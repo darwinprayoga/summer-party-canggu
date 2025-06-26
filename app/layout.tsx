@@ -1,22 +1,23 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter, Poppins } from "next/font/google"
-import "./globals.css"
-import Header from "./components/Header"
-import Footer from "./components/Footer"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter, Poppins } from "next/font/google";
+import "./globals.css";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-})
+});
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   variable: "--font-poppins",
   display: "swap",
-})
+});
 
 export const metadata: Metadata = {
   title: {
@@ -25,7 +26,14 @@ export const metadata: Metadata = {
   },
   description:
     "Premium beach and pool essentials in Canggu, Bali. Surfboards, floaties, cooler boxes and more for your perfect summer party.",
-  keywords: ["Canggu", "Bali", "beach essentials", "pool gear", "surfboards", "summer party"],
+  keywords: [
+    "Canggu",
+    "Bali",
+    "beach essentials",
+    "pool gear",
+    "surfboards",
+    "summer party",
+  ],
   authors: [{ name: "Summer Party Canggu" }],
   creator: "Summer Party Canggu",
   icons: {
@@ -71,13 +79,13 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
@@ -88,9 +96,10 @@ export default function RootLayout({
       </head>
       <body className="font-sans bg-cream text-charcoal">
         <Header />
+        <Analytics />
         <main>{children}</main>
         <Footer />
       </body>
     </html>
-  )
+  );
 }
