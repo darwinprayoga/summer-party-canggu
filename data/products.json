@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "name": "Premium Surfboard",
+    "description": "Professional-grade surfboard perfect for Canggu waves",
+    "category": "beach-essentials",
+    "image": "/placeholder.svg?height=300&width=400",
+    "slug": "premium-surfboard"
+  },
+  {
+    "id": "2",
+    "name": "Beach Towel Set",
+    "description": "Ultra-soft, quick-dry beach towels in tropical colors",
+    "category": "beach-essentials",
+    "image": "/placeholder.svg?height=300&width=400",
+    "slug": "beach-towel-set"
+  },
+  {
+    "id": "3",
+    "name": "Inflatable Pool Float",
+    "description": "Instagram-worthy pool floats for the perfect pool day",
+    "category": "pool-day-gear",
+    "image": "/placeholder.svg?height=300&width=400",
+    "slug": "inflatable-pool-float"
+  },
+  {
+    "id": "4",
+    "name": "Premium Cooler Box",
+    "description": "Keep your drinks cold all day with our insulated cooler",
+    "category": "pool-day-gear",
+    "image": "/placeholder.svg?height=300&width=400",
+    "slug": "premium-cooler-box"
+  },
+  {
+    "id": "5",
+    "name": "Balinese Arak (Traditional Alcohol)",
+    "description": "Authentic Balinese rice wine for the ultimate local party experience",
+    "category": "party-essentials",
+    "image": "/placeholder.svg?height=300&width=400",
+    "slug": "balinese-arak",
+    "isNew": true,
+    "isSpecial": true
+  }
+]

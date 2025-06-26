@@ -1,0 +1,98 @@
+[
+  {
+    "id": "surfing",
+    "name": "Surfing",
+    "emoji": "🏄‍♂️",
+    "description": "Catch the perfect waves at Bali's best surf spots"
+  },
+  {
+    "id": "snorkeling",
+    "name": "Snorkeling",
+    "emoji": "🤿",
+    "description": "Explore underwater paradise with crystal clear waters"
+  },
+  {
+    "id": "party",
+    "name": "Beach Party",
+    "emoji": "🎉",
+    "description": "Epic beach and pool parties with premium equipment"
+  },
+  {
+    "id": "relaxing",
+    "name": "Pool Relaxing",
+    "emoji": "🏖️",
+    "description": "Chill by the pool with luxury floats and amenities"
+  },
+  {
+    "id": "photography",
+    "name": "Photography",
+    "emoji": "📸",
+    "description": "Instagram-worthy spots for the perfect shots"
+  },
+  {
+    "id": "cultural",
+    "name": "Cultural Experience",
+    "emoji": "🏛️",
+    "description": "Authentic Balinese culture and traditional ceremonies"
+  },
+  {
+    "id": "diving",
+    "name": "Diving",
+    "emoji": "🤿",
+    "description": "Deep sea adventures and underwater exploration"
+  },
+  {
+    "id": "wellness",
+    "name": "Wellness & Yoga",
+    "emoji": "🧘‍♀️",
+    "description": "Peaceful retreats and mindful experiences"
+  },
+  {
+    "id": "adventure",
+    "name": "Adventure Sports",
+    "emoji": "🪂",
+    "description": "Thrilling activities and adrenaline-pumping experiences"
+  },
+  {
+    "id": "romantic",
+    "name": "Romantic Getaway",
+    "emoji": "💕",
+    "description": "Intimate settings for couples and special moments"
+  },
+  {
+    "id": "family",
+    "name": "Family Fun",
+    "emoji": "👨‍👩‍👧‍👦",
+    "description": "Safe and enjoyable activities for all ages"
+  },
+  {
+    "id": "nightlife",
+    "name": "Nightlife",
+    "emoji": "🌙",
+    "description": "Vibrant night scenes and party destinations"
+  },
+  {
+    "id": "coworking",
+    "name": "Co-working & Coffee",
+    "emoji": "💻",
+    "description": "Digital nomad spots with great wifi and coffee"
+  },
+  {
+    "id": "waterfall",
+    "name": "Waterfall Adventures",
+    "emoji": "💦",
+    "description": "Hidden waterfalls and natural swimming pools"
+  },
+  {
+    "id": "beach-soccer",
+    "name": "Beach Soccer",
+    "emoji": "⚽",
+    "description": "Beach football with friends and tournaments"
+  },
+  {
+    "id": "padel",
+    "name": "Padel Sports",
+    "emoji": "🎾",
+    "description": "Modern racquet sport in premium facilities"
+  }
+]

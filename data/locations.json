@@ -1,0 +1,694 @@
+[
+  {
+    "slug": "canggu",
+    "name": "Canggu",
+    "region": "Badung Regency",
+    "description": "The ultimate destination for beach parties and surf culture in Bali. Canggu combines world-class waves with vibrant nightlife, making it perfect for unforgettable summer parties and beach events.",
+    "highlights": [
+      "World-renowned surf breaks",
+      "Vibrant beach club scene",
+      "Instagram-worthy rice paddies",
+      "Trendy cafes and restaurants",
+      "Perfect sunset viewing spots"
+    ],
+    "attractions": ["Echo Beach", "Batu Bolong Beach", "Berawa Beach", "Old Man's Bar", "Deus Ex Machina"],
+    "beachType": "Black volcanic sand beaches",
+    "surfSpots": ["Echo Beach", "Batu Bolong", "Old Man's", "Berawa"],
+    "keywords": ["Canggu beach party", "Canggu surf", "Canggu pool party", "beach essentials Canggu"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Berawa", "Echo Beach", "Batu Bolong", "Pererenan"],
+    "specialties": ["Surfboard rentals", "Beach party equipment", "Pool floats", "Sunset party setups"]
+  },
+  {
+    "slug": "batu-bolong",
+    "name": "Batu Bolong",
+    "region": "Canggu Area",
+    "description": "Home to the iconic temple on the rock, Batu Bolong offers spiritual beauty combined with excellent surf conditions. Perfect for intimate beach gatherings and Instagram-worthy party setups.",
+    "highlights": [
+      "Iconic temple backdrop",
+      "Beginner-friendly surf waves",
+      "Stunning photography opportunities",
+      "Peaceful beach atmosphere",
+      "Traditional Balinese culture"
+    ],
+    "attractions": ["Batu Bolong Temple", "Batu Bolong Beach", "Traditional Warungs", "Surf Schools"],
+    "beachType": "Black sand with rocky temple formation",
+    "surfSpots": ["Batu Bolong Main Break", "Temple Left", "Inside Section"],
+    "keywords": ["Batu Bolong temple", "Batu Bolong surf", "beach party Batu Bolong", "Canggu temple beach"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Echo Beach", "Berawa"],
+    "specialties": ["Temple ceremony equipment", "Photography props", "Beginner surf gear", "Cultural event setups"]
+  },
+  {
+    "slug": "berawa",
+    "name": "Berawa",
+    "region": "Canggu Area",
+    "description": "The upscale side of Canggu, Berawa is known for luxury beach clubs and premium accommodations. Ideal for sophisticated pool parties and exclusive beach events with high-end amenities.",
+    "highlights": [
+      "Luxury beach clubs",
+      "Premium pool party venues",
+      "High-end dining scene",
+      "Exclusive event spaces",
+      "Sophisticated nightlife"
+    ],
+    "attractions": ["Finns Beach Club", "Potato Head Beach Club", "Berawa Beach", "Luxury Villas"],
+    "beachType": "Wide black sand beach",
+    "surfSpots": ["Berawa Beach Break", "Finns Right", "Berawa Left"],
+    "keywords": ["Berawa beach club", "luxury pool party Berawa", "premium beach party Bali", "Berawa events"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Batu Bolong", "Seminyak"],
+    "specialties": ["Luxury pool equipment", "Premium beach setups", "VIP party packages", "High-end event gear"]
+  },
+  {
+    "slug": "echo-beach",
+    "name": "Echo Beach",
+    "region": "Canggu Area",
+    "description": "The heart of Canggu's surf and party scene, Echo Beach offers consistent waves and vibrant beach clubs. The perfect spot for energetic beach parties and surf-themed events.",
+    "highlights": [
+      "Consistent surf breaks",
+      "Vibrant beach club scene",
+      "Live music venues",
+      "Sunset party atmosphere",
+      "International surf competitions"
+    ],
+    "attractions": ["Echo Beach Surf Break", "Beach Clubs", "Surf Schools", "Beachfront Restaurants"],
+    "beachType": "Black volcanic sand",
+    "surfSpots": ["Echo Beach Main Break", "Echo Rights", "Echo Lefts"],
+    "keywords": ["Echo Beach surf", "Echo Beach party", "Canggu Echo Beach", "surf party Echo Beach"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Batu Bolong", "Berawa"],
+    "specialties": ["Surf equipment", "Beach party sound systems", "Competition-grade gear", "Event staging"]
+  },
+  {
+    "slug": "pererenan",
+    "name": "Pererenan",
+    "region": "Canggu Area",
+    "description": "A quieter alternative to central Canggu, Pererenan offers pristine beaches and a more relaxed atmosphere. Perfect for intimate beach gatherings and peaceful pool parties away from the crowds.",
+    "highlights": [
+      "Pristine black sand beaches",
+      "Peaceful atmosphere",
+      "Less crowded than central Canggu",
+      "Beautiful rice field views",
+      "Authentic local culture"
+    ],
+    "attractions": ["Pererenan Beach", "Rice Field Walks", "Local Warungs", "Sunset Viewpoints"],
+    "beachType": "Pristine black volcanic sand",
+    "surfSpots": ["Pererenan Beach Break", "Pererenan Rights"],
+    "keywords": ["Pererenan beach", "quiet beach party Bali", "Pererenan surf", "peaceful pool party"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Cemagi", "Mengwi"],
+    "specialties": [
+      "Intimate party setups",
+      "Peaceful event equipment",
+      "Rice field photography props",
+      "Local cultural items"
+    ]
+  },
+  {
+    "slug": "umalas",
+    "name": "Umalas",
+    "region": "Canggu Area",
+    "description": "The residential heart of Canggu, Umalas is perfect for private villa pool parties and exclusive events. Known for luxury accommodations and sophisticated party venues.",
+    "highlights": [
+      "Luxury villa accommodations",
+      "Private pool party venues",
+      "Sophisticated dining options",
+      "Exclusive event spaces",
+      "Premium shopping areas"
+    ],
+    "attractions": ["Luxury Villas", "Boutique Shops", "Fine Dining Restaurants", "Spa Retreats"],
+    "keywords": ["Umalas villa party", "private pool party Umalas", "luxury events Canggu", "villa rental Umalas"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Berawa", "Seminyak"],
+    "specialties": ["Villa pool equipment", "Private party setups", "Luxury event gear", "Exclusive party packages"]
+  },
+  {
+    "slug": "padonan-tibubeneng",
+    "name": "Padonan / Tibubeneng",
+    "region": "North Canggu",
+    "description": "The emerging area of North Canggu, offering a perfect blend of traditional Balinese culture and modern beach party vibes. Ideal for unique cultural-themed events and authentic experiences.",
+    "highlights": [
+      "Emerging party destination",
+      "Traditional Balinese culture",
+      "Authentic local experiences",
+      "Growing expat community",
+      "Unique event venues"
+    ],
+    "attractions": ["Traditional Villages", "Local Temples", "Authentic Warungs", "Cultural Centers"],
+    "keywords": ["Padonan events", "Tibubeneng party", "North Canggu beach", "cultural party Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Pererenan", "Cemagi"],
+    "specialties": [
+      "Cultural event equipment",
+      "Traditional decorations",
+      "Authentic party setups",
+      "Local ceremony items"
+    ]
+  },
+  {
+    "slug": "babakan",
+    "name": "Babakan",
+    "region": "Canggu Area",
+    "description": "A hidden gem in the Canggu area, Babakan offers secluded beaches and intimate party settings. Perfect for private events and exclusive gatherings away from the tourist crowds.",
+    "highlights": [
+      "Secluded beach locations",
+      "Private event settings",
+      "Intimate party atmosphere",
+      "Hidden gem status",
+      "Exclusive access areas"
+    ],
+    "attractions": ["Hidden Beaches", "Private Villas", "Secluded Viewpoints", "Local Fishing Villages"],
+    "keywords": ["Babakan beach", "private beach party Babakan", "secluded events Bali", "hidden beach Canggu"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Pererenan", "Cemagi"],
+    "specialties": [
+      "Private beach setups",
+      "Secluded party equipment",
+      "Intimate event gear",
+      "Exclusive access arrangements"
+    ]
+  },
+  {
+    "slug": "kayu-tulang",
+    "name": "Kayu Tulang",
+    "region": "Canggu Area",
+    "description": "An authentic local area near Canggu, Kayu Tulang offers traditional Balinese experiences combined with modern party amenities. Perfect for cultural-themed events and authentic celebrations.",
+    "highlights": [
+      "Authentic Balinese culture",
+      "Traditional village atmosphere",
+      "Local community experiences",
+      "Cultural event opportunities",
+      "Traditional architecture"
+    ],
+    "attractions": ["Traditional Villages", "Local Temples", "Cultural Centers", "Artisan Workshops"],
+    "keywords": ["Kayu Tulang culture", "traditional party Bali", "authentic events Canggu", "cultural celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Babakan", "Pererenan"],
+    "specialties": [
+      "Cultural decorations",
+      "Traditional music equipment",
+      "Authentic ceremony items",
+      "Local artisan products"
+    ]
+  },
+  {
+    "slug": "tumbak-bayuh",
+    "name": "Tumbak Bayuh",
+    "region": "Canggu Area",
+    "description": "A peaceful area perfect for intimate gatherings and cultural experiences. Tumbak Bayuh offers authentic Balinese village life with easy access to Canggu's party scene.",
+    "highlights": [
+      "Peaceful village setting",
+      "Authentic cultural experiences",
+      "Traditional Balinese architecture",
+      "Local community involvement",
+      "Serene event locations"
+    ],
+    "attractions": ["Traditional Villages", "Rice Field Views", "Local Temples", "Cultural Sites"],
+    "keywords": ["Tumbak Bayuh events", "peaceful party Bali", "village celebration", "cultural gathering"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Canggu", "Pererenan", "Mengwi"],
+    "specialties": [
+      "Village-style setups",
+      "Cultural event equipment",
+      "Traditional decorations",
+      "Peaceful party gear"
+    ]
+  },
+  {
+    "slug": "munggu",
+    "name": "Munggu",
+    "region": "Tabanan Regency",
+    "description": "A serene coastal area perfect for peaceful beach parties and intimate celebrations. Munggu offers pristine beaches and authentic Balinese culture for unique event experiences.",
+    "highlights": [
+      "Pristine coastal beaches",
+      "Peaceful atmosphere",
+      "Authentic local culture",
+      "Beautiful sunset views",
+      "Traditional fishing villages"
+    ],
+    "attractions": ["Munggu Beach", "Traditional Fishing Villages", "Sunset Viewpoints", "Local Temples"],
+    "beachType": "Pristine black sand beaches",
+    "keywords": ["Munggu beach party", "peaceful beach events", "Tabanan coast", "authentic Bali celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Cemagi", "Pererenan", "Tanah Lot"],
+    "specialties": [
+      "Peaceful beach setups",
+      "Traditional fishing equipment",
+      "Sunset party gear",
+      "Cultural decorations"
+    ]
+  },
+  {
+    "slug": "cemagi",
+    "name": "Cemagi",
+    "region": "Tabanan Regency",
+    "description": "A tranquil beach destination perfect for exclusive events and private celebrations. Cemagi offers stunning black sand beaches and a peaceful atmosphere for sophisticated gatherings.",
+    "highlights": [
+      "Exclusive beach locations",
+      "Tranquil atmosphere",
+      "Stunning black sand beaches",
+      "Private event venues",
+      "Sophisticated party settings"
+    ],
+    "attractions": ["Cemagi Beach", "Luxury Resorts", "Private Villas", "Exclusive Beach Clubs"],
+    "beachType": "Stunning black volcanic sand",
+    "keywords": ["Cemagi beach party", "exclusive events Cemagi", "luxury beach Bali", "private celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Pererenan", "Munggu", "Tanah Lot"],
+    "specialties": [
+      "Exclusive event equipment",
+      "Luxury beach setups",
+      "Private party gear",
+      "Sophisticated decorations"
+    ]
+  },
+  {
+    "slug": "ubud",
+    "name": "Ubud",
+    "region": "Gianyar Regency",
+    "description": "The cultural heart of Bali, Ubud offers unique jungle pool parties and spiritual retreat celebrations. Perfect for wellness-themed events and cultural gatherings in lush tropical settings.",
+    "highlights": [
+      "Lush jungle settings",
+      "Cultural and spiritual atmosphere",
+      "Unique pool party venues",
+      "Wellness retreat locations",
+      "Traditional art and crafts"
+    ],
+    "attractions": ["Monkey Forest", "Rice Terraces", "Art Villages", "Yoga Retreats", "Cultural Centers"],
+    "keywords": ["Ubud pool party", "jungle party Bali", "wellness retreat Ubud", "cultural events Ubud"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Sidemen", "Gianyar", "Mas Village"],
+    "specialties": ["Jungle pool equipment", "Wellness event gear", "Cultural decorations", "Spiritual ceremony items"]
+  },
+  {
+    "slug": "sidemen",
+    "name": "Sidemen",
+    "region": "Karangasem Regency",
+    "description": "A hidden paradise with stunning rice terraces and mountain views. Sidemen offers unique highland pool parties and cultural celebrations with breathtaking natural backdrops.",
+    "highlights": [
+      "Stunning rice terrace views",
+      "Mountain backdrop settings",
+      "Traditional weaving villages",
+      "Peaceful highland atmosphere",
+      "Authentic cultural experiences"
+    ],
+    "attractions": ["Rice Terraces", "Mount Agung Views", "Traditional Villages", "Weaving Centers"],
+    "keywords": ["Sidemen pool party", "mountain view events", "rice terrace celebration", "highland party Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Ubud", "Candidasa", "Amed"],
+    "specialties": [
+      "Highland event equipment",
+      "Mountain view setups",
+      "Cultural celebration gear",
+      "Traditional decorations"
+    ]
+  },
+  {
+    "slug": "uluwatu",
+    "name": "Uluwatu",
+    "region": "Badung Regency",
+    "description": "Perched on dramatic clifftops, Uluwatu offers spectacular ocean views and world-class surf breaks. Perfect for sunset parties and sophisticated cliff-top celebrations with breathtaking backdrops.",
+    "highlights": [
+      "Dramatic clifftop locations",
+      "World-class surf breaks",
+      "Spectacular sunset views",
+      "Luxury cliff-top venues",
+      "Iconic temple backdrop"
+    ],
+    "attractions": ["Uluwatu Temple", "Padang Padang Beach", "Bingin Beach", "Cliff-top Bars"],
+    "beachType": "White sand hidden beaches",
+    "surfSpots": ["Uluwatu", "Padang Padang", "Bingin", "Impossibles"],
+    "keywords": ["Uluwatu cliff party", "sunset party Uluwatu", "surf party Bali", "clifftop events"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Pecatu", "Jimbaran", "Nusa Dua"],
+    "specialties": ["Clifftop event equipment", "Sunset party setups", "Surf competition gear", "Luxury event packages"]
+  },
+  {
+    "slug": "pecatu",
+    "name": "Pecatu",
+    "region": "Badung Regency",
+    "description": "Home to pristine white sand beaches and luxury resorts, Pecatu offers exclusive beach parties and upscale celebrations. Perfect for sophisticated events with world-class amenities.",
+    "highlights": [
+      "Pristine white sand beaches",
+      "Luxury resort venues",
+      "Exclusive beach clubs",
+      "Championship golf courses",
+      "Upscale dining options"
+    ],
+    "attractions": ["Dreamland Beach", "New Kuta Golf", "Luxury Resorts", "GWK Cultural Park"],
+    "beachType": "Pristine white sand beaches",
+    "keywords": ["Pecatu beach party", "luxury events Pecatu", "white sand beach Bali", "exclusive celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Uluwatu", "Jimbaran", "Nusa Dua"],
+    "specialties": ["Luxury beach equipment", "Exclusive party setups", "Resort-quality gear", "Premium event packages"]
+  },
+  {
+    "slug": "seminyak",
+    "name": "Seminyak",
+    "region": "Badung Regency",
+    "description": "Bali's most sophisticated beach destination, Seminyak offers world-class beach clubs and luxury party venues. The ultimate location for glamorous celebrations and high-end events.",
+    "highlights": [
+      "World-class beach clubs",
+      "Luxury shopping districts",
+      "Fine dining restaurants",
+      "Sophisticated nightlife",
+      "Premium spa experiences"
+    ],
+    "attractions": ["Potato Head Beach Club", "Ku De Ta", "Double Six Beach", "Oberoi Street"],
+    "beachType": "Golden sand beaches",
+    "keywords": ["Seminyak beach club", "luxury party Seminyak", "glamorous events Bali", "sophisticated celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Berawa", "Legian", "Kerobokan"],
+    "specialties": [
+      "Luxury party equipment",
+      "Glamorous event setups",
+      "High-end beach gear",
+      "Sophisticated decorations"
+    ]
+  },
+  {
+    "slug": "jimbaran",
+    "name": "Jimbaran",
+    "region": "Badung Regency",
+    "description": "Famous for its seafood dining and calm bay waters, Jimbaran offers unique beachfront celebrations and romantic sunset parties. Perfect for intimate gatherings and culinary-themed events.",
+    "highlights": [
+      "Famous seafood dining",
+      "Calm bay waters",
+      "Romantic sunset settings",
+      "Traditional fishing culture",
+      "Luxury resort venues"
+    ],
+    "attractions": ["Jimbaran Bay", "Seafood Restaurants", "Fish Markets", "Luxury Resorts"],
+    "beachType": "Calm golden sand bay",
+    "keywords": ["Jimbaran seafood party", "sunset dinner Jimbaran", "bay celebration Bali", "romantic events"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Pecatu", "Uluwatu", "Nusa Dua"],
+    "specialties": ["Seafood party equipment", "Romantic dinner setups", "Bay celebration gear", "Culinary event items"]
+  },
+  {
+    "slug": "sanur",
+    "name": "Sanur",
+    "region": "Denpasar",
+    "description": "Bali's first beach resort area, Sanur offers calm waters and family-friendly celebrations. Perfect for relaxed pool parties and traditional Balinese cultural events with a peaceful atmosphere.",
+    "highlights": [
+      "Calm, family-friendly waters",
+      "Traditional Balinese culture",
+      "Peaceful beach atmosphere",
+      "Historic significance",
+      "Beautiful sunrise views"
+    ],
+    "attractions": ["Sanur Beach", "Le Mayeur Museum", "Traditional Markets", "Sunrise Viewpoints"],
+    "beachType": "Calm white sand beaches",
+    "keywords": ["Sanur family party", "calm beach events", "traditional celebration Sanur", "sunrise party Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Denpasar", "Gianyar", "Klungkung"],
+    "specialties": [
+      "Family-friendly equipment",
+      "Traditional ceremony items",
+      "Calm water gear",
+      "Cultural decorations"
+    ]
+  },
+  {
+    "slug": "nusa-penida",
+    "name": "Nusa Penida",
+    "region": "Klungkung Regency",
+    "description": "A dramatic island paradise with stunning cliff formations and pristine beaches. Nusa Penida offers unique adventure-themed parties and exclusive island celebrations with breathtaking natural beauty.",
+    "highlights": [
+      "Dramatic cliff formations",
+      "Pristine untouched beaches",
+      "Crystal clear waters",
+      "Adventure tourism activities",
+      "Exclusive island atmosphere"
+    ],
+    "attractions": ["Kelingking Beach", "Angel's Billabong", "Broken Beach", "Crystal Bay"],
+    "beachType": "Pristine white sand beaches",
+    "keywords": ["Nusa Penida island party", "cliff celebration", "adventure party Bali", "exclusive island events"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Nusa Lembongan", "Nusa Ceningan", "Sanur"],
+    "specialties": ["Island adventure gear", "Cliff-top equipment", "Boat party setups", "Adventure celebration items"]
+  },
+  {
+    "slug": "nusa-lembongan",
+    "name": "Nusa Lembongan",
+    "region": "Klungkung Regency",
+    "description": "A charming island getaway perfect for intimate beach parties and water sports celebrations. Nusa Lembongan offers crystal clear waters and a relaxed island vibe for unique events.",
+    "highlights": [
+      "Crystal clear waters",
+      "Relaxed island atmosphere",
+      "Water sports activities",
+      "Intimate beach settings",
+      "Traditional seaweed farming"
+    ],
+    "attractions": ["Dream Beach", "Devil's Tear", "Mushroom Bay", "Seaweed Farms"],
+    "beachType": "Crystal clear water beaches",
+    "keywords": ["Nusa Lembongan beach party", "island celebration", "water sports party", "intimate island events"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Nusa Penida", "Nusa Ceningan", "Sanur"],
+    "specialties": [
+      "Water sports equipment",
+      "Island party gear",
+      "Intimate celebration setups",
+      "Marine activity items"
+    ]
+  },
+  {
+    "slug": "amed",
+    "name": "Amed",
+    "region": "Karangasem Regency",
+    "description": "A traditional fishing village with black sand beaches and excellent diving spots. Amed offers unique underwater-themed parties and authentic cultural celebrations with stunning mountain backdrops.",
+    "highlights": [
+      "Traditional fishing culture",
+      "Excellent diving and snorkeling",
+      "Black volcanic sand beaches",
+      "Mount Agung backdrop",
+      "Authentic village atmosphere"
+    ],
+    "attractions": ["Amed Beach", "Japanese Shipwreck", "Traditional Salt Making", "Diving Sites"],
+    "beachType": "Black volcanic sand beaches",
+    "keywords": [
+      "Amed diving party",
+      "traditional fishing celebration",
+      "underwater theme party",
+      "authentic village events"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Candidasa", "Sidemen", "Tulamben"],
+    "specialties": [
+      "Diving party equipment",
+      "Underwater theme gear",
+      "Traditional fishing items",
+      "Cultural celebration setups"
+    ]
+  },
+  {
+    "slug": "candidasa",
+    "name": "Candidasa",
+    "region": "Karangasem Regency",
+    "description": "A peaceful coastal town perfect for relaxed beach parties and cultural celebrations. Candidasa offers beautiful lagoons and traditional Balinese experiences for unique events.",
+    "highlights": [
+      "Peaceful coastal atmosphere",
+      "Beautiful lagoons",
+      "Traditional Balinese culture",
+      "Relaxed beach settings",
+      "Historic water palaces"
+    ],
+    "attractions": ["Candidasa Beach", "Tirta Gangga", "Tenganan Village", "Water Palaces"],
+    "beachType": "Peaceful coastal beaches",
+    "keywords": ["Candidasa beach party", "peaceful celebration", "lagoon party Bali", "cultural events East Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Amed", "Sidemen", "Padang Bai"],
+    "specialties": [
+      "Peaceful event equipment",
+      "Lagoon party gear",
+      "Cultural celebration items",
+      "Traditional decorations"
+    ]
+  },
+  {
+    "slug": "bangli-kintamani",
+    "name": "Bangli / Kintamani",
+    "region": "Bangli Regency",
+    "description": "Highland paradise with stunning volcano views and cool mountain air. Perfect for unique highland pool parties and cultural celebrations with breathtaking Lake Batur backdrops.",
+    "highlights": [
+      "Stunning volcano views",
+      "Cool mountain climate",
+      "Lake Batur scenery",
+      "Traditional highland culture",
+      "Unique geological features"
+    ],
+    "attractions": ["Mount Batur", "Lake Batur", "Hot Springs", "Traditional Villages"],
+    "keywords": ["Kintamani volcano party", "highland celebration", "Lake Batur events", "mountain party Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Ubud", "Sidemen", "Besakih"],
+    "specialties": [
+      "Highland event equipment",
+      "Volcano view setups",
+      "Mountain celebration gear",
+      "Cool climate party items"
+    ]
+  },
+  {
+    "slug": "gili-trawangan",
+    "name": "Gili Trawangan",
+    "region": "Lombok",
+    "description": "The party island of the Gilis, offering vibrant nightlife and stunning beach parties. Perfect for energetic celebrations and tropical island events with crystal clear waters and white sand beaches.",
+    "highlights": [
+      "Vibrant party atmosphere",
+      "Crystal clear waters",
+      "White sand beaches",
+      "No motorized vehicles",
+      "World-class diving and snorkeling"
+    ],
+    "attractions": ["Gili T Beach Parties", "Sunset Swings", "Diving Sites", "Beach Bars"],
+    "beachType": "White sand tropical beaches",
+    "keywords": ["Gili Trawangan party", "island nightlife", "tropical beach party", "Gili T celebration"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Gili Air", "Gili Meno", "Lombok"],
+    "specialties": ["Island party equipment", "Beach bar setups", "Tropical celebration gear", "Water activity items"]
+  },
+  {
+    "slug": "gili-air",
+    "name": "Gili Air",
+    "region": "Lombok",
+    "description": "The perfect balance of relaxation and fun, Gili Air offers intimate beach parties and peaceful celebrations. Ideal for romantic events and small group gatherings in paradise.",
+    "highlights": [
+      "Perfect balance of relaxation and fun",
+      "Intimate beach settings",
+      "Local island culture",
+      "Beautiful coral reefs",
+      "Peaceful atmosphere"
+    ],
+    "attractions": ["Gili Air Beach", "Local Villages", "Coral Reefs", "Sunset Viewpoints"],
+    "beachType": "White sand peaceful beaches",
+    "keywords": [
+      "Gili Air intimate party",
+      "peaceful island celebration",
+      "romantic beach events",
+      "small group party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Gili Trawangan", "Gili Meno", "Lombok"],
+    "specialties": [
+      "Intimate party equipment",
+      "Romantic celebration setups",
+      "Small group gear",
+      "Peaceful event items"
+    ]
+  },
+  {
+    "slug": "gili-meno",
+    "name": "Gili Meno",
+    "region": "Lombok",
+    "description": "The quietest of the Gili Islands, perfect for exclusive and intimate celebrations. Gili Meno offers pristine beaches and ultimate privacy for special events and romantic gatherings.",
+    "highlights": [
+      "Ultimate privacy and exclusivity",
+      "Pristine untouched beaches",
+      "Romantic atmosphere",
+      "Excellent snorkeling",
+      "Peaceful island life"
+    ],
+    "attractions": ["Gili Meno Beach", "Salt Lake", "Turtle Sanctuary", "Pristine Reefs"],
+    "beachType": "Pristine white sand beaches",
+    "keywords": [
+      "Gili Meno exclusive party",
+      "private island celebration",
+      "romantic getaway events",
+      "pristine beach party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Gili Air", "Gili Trawangan", "Lombok"],
+    "specialties": [
+      "Exclusive event equipment",
+      "Private celebration setups",
+      "Romantic party gear",
+      "Pristine beach items"
+    ]
+  },
+  {
+    "slug": "lombok",
+    "name": "Lombok",
+    "region": "West Nusa Tenggara",
+    "description": "The adventure island offering diverse landscapes from pristine beaches to volcanic mountains. Perfect for adventure-themed parties and unique cultural celebrations with authentic Sasak experiences.",
+    "highlights": [
+      "Diverse landscapes",
+      "Pristine beaches and mountains",
+      "Authentic Sasak culture",
+      "Adventure tourism activities",
+      "Less crowded than Bali"
+    ],
+    "attractions": ["Mount Rinjani", "Senggigi Beach", "Traditional Sasak Villages", "Pink Beach"],
+    "beachType": "Diverse beach types",
+    "keywords": [
+      "Lombok adventure party",
+      "Sasak cultural celebration",
+      "mountain beach party",
+      "authentic Indonesia events"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Gili Islands", "Sumbawa", "Bali"],
+    "specialties": [
+      "Adventure party equipment",
+      "Cultural celebration gear",
+      "Mountain event items",
+      "Authentic decorations"
+    ]
+  },
+  {
+    "slug": "buduk",
+    "name": "Buduk",
+    "region": "Lombok",
+    "description": "A hidden gem in Lombok offering pristine beaches and authentic local experiences. Perfect for exclusive events and cultural celebrations away from tourist crowds.",
+    "highlights": [
+      "Hidden pristine beaches",
+      "Authentic local culture",
+      "Exclusive locations",
+      "Traditional fishing villages",
+      "Untouched natural beauty"
+    ],
+    "attractions": ["Buduk Beach", "Traditional Villages", "Local Fishing Areas", "Hidden Coves"],
+    "beachType": "Hidden pristine beaches",
+    "keywords": [
+      "Buduk hidden beach party",
+      "exclusive Lombok events",
+      "authentic village celebration",
+      "pristine beach party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Lombok", "Gili Islands", "Senggigi"],
+    "specialties": [
+      "Hidden beach equipment",
+      "Exclusive event setups",
+      "Traditional village items",
+      "Pristine location gear"
+    ]
+  },
+  {
+    "slug": "tiying-tutul",
+    "name": "Tiying Tutul",
+    "region": "Lombok",
+    "description": "An authentic Sasak village area perfect for cultural celebrations and traditional events. Offers unique highland experiences and authentic Indonesian cultural immersion.",
+    "highlights": [
+      "Authentic Sasak culture",
+      "Traditional village life",
+      "Highland location",
+      "Cultural immersion experiences",
+      "Traditional architecture"
+    ],
+    "attractions": ["Traditional Sasak Villages", "Cultural Centers", "Highland Views", "Artisan Workshops"],
+    "keywords": [
+      "Tiying Tutul cultural party",
+      "Sasak village celebration",
+      "traditional events Lombok",
+      "authentic cultural gathering"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Lombok", "Traditional Villages", "Highland Areas"],
+    "specialties": [
+      "Cultural celebration equipment",
+      "Traditional decorations",
+      "Village ceremony items",
+      "Authentic cultural gear"
+    ]
+  }
+]
