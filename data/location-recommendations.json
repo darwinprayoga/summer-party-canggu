@@ -3,79 +3,155 @@
     {
       "name": "Uluwatu",
       "slug": "uluwatu",
-      "timeSlots": ["Today at 6:00 AM", "Today at 3:00 PM", "Tomorrow at 7:00 AM"],
+      "timeSlots": [
+        "Today at 6:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 7:00 AM"
+      ],
       "description": "World-class reef breaks with dramatic cliff backdrops",
-      "highlights": ["Advanced level waves", "Stunning cliff views", "Professional surf gear available"]
+      "highlights": [
+        "Advanced level waves",
+        "Stunning cliff views",
+        "Professional surf gear available"
+      ]
     },
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Today at 7:00 AM", "Today at 4:00 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Perfect for all skill levels with consistent waves",
-      "highlights": ["Beginner to advanced", "Beach clubs nearby", "Surf lessons available"]
+      "highlights": [
+        "Beginner to advanced",
+        "Beach clubs nearby",
+        "Surf lessons available"
+      ]
     },
     {
       "name": "Echo Beach",
       "slug": "echo-beach",
-      "timeSlots": ["Today at 6:30 AM", "Today at 3:30 PM", "Tomorrow at 7:30 AM"],
+      "timeSlots": [
+        "Today at 6:30 AM",
+        "Today at 3:30 PM",
+        "Tomorrow at 7:30 AM"
+      ],
       "description": "Consistent surf with vibrant beach scene",
-      "highlights": ["Reliable waves", "Great atmosphere", "Equipment rental on-site"]
+      "highlights": [
+        "Reliable waves",
+        "Great atmosphere",
+        "Equipment rental on-site"
+      ]
     },
     {
       "name": "Berawa",
       "slug": "berawa",
-      "timeSlots": ["Today at 7:30 AM", "Today at 4:30 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 7:30 AM",
+        "Today at 4:30 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Luxury surf experience with premium facilities",
-      "highlights": ["High-end beach clubs", "Professional coaching", "Premium equipment"]
+      "highlights": [
+        "High-end beach clubs",
+        "Professional coaching",
+        "Premium equipment"
+      ]
     },
     {
       "name": "Pererenan",
       "slug": "pererenan",
-      "timeSlots": ["Today at 6:00 AM", "Today at 3:00 PM", "Tomorrow at 7:00 AM"],
+      "timeSlots": [
+        "Today at 6:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 7:00 AM"
+      ],
       "description": "Peaceful surf sessions away from crowds",
-      "highlights": ["Less crowded", "Pristine conditions", "Authentic local vibe"]
+      "highlights": [
+        "Less crowded",
+        "Pristine conditions",
+        "Authentic local vibe"
+      ]
     },
     {
       "name": "Batu Bolong",
       "slug": "batu-bolong",
-      "timeSlots": ["Today at 7:00 AM", "Today at 4:00 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Beginner-friendly waves with temple backdrop",
-      "highlights": ["Perfect for beginners", "Iconic temple views", "Surf schools nearby"]
+      "highlights": [
+        "Perfect for beginners",
+        "Iconic temple views",
+        "Surf schools nearby"
+      ]
     }
   ],
   "snorkeling": [
     {
       "name": "Nusa Penida",
       "slug": "nusa-penida",
-      "timeSlots": ["Today at 9:00 AM", "Today at 1:00 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 1:00 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Crystal clear waters with diverse marine life",
       "highlights": ["Manta ray spotting", "Crystal Bay", "Boat trip included"]
     },
     {
       "name": "Amed",
       "slug": "amed",
-      "timeSlots": ["Today at 8:00 AM", "Today at 2:00 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Traditional fishing village with excellent diving",
-      "highlights": ["Japanese shipwreck", "Coral gardens", "Traditional culture"]
+      "highlights": [
+        "Japanese shipwreck",
+        "Coral gardens",
+        "Traditional culture"
+      ]
     },
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 10:00 AM", "Today at 3:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 10:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Calm waters perfect for beginners",
       "highlights": ["Family-friendly", "Calm conditions", "Easy access"]
     },
     {
       "name": "Nusa Lembongan",
       "slug": "nusa-lembongan",
-      "timeSlots": ["Today at 9:30 AM", "Today at 2:30 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 9:30 AM",
+        "Today at 2:30 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Island paradise with pristine coral reefs",
-      "highlights": ["Crystal clear waters", "Diverse marine life", "Island adventure"]
+      "highlights": [
+        "Crystal clear waters",
+        "Diverse marine life",
+        "Island adventure"
+      ]
     },
     {
       "name": "Candidasa",
       "slug": "candidasa",
-      "timeSlots": ["Today at 8:30 AM", "Today at 1:30 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:30 AM",
+        "Today at 1:30 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Peaceful coastal snorkeling with cultural sites",
       "highlights": ["Calm lagoons", "Cultural attractions", "Less crowded"]
     }
@@ -84,42 +160,74 @@
     {
       "name": "Seminyak",
       "slug": "seminyak",
-      "timeSlots": ["Today at 2:00 PM", "Tonight at 8:00 PM", "Tomorrow at 3:00 PM"],
+      "timeSlots": [
+        "Today at 2:00 PM",
+        "Tonight at 8:00 PM",
+        "Tomorrow at 3:00 PM"
+      ],
       "description": "Luxury beach clubs and sophisticated nightlife",
-      "highlights": ["World-class venues", "Premium equipment", "VIP experiences"]
+      "highlights": [
+        "World-class venues",
+        "Premium equipment",
+        "VIP experiences"
+      ]
     },
     {
       "name": "Berawa",
       "slug": "berawa",
-      "timeSlots": ["Today at 1:00 PM", "Tonight at 7:00 PM", "Tomorrow at 2:00 PM"],
+      "timeSlots": [
+        "Today at 1:00 PM",
+        "Tonight at 7:00 PM",
+        "Tomorrow at 2:00 PM"
+      ],
       "description": "Upscale beach clubs with exclusive party setups",
       "highlights": ["Luxury venues", "Exclusive access", "Premium party gear"]
     },
     {
       "name": "Gili Trawangan",
       "slug": "gili-trawangan",
-      "timeSlots": ["Today at 4:00 PM", "Tonight at 9:00 PM", "Tomorrow at 5:00 PM"],
+      "timeSlots": [
+        "Today at 4:00 PM",
+        "Tonight at 9:00 PM",
+        "Tomorrow at 5:00 PM"
+      ],
       "description": "The ultimate party island experience",
       "highlights": ["Island nightlife", "Beach parties", "Tropical vibes"]
     },
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Today at 3:00 PM", "Tonight at 8:30 PM", "Tomorrow at 4:00 PM"],
+      "timeSlots": [
+        "Today at 3:00 PM",
+        "Tonight at 8:30 PM",
+        "Tomorrow at 4:00 PM"
+      ],
       "description": "Vibrant surf town with epic beach parties",
       "highlights": ["Surf culture", "Beach clubs", "Young crowd"]
     },
     {
       "name": "Echo Beach",
       "slug": "echo-beach",
-      "timeSlots": ["Today at 2:30 PM", "Tonight at 7:30 PM", "Tomorrow at 3:30 PM"],
+      "timeSlots": [
+        "Today at 2:30 PM",
+        "Tonight at 7:30 PM",
+        "Tomorrow at 3:30 PM"
+      ],
       "description": "Heart of Canggu's party scene with live music",
-      "highlights": ["Live music venues", "Sunset parties", "Energetic atmosphere"]
+      "highlights": [
+        "Live music venues",
+        "Sunset parties",
+        "Energetic atmosphere"
+      ]
     },
     {
       "name": "Umalas",
       "slug": "umalas",
-      "timeSlots": ["Today at 1:30 PM", "Tonight at 6:30 PM", "Tomorrow at 2:30 PM"],
+      "timeSlots": [
+        "Today at 1:30 PM",
+        "Tonight at 6:30 PM",
+        "Tomorrow at 2:30 PM"
+      ],
       "description": "Private villa parties and exclusive events",
       "highlights": ["Private venues", "Villa parties", "Exclusive settings"]
     }
@@ -128,49 +236,89 @@
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 11:00 AM", "Today at 4:00 PM", "Tomorrow at 10:00 AM"],
+      "timeSlots": [
+        "Today at 11:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 10:00 AM"
+      ],
       "description": "Jungle pool parties and wellness retreats",
       "highlights": ["Peaceful atmosphere", "Luxury pools", "Wellness focus"]
     },
     {
       "name": "Jimbaran",
       "slug": "jimbaran",
-      "timeSlots": ["Today at 12:00 PM", "Today at 5:00 PM", "Tomorrow at 11:00 AM"],
+      "timeSlots": [
+        "Today at 12:00 PM",
+        "Today at 5:00 PM",
+        "Tomorrow at 11:00 AM"
+      ],
       "description": "Calm bay waters with romantic sunset views",
       "highlights": ["Calm waters", "Sunset views", "Romantic setting"]
     },
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 10:00 AM", "Today at 3:00 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 10:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Family-friendly beaches with peaceful vibes",
       "highlights": ["Family-friendly", "Peaceful atmosphere", "Sunrise views"]
     },
     {
       "name": "Pererenan",
       "slug": "pererenan",
-      "timeSlots": ["Today at 11:30 AM", "Today at 4:30 PM", "Tomorrow at 10:30 AM"],
+      "timeSlots": [
+        "Today at 11:30 AM",
+        "Today at 4:30 PM",
+        "Tomorrow at 10:30 AM"
+      ],
       "description": "Pristine beaches away from crowds with rice field views",
-      "highlights": ["Secluded beaches", "Rice field scenery", "Authentic atmosphere"]
+      "highlights": [
+        "Secluded beaches",
+        "Rice field scenery",
+        "Authentic atmosphere"
+      ]
     },
     {
       "name": "Cemagi",
       "slug": "cemagi",
-      "timeSlots": ["Today at 12:30 PM", "Today at 5:30 PM", "Tomorrow at 11:30 AM"],
+      "timeSlots": [
+        "Today at 12:30 PM",
+        "Today at 5:30 PM",
+        "Tomorrow at 11:30 AM"
+      ],
       "description": "Tranquil black sand beaches for ultimate relaxation",
-      "highlights": ["Exclusive locations", "Pristine beaches", "Sophisticated settings"]
+      "highlights": [
+        "Exclusive locations",
+        "Pristine beaches",
+        "Sophisticated settings"
+      ]
     },
     {
       "name": "Gili Meno",
       "slug": "gili-meno",
-      "timeSlots": ["Today at 10:30 AM", "Today at 3:30 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 10:30 AM",
+        "Today at 3:30 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Ultimate privacy on the quietest Gili island",
-      "highlights": ["Complete privacy", "Pristine beaches", "Romantic atmosphere"]
+      "highlights": [
+        "Complete privacy",
+        "Pristine beaches",
+        "Romantic atmosphere"
+      ]
     },
     {
       "name": "Sidemen",
       "slug": "sidemen",
-      "timeSlots": ["Today at 9:00 AM", "Today at 2:00 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Mountain retreat with rice terrace views",
       "highlights": ["Mountain air", "Rice terraces", "Cool climate"]
     }
@@ -179,28 +327,56 @@
     {
       "name": "Batu Bolong",
       "slug": "batu-bolong",
-      "timeSlots": ["Today at 6:00 AM", "Today at 5:30 PM", "Tomorrow at 6:30 AM"],
+      "timeSlots": [
+        "Today at 6:00 AM",
+        "Today at 5:30 PM",
+        "Tomorrow at 6:30 AM"
+      ],
       "description": "Iconic temple on rock formation with stunning backdrops",
-      "highlights": ["Temple photography", "Golden hour shots", "Unique rock formations"]
+      "highlights": [
+        "Temple photography",
+        "Golden hour shots",
+        "Unique rock formations"
+      ]
     },
     {
       "name": "Nusa Penida",
       "slug": "nusa-penida",
-      "timeSlots": ["Today at 8:00 AM", "Today at 4:00 PM", "Tomorrow at 7:30 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 7:30 AM"
+      ],
       "description": "Dramatic cliffs and pristine beaches for epic shots",
-      "highlights": ["Kelingking Beach", "Angel's Billabong", "Dramatic landscapes"]
+      "highlights": [
+        "Kelingking Beach",
+        "Angel's Billabong",
+        "Dramatic landscapes"
+      ]
     },
     {
       "name": "Sidemen",
       "slug": "sidemen",
-      "timeSlots": ["Today at 7:00 AM", "Today at 5:00 PM", "Tomorrow at 6:00 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 5:00 PM",
+        "Tomorrow at 6:00 AM"
+      ],
       "description": "Rice terraces with Mount Agung backdrop",
-      "highlights": ["Rice terrace views", "Mountain backdrop", "Traditional villages"]
+      "highlights": [
+        "Rice terrace views",
+        "Mountain backdrop",
+        "Traditional villages"
+      ]
     },
     {
       "name": "Uluwatu",
       "slug": "uluwatu",
-      "timeSlots": ["Today at 5:00 PM", "Today at 6:00 PM", "Tomorrow at 5:30 PM"],
+      "timeSlots": [
+        "Today at 5:00 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 5:30 PM"
+      ],
       "description": "Clifftop temple with ocean views and sunset shots",
       "highlights": ["Clifftop temple", "Sunset photography", "Ocean panoramas"]
     }
@@ -209,88 +385,168 @@
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 9:00 AM", "Today at 2:00 PM", "Tomorrow at 10:00 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 10:00 AM"
+      ],
       "description": "Cultural heart of Bali with traditional arts and ceremonies",
-      "highlights": ["Traditional arts", "Cultural ceremonies", "Local workshops"]
+      "highlights": [
+        "Traditional arts",
+        "Cultural ceremonies",
+        "Local workshops"
+      ]
     },
     {
       "name": "Batu Bolong",
       "slug": "batu-bolong",
-      "timeSlots": ["Today at 8:00 AM", "Today at 4:00 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Sacred temple site with traditional Balinese ceremonies",
-      "highlights": ["Sacred temple", "Traditional ceremonies", "Spiritual atmosphere"]
+      "highlights": [
+        "Sacred temple",
+        "Traditional ceremonies",
+        "Spiritual atmosphere"
+      ]
     },
     {
       "name": "Candidasa",
       "slug": "candidasa",
-      "timeSlots": ["Today at 10:00 AM", "Today at 3:00 PM", "Tomorrow at 11:00 AM"],
+      "timeSlots": [
+        "Today at 10:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 11:00 AM"
+      ],
       "description": "Traditional water palaces and cultural sites",
-      "highlights": ["Water palaces", "Traditional villages", "Cultural heritage"]
+      "highlights": [
+        "Water palaces",
+        "Traditional villages",
+        "Cultural heritage"
+      ]
     },
     {
       "name": "Bangli Kintamani",
       "slug": "bangli-kintamani",
-      "timeSlots": ["Today at 9:30 AM", "Today at 2:30 PM", "Tomorrow at 10:30 AM"],
+      "timeSlots": [
+        "Today at 9:30 AM",
+        "Today at 2:30 PM",
+        "Tomorrow at 10:30 AM"
+      ],
       "description": "Highland culture with volcano views and traditional villages",
-      "highlights": ["Highland culture", "Traditional villages", "Volcano ceremonies"]
+      "highlights": [
+        "Highland culture",
+        "Traditional villages",
+        "Volcano ceremonies"
+      ]
     }
   ],
   "diving": [
     {
       "name": "Amed",
       "slug": "amed",
-      "timeSlots": ["Today at 8:00 AM", "Today at 1:00 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 1:00 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "World-class diving with Japanese shipwreck and coral gardens",
-      "highlights": ["Japanese shipwreck", "Coral gardens", "Diverse marine life"]
+      "highlights": [
+        "Japanese shipwreck",
+        "Coral gardens",
+        "Diverse marine life"
+      ]
     },
     {
       "name": "Nusa Penida",
       "slug": "nusa-penida",
-      "timeSlots": ["Today at 9:00 AM", "Today at 2:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Manta ray diving and crystal clear waters",
-      "highlights": ["Manta ray encounters", "Crystal clear visibility", "Diverse dive sites"]
+      "highlights": [
+        "Manta ray encounters",
+        "Crystal clear visibility",
+        "Diverse dive sites"
+      ]
     },
     {
       "name": "Nusa Lembongan",
       "slug": "nusa-lembongan",
-      "timeSlots": ["Today at 8:30 AM", "Today at 1:30 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:30 AM",
+        "Today at 1:30 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Island diving with pristine coral reefs",
       "highlights": ["Pristine reefs", "Island diving", "Clear waters"]
     },
     {
       "name": "Candidasa",
       "slug": "candidasa",
-      "timeSlots": ["Today at 9:30 AM", "Today at 2:30 PM", "Tomorrow at 10:00 AM"],
+      "timeSlots": [
+        "Today at 9:30 AM",
+        "Today at 2:30 PM",
+        "Tomorrow at 10:00 AM"
+      ],
       "description": "Peaceful diving with macro photography opportunities",
-      "highlights": ["Macro diving", "Peaceful sites", "Photography opportunities"]
+      "highlights": [
+        "Macro diving",
+        "Peaceful sites",
+        "Photography opportunities"
+      ]
     }
   ],
   "wellness": [
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 7:00 AM", "Today at 4:00 PM", "Tomorrow at 7:30 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 7:30 AM"
+      ],
       "description": "Wellness capital with yoga retreats and spa experiences",
       "highlights": ["Yoga retreats", "Spa treatments", "Meditation centers"]
     },
     {
       "name": "Sidemen",
       "slug": "sidemen",
-      "timeSlots": ["Today at 6:30 AM", "Today at 5:00 PM", "Tomorrow at 7:00 AM"],
+      "timeSlots": [
+        "Today at 6:30 AM",
+        "Today at 5:00 PM",
+        "Tomorrow at 7:00 AM"
+      ],
       "description": "Mountain wellness retreats with rice terrace views",
       "highlights": ["Mountain air", "Peaceful retreats", "Natural healing"]
     },
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 8:00 AM", "Today at 5:30 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 5:30 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Beachfront wellness with sunrise yoga sessions",
-      "highlights": ["Sunrise yoga", "Beachfront wellness", "Peaceful atmosphere"]
+      "highlights": [
+        "Sunrise yoga",
+        "Beachfront wellness",
+        "Peaceful atmosphere"
+      ]
     },
     {
       "name": "Cemagi",
       "slug": "cemagi",
-      "timeSlots": ["Today at 7:30 AM", "Today at 4:30 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 7:30 AM",
+        "Today at 4:30 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Luxury wellness retreats with ocean views",
       "highlights": ["Luxury spas", "Ocean views", "Exclusive treatments"]
     }
@@ -299,28 +555,52 @@
     {
       "name": "Bangli Kintamani",
       "slug": "bangli-kintamani",
-      "timeSlots": ["Today at 5:00 AM", "Today at 3:00 PM", "Tomorrow at 5:30 AM"],
+      "timeSlots": [
+        "Today at 5:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 5:30 AM"
+      ],
       "description": "Volcano trekking and highland adventures",
-      "highlights": ["Mount Batur trekking", "Sunrise hikes", "Adventure sports"]
+      "highlights": [
+        "Mount Batur trekking",
+        "Sunrise hikes",
+        "Adventure sports"
+      ]
     },
     {
       "name": "Nusa Penida",
       "slug": "nusa-penida",
-      "timeSlots": ["Today at 8:00 AM", "Today at 2:00 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Island adventures with cliff jumping and exploration",
       "highlights": ["Cliff jumping", "Island exploration", "Adventure tours"]
     },
     {
       "name": "Uluwatu",
       "slug": "uluwatu",
-      "timeSlots": ["Today at 9:00 AM", "Today at 3:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Clifftop adventures and extreme sports",
-      "highlights": ["Clifftop activities", "Extreme sports", "Adventure challenges"]
+      "highlights": [
+        "Clifftop activities",
+        "Extreme sports",
+        "Adventure challenges"
+      ]
     },
     {
       "name": "Lombok",
       "slug": "lombok",
-      "timeSlots": ["Today at 7:00 AM", "Today at 1:00 PM", "Tomorrow at 7:30 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 1:00 PM",
+        "Tomorrow at 7:30 AM"
+      ],
       "description": "Mountain and beach adventures on the adventure island",
       "highlights": ["Mount Rinjani", "Adventure sports", "Island exploration"]
     }
@@ -329,88 +609,152 @@
     {
       "name": "Jimbaran",
       "slug": "jimbaran",
-      "timeSlots": ["Today at 5:00 PM", "Today at 7:00 PM", "Tomorrow at 5:30 PM"],
+      "timeSlots": [
+        "Today at 5:00 PM",
+        "Today at 7:00 PM",
+        "Tomorrow at 5:30 PM"
+      ],
       "description": "Romantic sunset dinners on the beach",
       "highlights": ["Sunset dinners", "Beach romance", "Intimate settings"]
     },
     {
       "name": "Gili Meno",
       "slug": "gili-meno",
-      "timeSlots": ["Today at 4:00 PM", "Today at 6:00 PM", "Tomorrow at 4:30 PM"],
+      "timeSlots": [
+        "Today at 4:00 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 4:30 PM"
+      ],
       "description": "Private island romance with pristine beaches",
       "highlights": ["Private beaches", "Island romance", "Ultimate privacy"]
     },
     {
       "name": "Uluwatu",
       "slug": "uluwatu",
-      "timeSlots": ["Today at 5:30 PM", "Today at 6:30 PM", "Tomorrow at 6:00 PM"],
+      "timeSlots": [
+        "Today at 5:30 PM",
+        "Today at 6:30 PM",
+        "Tomorrow at 6:00 PM"
+      ],
       "description": "Clifftop romance with dramatic ocean views",
       "highlights": ["Clifftop dining", "Ocean views", "Dramatic sunsets"]
     },
     {
       "name": "Cemagi",
       "slug": "cemagi",
-      "timeSlots": ["Today at 4:30 PM", "Today at 6:30 PM", "Tomorrow at 5:00 PM"],
+      "timeSlots": [
+        "Today at 4:30 PM",
+        "Today at 6:30 PM",
+        "Tomorrow at 5:00 PM"
+      ],
       "description": "Exclusive romantic retreats with luxury amenities",
-      "highlights": ["Luxury romance", "Exclusive venues", "Private experiences"]
+      "highlights": [
+        "Luxury romance",
+        "Exclusive venues",
+        "Private experiences"
+      ]
     }
   ],
   "family": [
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 10:00 AM", "Today at 3:00 PM", "Tomorrow at 10:30 AM"],
+      "timeSlots": [
+        "Today at 10:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 10:30 AM"
+      ],
       "description": "Family-friendly beaches with calm waters and safe environment",
       "highlights": ["Calm waters", "Safe environment", "Family activities"]
     },
     {
       "name": "Jimbaran",
       "slug": "jimbaran",
-      "timeSlots": ["Today at 11:00 AM", "Today at 4:00 PM", "Tomorrow at 11:30 AM"],
+      "timeSlots": [
+        "Today at 11:00 AM",
+        "Today at 4:00 PM",
+        "Tomorrow at 11:30 AM"
+      ],
       "description": "Family dining on the beach with gentle waves",
       "highlights": ["Family dining", "Gentle waves", "Safe swimming"]
     },
     {
       "name": "Nusa Lembongan",
       "slug": "nusa-lembongan",
-      "timeSlots": ["Today at 9:00 AM", "Today at 2:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Island family adventures with safe snorkeling",
-      "highlights": ["Family snorkeling", "Island adventures", "Safe activities"]
+      "highlights": [
+        "Family snorkeling",
+        "Island adventures",
+        "Safe activities"
+      ]
     },
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 10:30 AM", "Today at 3:30 PM", "Tomorrow at 11:00 AM"],
+      "timeSlots": [
+        "Today at 10:30 AM",
+        "Today at 3:30 PM",
+        "Tomorrow at 11:00 AM"
+      ],
       "description": "Cultural family experiences with nature activities",
-      "highlights": ["Cultural learning", "Nature activities", "Family workshops"]
+      "highlights": [
+        "Cultural learning",
+        "Nature activities",
+        "Family workshops"
+      ]
     }
   ],
   "nightlife": [
     {
       "name": "Seminyak",
       "slug": "seminyak",
-      "timeSlots": ["Tonight at 8:00 PM", "Tonight at 10:00 PM", "Tomorrow at 9:00 PM"],
+      "timeSlots": [
+        "Tonight at 8:00 PM",
+        "Tonight at 10:00 PM",
+        "Tomorrow at 9:00 PM"
+      ],
       "description": "Sophisticated nightlife with world-class venues",
-      "highlights": ["World-class clubs", "Sophisticated bars", "VIP experiences"]
+      "highlights": [
+        "World-class clubs",
+        "Sophisticated bars",
+        "VIP experiences"
+      ]
     },
     {
       "name": "Gili Trawangan",
       "slug": "gili-trawangan",
-      "timeSlots": ["Tonight at 9:00 PM", "Tonight at 11:00 PM", "Tomorrow at 10:00 PM"],
+      "timeSlots": [
+        "Tonight at 9:00 PM",
+        "Tonight at 11:00 PM",
+        "Tomorrow at 10:00 PM"
+      ],
       "description": "Island party scene with beach bars and nightlife",
       "highlights": ["Beach bars", "Island parties", "Tropical nightlife"]
     },
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Tonight at 7:00 PM", "Tonight at 9:00 PM", "Tomorrow at 8:00 PM"],
+      "timeSlots": [
+        "Tonight at 7:00 PM",
+        "Tonight at 9:00 PM",
+        "Tomorrow at 8:00 PM"
+      ],
       "description": "Surf town nightlife with beach clubs and bars",
       "highlights": ["Beach clubs", "Surf culture", "Young crowd"]
     },
     {
       "name": "Echo Beach",
       "slug": "echo-beach",
-      "timeSlots": ["Tonight at 7:30 PM", "Tonight at 9:30 PM", "Tomorrow at 8:30 PM"],
+      "timeSlots": [
+        "Tonight at 7:30 PM",
+        "Tonight at 9:30 PM",
+        "Tomorrow at 8:30 PM"
+      ],
       "description": "Live music venues and beachfront nightlife",
       "highlights": ["Live music", "Beachfront bars", "Energetic atmosphere"]
     }
@@ -419,58 +763,102 @@
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Today at 8:00 AM", "Today at 1:00 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 1:00 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Digital nomad hub with excellent coworking spaces",
       "highlights": ["Fast wifi", "Coworking spaces", "Nomad community"]
     },
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 9:00 AM", "Today at 2:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Peaceful work environment surrounded by nature",
       "highlights": ["Nature setting", "Quiet spaces", "Creative atmosphere"]
     },
     {
       "name": "Seminyak",
       "slug": "seminyak",
-      "timeSlots": ["Today at 8:30 AM", "Today at 1:30 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:30 AM",
+        "Today at 1:30 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Upscale coworking with premium amenities",
-      "highlights": ["Premium facilities", "Business networking", "Luxury amenities"]
+      "highlights": [
+        "Premium facilities",
+        "Business networking",
+        "Luxury amenities"
+      ]
     },
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 9:30 AM", "Today at 2:30 PM", "Tomorrow at 10:00 AM"],
+      "timeSlots": [
+        "Today at 9:30 AM",
+        "Today at 2:30 PM",
+        "Tomorrow at 10:00 AM"
+      ],
       "description": "Peaceful work environment with beachfront cafes",
-      "highlights": ["Peaceful atmosphere", "Beachfront cafes", "Reliable internet"]
+      "highlights": [
+        "Peaceful atmosphere",
+        "Beachfront cafes",
+        "Reliable internet"
+      ]
     }
   ],
   "waterfall": [
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 8:00 AM", "Today at 2:00 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 2:00 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Hidden waterfalls and natural swimming pools in the jungle",
       "highlights": ["Sekumpul Falls", "Tegenungan Waterfall", "Natural pools"]
     },
     {
       "name": "Sidemen",
       "slug": "sidemen",
-      "timeSlots": ["Today at 7:30 AM", "Today at 1:30 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 7:30 AM",
+        "Today at 1:30 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Mountain waterfalls with rice terrace trekking",
-      "highlights": ["Mountain waterfalls", "Rice terrace treks", "Cool climate"]
+      "highlights": [
+        "Mountain waterfalls",
+        "Rice terrace treks",
+        "Cool climate"
+      ]
     },
     {
       "name": "Bangli Kintamani",
       "slug": "bangli-kintamani",
-      "timeSlots": ["Today at 8:30 AM", "Today at 2:30 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:30 AM",
+        "Today at 2:30 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Highland waterfalls with volcano views",
       "highlights": ["Highland falls", "Volcano views", "Adventure trekking"]
     },
     {
       "name": "Lombok",
       "slug": "lombok",
-      "timeSlots": ["Today at 9:00 AM", "Today at 3:00 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 9:00 AM",
+        "Today at 3:00 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Pristine waterfalls and natural adventures",
       "highlights": ["Pristine nature", "Adventure trekking", "Natural pools"]
     }
@@ -479,28 +867,56 @@
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Today at 4:00 PM", "Today at 6:00 PM", "Tomorrow at 5:00 PM"],
+      "timeSlots": [
+        "Today at 4:00 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 5:00 PM"
+      ],
       "description": "Beach soccer on black sand with local and international players",
-      "highlights": ["Local tournaments", "International players", "Beach soccer culture"]
+      "highlights": [
+        "Local tournaments",
+        "International players",
+        "Beach soccer culture"
+      ]
     },
     {
       "name": "Echo Beach",
       "slug": "echo-beach",
-      "timeSlots": ["Today at 4:30 PM", "Today at 6:30 PM", "Tomorrow at 5:30 PM"],
+      "timeSlots": [
+        "Today at 4:30 PM",
+        "Today at 6:30 PM",
+        "Tomorrow at 5:30 PM"
+      ],
       "description": "Popular beach soccer spot with regular games",
-      "highlights": ["Regular games", "Beach soccer community", "Equipment available"]
+      "highlights": [
+        "Regular games",
+        "Beach soccer community",
+        "Equipment available"
+      ]
     },
     {
       "name": "Seminyak",
       "slug": "seminyak",
-      "timeSlots": ["Today at 5:00 PM", "Today at 7:00 PM", "Tomorrow at 6:00 PM"],
+      "timeSlots": [
+        "Today at 5:00 PM",
+        "Today at 7:00 PM",
+        "Tomorrow at 6:00 PM"
+      ],
       "description": "Organized beach soccer with premium facilities",
-      "highlights": ["Organized games", "Premium facilities", "Professional equipment"]
+      "highlights": [
+        "Organized games",
+        "Premium facilities",
+        "Professional equipment"
+      ]
     },
     {
       "name": "Sanur",
       "slug": "sanur",
-      "timeSlots": ["Today at 4:00 PM", "Today at 6:00 PM", "Tomorrow at 4:30 PM"],
+      "timeSlots": [
+        "Today at 4:00 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 4:30 PM"
+      ],
       "description": "Family-friendly beach soccer with calm conditions",
       "highlights": ["Family-friendly", "Calm conditions", "Safe environment"]
     }
@@ -509,30 +925,298 @@
     {
       "name": "Seminyak",
       "slug": "seminyak",
-      "timeSlots": ["Today at 7:00 AM", "Today at 5:00 PM", "Tomorrow at 8:00 AM"],
+      "timeSlots": [
+        "Today at 7:00 AM",
+        "Today at 5:00 PM",
+        "Tomorrow at 8:00 AM"
+      ],
       "description": "Premium padel courts with professional equipment",
-      "highlights": ["Premium courts", "Professional equipment", "Coaching available"]
+      "highlights": [
+        "Premium courts",
+        "Professional equipment",
+        "Coaching available"
+      ]
     },
     {
       "name": "Canggu",
       "slug": "canggu",
-      "timeSlots": ["Today at 8:00 AM", "Today at 6:00 PM", "Tomorrow at 9:00 AM"],
+      "timeSlots": [
+        "Today at 8:00 AM",
+        "Today at 6:00 PM",
+        "Tomorrow at 9:00 AM"
+      ],
       "description": "Modern padel facilities in the heart of surf town",
       "highlights": ["Modern facilities", "Surf town vibe", "Equipment rental"]
     },
     {
       "name": "Berawa",
       "slug": "berawa",
-      "timeSlots": ["Today at 7:30 AM", "Today at 5:30 PM", "Tomorrow at 8:30 AM"],
+      "timeSlots": [
+        "Today at 7:30 AM",
+        "Today at 5:30 PM",
+        "Tomorrow at 8:30 AM"
+      ],
       "description": "Luxury padel experience with high-end facilities",
-      "highlights": ["Luxury facilities", "High-end equipment", "Premium experience"]
+      "highlights": [
+        "Luxury facilities",
+        "High-end equipment",
+        "Premium experience"
+      ]
     },
     {
       "name": "Ubud",
       "slug": "ubud",
-      "timeSlots": ["Today at 8:30 AM", "Today at 4:30 PM", "Tomorrow at 9:30 AM"],
+      "timeSlots": [
+        "Today at 8:30 AM",
+        "Today at 4:30 PM",
+        "Tomorrow at 9:30 AM"
+      ],
       "description": "Padel in nature with jungle surroundings",
-      "highlights": ["Nature setting", "Jungle surroundings", "Unique experience"]
+      "highlights": [
+        "Nature setting",
+        "Jungle surroundings",
+        "Unique experience"
+      ]
+    }
+  ],
+  "sunset": [
+    {
+      "name": "Uluwatu",
+      "slug": "uluwatu",
+      "timeSlots": [
+        "Today at 5:30 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 5:45 PM"
+      ],
+      "description": "Dramatic clifftop sunset views with temple backdrop and ocean panoramas",
+      "highlights": [
+        "Clifftop temple views",
+        "Dramatic ocean panoramas",
+        "World-famous sunset spot"
+      ]
+    },
+    {
+      "name": "Seminyak",
+      "slug": "seminyak",
+      "timeSlots": [
+        "Today at 5:45 PM",
+        "Today at 6:15 PM",
+        "Tomorrow at 6:00 PM"
+      ],
+      "description": "Luxury beach club sunsets with sophisticated atmosphere and golden sand beaches",
+      "highlights": [
+        "Luxury beach clubs",
+        "Sophisticated sunset dining",
+        "Premium sunset cocktails"
+      ]
+    },
+    {
+      "name": "Canggu",
+      "slug": "canggu",
+      "timeSlots": [
+        "Today at 5:30 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 5:45 PM"
+      ],
+      "description": "Surf culture meets stunning sunsets with vibrant beach scene and rice paddy views",
+      "highlights": [
+        "Surf culture atmosphere",
+        "Rice paddy backdrops",
+        "Vibrant beach clubs"
+      ]
+    },
+    {
+      "name": "Echo Beach",
+      "slug": "echo-beach",
+      "timeSlots": [
+        "Today at 5:45 PM",
+        "Today at 6:15 PM",
+        "Tomorrow at 6:00 PM"
+      ],
+      "description": "Popular sunset surf spot with consistent waves and energetic beach atmosphere",
+      "highlights": ["Sunset surfing", "Live music venues", "Energetic crowd"]
+    },
+    {
+      "name": "Jimbaran",
+      "slug": "jimbaran",
+      "timeSlots": [
+        "Today at 6:00 PM",
+        "Today at 6:30 PM",
+        "Tomorrow at 6:15 PM"
+      ],
+      "description": "Romantic sunset dining on calm bay waters with fresh seafood and traditional atmosphere",
+      "highlights": [
+        "Romantic seafood dining",
+        "Calm bay waters",
+        "Traditional fishing boats"
+      ]
+    },
+    {
+      "name": "Batu Bolong",
+      "slug": "batu-bolong",
+      "timeSlots": [
+        "Today at 5:30 PM",
+        "Today at 6:00 PM",
+        "Tomorrow at 5:45 PM"
+      ],
+      "description": "Iconic temple on rock formation with spiritual sunset atmosphere and cultural significance",
+      "highlights": [
+        "Sacred temple backdrop",
+        "Spiritual atmosphere",
+        "Cultural photography"
+      ]
+    },
+    {
+      "name": "Gili Trawangan",
+      "slug": "gili-trawangan",
+      "timeSlots": [
+        "Today at 6:00 PM",
+        "Today at 6:30 PM",
+        "Tomorrow at 6:15 PM"
+      ],
+      "description": "Island paradise sunset with famous sunset swings and tropical party atmosphere",
+      "highlights": [
+        "Famous sunset swings",
+        "Island party vibes",
+        "Crystal clear waters"
+      ]
+    },
+    {
+      "name": "Cemagi",
+      "slug": "cemagi",
+      "timeSlots": [
+        "Today at 5:45 PM",
+        "Today at 6:15 PM",
+        "Tomorrow at 6:00 PM"
+      ],
+      "description": "Exclusive tranquil sunset spot with pristine black sand beaches and sophisticated settings",
+      "highlights": [
+        "Exclusive locations",
+        "Pristine beaches",
+        "Sophisticated atmosphere"
+      ]
+    }
+  ],
+  "sunrise": [
+    {
+      "name": "Sanur",
+      "slug": "sanur",
+      "timeSlots": [
+        "Today at 5:30 AM",
+        "Today at 6:00 AM",
+        "Tomorrow at 5:45 AM"
+      ],
+      "description": "Bali's most famous sunrise spot with calm waters and peaceful beach atmosphere",
+      "highlights": [
+        "Famous sunrise beach",
+        "Calm waters",
+        "Peaceful morning atmosphere"
+      ]
+    },
+    {
+      "name": "Amed",
+      "slug": "amed",
+      "timeSlots": [
+        "Today at 5:45 AM",
+        "Today at 6:15 AM",
+        "Tomorrow at 6:00 AM"
+      ],
+      "description": "Traditional fishing village sunrise with Mount Agung backdrop and authentic culture",
+      "highlights": [
+        "Mount Agung backdrop",
+        "Traditional fishing boats",
+        "Authentic village life"
+      ]
+    },
+    {
+      "name": "Bangli Kintamani",
+      "slug": "bangli-kintamani",
+      "timeSlots": [
+        "Today at 5:00 AM",
+        "Today at 5:30 AM",
+        "Tomorrow at 5:15 AM"
+      ],
+      "description": "Mount Batur sunrise trekking with volcanic crater views and highland adventure",
+      "highlights": [
+        "Mount Batur trekking",
+        "Volcanic crater views",
+        "Highland adventure"
+      ]
+    },
+    {
+      "name": "Sidemen",
+      "slug": "sidemen",
+      "timeSlots": [
+        "Today at 5:30 AM",
+        "Today at 6:00 AM",
+        "Tomorrow at 5:45 AM"
+      ],
+      "description": "Rice terrace sunrise with Mount Agung views and traditional village atmosphere",
+      "highlights": [
+        "Rice terrace views",
+        "Mount Agung backdrop",
+        "Traditional villages"
+      ]
+    },
+    {
+      "name": "Nusa Penida",
+      "slug": "nusa-penida",
+      "timeSlots": [
+        "Today at 5:45 AM",
+        "Today at 6:15 AM",
+        "Tomorrow at 6:00 AM"
+      ],
+      "description": "Dramatic cliff sunrise with pristine island views and adventure atmosphere",
+      "highlights": [
+        "Dramatic cliff views",
+        "Pristine island scenery",
+        "Adventure photography"
+      ]
+    },
+    {
+      "name": "Candidasa",
+      "slug": "candidasa",
+      "timeSlots": [
+        "Today at 5:30 AM",
+        "Today at 6:00 AM",
+        "Tomorrow at 5:45 AM"
+      ],
+      "description": "Peaceful coastal sunrise with lagoon views and cultural water palace nearby",
+      "highlights": [
+        "Peaceful lagoons",
+        "Cultural water palaces",
+        "Calm morning atmosphere"
+      ]
+    },
+    {
+      "name": "Ubud",
+      "slug": "ubud",
+      "timeSlots": [
+        "Today at 5:45 AM",
+        "Today at 6:15 AM",
+        "Tomorrow at 6:00 AM"
+      ],
+      "description": "Jungle sunrise with mist-covered rice terraces and spiritual wellness atmosphere",
+      "highlights": [
+        "Jungle mist views",
+        "Rice terrace panoramas",
+        "Spiritual atmosphere"
+      ]
+    },
+    {
+      "name": "Lombok",
+      "slug": "lombok",
+      "timeSlots": [
+        "Today at 5:30 AM",
+        "Today at 6:00 AM",
+        "Tomorrow at 5:45 AM"
+      ],
+      "description": "Mount Rinjani sunrise with pristine island views and authentic Sasak culture",
+      "highlights": [
+        "Mount Rinjani views",
+        "Pristine nature",
+        "Authentic Sasak culture"
+      ]
     }
   ]
 }

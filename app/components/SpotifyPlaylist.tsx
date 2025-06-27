@@ -1,9 +1,9 @@
-import { Music, Play, Headphones } from "lucide-react"
+import { Music, Play, Headphones } from "lucide-react";
 
 interface SpotifyPlaylistProps {
-  title?: string
-  description?: string
-  className?: string
+  title?: string;
+  description?: string;
+  className?: string;
 }
 
 export default function SpotifyPlaylist({
@@ -12,14 +12,20 @@ export default function SpotifyPlaylist({
   className = "",
 }: SpotifyPlaylistProps) {
   return (
-    <section className={`section-padding bg-gradient-to-br from-coral/10 to-mint/20 ${className}`}>
+    <section
+      className={`section-padding bg-gradient-to-br from-coral/10 to-mint/20 ${className}`}
+    >
       <div className="container-custom">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
             <Music className="w-8 h-8 text-coral mr-3" />
-            <h2 className="font-display font-bold text-3xl md:text-4xl">{title}</h2>
+            <h2 className="font-display font-bold text-3xl md:text-4xl">
+              {title}
+            </h2>
           </div>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{description}</p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            {description}
+          </p>
         </div>
 
         <div className="max-w-4xl mx-auto">
@@ -33,16 +39,19 @@ export default function SpotifyPlaylist({
                       <Play className="w-8 h-8 text-white ml-1" />
                     </div>
                   </div>
-                  <h3 className="font-display font-bold text-2xl mb-3 text-charcoal">Official Summer Party Playlist</h3>
+                  <h3 className="font-display font-bold text-2xl mb-3 text-charcoal">
+                    Official Summer Party Playlist
+                  </h3>
                   <p className="text-gray-600 mb-4">
-                    Handpicked tracks that capture the essence of Canggu's beach culture and party atmosphere
+                    Handpicked tracks that capture the essence of Canggu's beach
+                    culture and party atmosphere
                   </p>
-                  <div className="flex items-center justify-center lg:justify-start space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center">
+                  <div className="flex md:flex-col items-center md:items-start gap-2 justify-center lg:justify-start text-sm text-gray-500">
+                    <div className="flex">
                       <Headphones className="w-4 h-4 mr-1" />
                       <span>Perfect for parties</span>
                     </div>
-                    <div className="flex items-center">
+                    <div className="flex">
                       <Music className="w-4 h-4 mr-1" />
                       <span>Updated weekly</span>
                     </div>
@@ -77,21 +86,29 @@ export default function SpotifyPlaylist({
                     <span className="text-coral font-bold">🎵</span>
                   </div>
                   <h4 className="font-semibold text-sm mb-2">Beach Vibes</h4>
-                  <p className="text-xs text-gray-600">Perfect soundtrack for your beach day</p>
+                  <p className="text-xs text-gray-600">
+                    Perfect soundtrack for your beach day
+                  </p>
                 </div>
                 <div className="p-4">
                   <div className="w-12 h-12 bg-teal/20 rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-teal font-bold">🏊‍♀️</span>
                   </div>
                   <h4 className="font-semibold text-sm mb-2">Pool Party</h4>
-                  <p className="text-xs text-gray-600">High-energy tracks for pool parties</p>
+                  <p className="text-xs text-gray-600">
+                    High-energy tracks for pool parties
+                  </p>
                 </div>
                 <div className="p-4">
                   <div className="w-12 h-12 bg-lime/20 rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="text-lime font-bold">🌅</span>
                   </div>
-                  <h4 className="font-semibold text-sm mb-2">Sunset Sessions</h4>
-                  <p className="text-xs text-gray-600">Chill beats for golden hour moments</p>
+                  <h4 className="font-semibold text-sm mb-2">
+                    Sunset Sessions
+                  </h4>
+                  <p className="text-xs text-gray-600">
+                    Chill beats for golden hour moments
+                  </p>
                 </div>
               </div>
             </div>
@@ -101,10 +118,12 @@ export default function SpotifyPlaylist({
         {/* CTA Section */}
         <div className="mt-12 text-center">
           <div className="bg-white rounded-xl p-6 max-w-2xl mx-auto">
-            <h4 className="font-display font-semibold text-lg mb-3">Need Sound Equipment?</h4>
+            <h4 className="font-display font-semibold text-lg mb-3">
+              Need Sound Equipment?
+            </h4>
             <p className="text-gray-600 mb-4">
-              We provide waterproof speakers and sound systems to bring this playlist to life at your beach or pool
-              party!
+              We provide waterproof speakers and sound systems to bring this
+              playlist to life at your beach or pool party!
             </p>
             <a
               href="https://wa.me/6285190459091?text=Hi! I'm interested in renting sound equipment for my party in Canggu"
@@ -118,5 +137,5 @@ export default function SpotifyPlaylist({
         </div>
       </div>
     </section>
-  )
+  );
 }

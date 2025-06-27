@@ -94,5 +94,17 @@
     "name": "Padel Sports",
     "emoji": "🎾",
     "description": "Modern racquet sport in premium facilities"
+  },
+  {
+    "id": "sunset",
+    "name": "Sunset Spot",
+    "emoji": "🌅",
+    "description": "Breathtaking sunset views at Bali's most scenic locations"
+  },
+  {
+    "id": "sunrise",
+    "name": "Sunrise Spot",
+    "emoji": "🌄",
+    "description": "Early morning magic with stunning sunrise panoramas"
   }
 ]
