@@ -1,17 +1,25 @@
-import { getAllPostSlugs } from "@/lib/wordpress"
-import locationSlugs from "@/data/location-slugs.json"
+import { getAllPostSlugs } from "@/lib/wordpress";
+import locationSlugs from "@/data/location-slugs.json";
 
 interface SitemapEntry {
-  url: string
-  lastModified: string
-  changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never"
-  priority: number
+  url: string;
+  lastModified: string;
+  changeFrequency:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
+  priority: number;
 }
 
 function generateSitemapXML(entries: SitemapEntry[]): string {
-  const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>'
-  const urlsetOpen = '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-  const urlsetClose = "</urlset>"
+  const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>';
+  const urlsetOpen =
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+  const urlsetClose = "</urlset>";
 
   const urls = entries
     .map(
@@ -23,14 +31,14 @@ function generateSitemapXML(entries: SitemapEntry[]): string {
     <priority>${entry.priority}</priority>
   </url>`,
     )
-    .join("")
+    .join("");
 
-  return `${xmlHeader}\n${urlsetOpen}${urls}\n${urlsetClose}`
+  return `${xmlHeader}\n${urlsetOpen}${urls}\n${urlsetClose}`;
 }
 
 export async function GET() {
-  const baseUrl = "https://summerpartycanggu.com"
-  const currentDate = new Date().toISOString()
+  const baseUrl = "https://summer.prayoga.io";
+  const currentDate = new Date().toISOString();
 
   try {
     // Static pages with high priority
@@ -59,20 +67,20 @@ export async function GET() {
         changeFrequency: "monthly",
         priority: 0.7,
       },
-    ]
+    ];
 
     // Dynamic blog posts
-    let blogPostEntries: SitemapEntry[] = []
+    let blogPostEntries: SitemapEntry[] = [];
     try {
-      const postSlugs = await getAllPostSlugs()
+      const postSlugs = await getAllPostSlugs();
       blogPostEntries = postSlugs.map((slug) => ({
         url: `${baseUrl}/blog/${slug}`,
         lastModified: currentDate,
         changeFrequency: "monthly" as const,
         priority: 0.6,
-      }))
+      }));
     } catch (error) {
-      console.error("Error fetching blog posts for sitemap:", error)
+      console.error("Error fetching blog posts for sitemap:", error);
       // Continue without blog posts if there's an error
     }
 
@@ -82,7 +90,7 @@ export async function GET() {
       lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.5,
-    }))
+    }));
 
     // Product category pages (if they exist)
     const productCategoryEntries: SitemapEntry[] = [
@@ -98,15 +106,20 @@ export async function GET() {
         changeFrequency: "weekly",
         priority: 0.4,
       },
-    ]
+    ];
 
     // Blog category pages (dynamic based on available categories)
-    const blogCategoryEntries: SitemapEntry[] = ["Beach Guide", "Party Tips", "Surfing", "General"].map((category) => ({
+    const blogCategoryEntries: SitemapEntry[] = [
+      "Beach Guide",
+      "Party Tips",
+      "Surfing",
+      "General",
+    ].map((category) => ({
       url: `${baseUrl}/blog?category=${encodeURIComponent(category)}`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.3,
-    }))
+    }));
 
     // Combine all entries
     const allEntries = [
@@ -115,17 +128,17 @@ export async function GET() {
       ...locationEntries,
       ...productCategoryEntries,
       ...blogCategoryEntries,
-    ]
+    ];
 
     // Sort by priority (highest first) then by URL
     allEntries.sort((a, b) => {
       if (a.priority !== b.priority) {
-        return b.priority - a.priority
+        return b.priority - a.priority;
       }
-      return a.url.localeCompare(b.url)
-    })
+      return a.url.localeCompare(b.url);
+    });
 
-    const sitemapXML = generateSitemapXML(allEntries)
+    const sitemapXML = generateSitemapXML(allEntries);
 
     return new Response(sitemapXML, {
       status: 200,
@@ -133,9 +146,9 @@ export async function GET() {
         "Content-Type": "application/xml",
         "Cache-Control": "public, max-age=3600, s-maxage=3600", // Cache for 1 hour
       },
-    })
+    });
   } catch (error) {
-    console.error("Error generating sitemap:", error)
+    console.error("Error generating sitemap:", error);
 
     // Return a minimal sitemap with just static pages if there's an error
     const minimalEntries: SitemapEntry[] = [
@@ -163,9 +176,9 @@ export async function GET() {
         changeFrequency: "monthly",
         priority: 0.7,
       },
-    ]
+    ];
 
-    const minimalSitemap = generateSitemapXML(minimalEntries)
+    const minimalSitemap = generateSitemapXML(minimalEntries);
 
     return new Response(minimalSitemap, {
       status: 200,
@@ -173,7 +186,7 @@ export async function GET() {
         "Content-Type": "application/xml",
         "Cache-Control": "public, max-age=1800, s-maxage=1800", // Cache for 30 minutes on error
       },
-    })
+    });
   }
 }
 
@@ -185,5 +198,5 @@ export async function HEAD() {
       "Content-Type": "application/xml",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
-  })
+  });
 }

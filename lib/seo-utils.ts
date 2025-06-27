@@ -1,10 +1,17 @@
 // SEO utility functions for better search engine optimization
 
 export interface SitemapEntry {
-  url: string
-  lastModified: string
-  changeFrequency: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never"
-  priority: number
+  url: string;
+  lastModified: string;
+  changeFrequency:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
+  priority: number;
 }
 
 // Generate structured data for local business
@@ -13,10 +20,11 @@ export function generateLocalBusinessSchema(location?: string) {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Summer Party Canggu",
-    description: "Premium beach and pool party equipment rental in Canggu, Bali",
-    url: "https://summerpartycanggu.com",
+    description:
+      "Premium beach and pool party equipment rental in Canggu, Bali",
+    url: "https://summer.prayoga.io",
     telephone: "+6285190459091",
-    email: "info@summerpartycanggu.com",
+    email: "info@summer.prayoga.io",
     address: {
       "@type": "PostalAddress",
       addressLocality: location || "Canggu",
@@ -44,7 +52,8 @@ export function generateLocalBusinessSchema(location?: string) {
           itemOffered: {
             "@type": "Product",
             name: "Beach Party Equipment",
-            description: "Complete beach party setup including umbrellas, chairs, and games",
+            description:
+              "Complete beach party setup including umbrellas, chairs, and games",
           },
         },
         {
@@ -52,7 +61,8 @@ export function generateLocalBusinessSchema(location?: string) {
           itemOffered: {
             "@type": "Product",
             name: "Pool Party Equipment",
-            description: "Pool floats, games, and party accessories for the perfect pool day",
+            description:
+              "Pool floats, games, and party accessories for the perfect pool day",
           },
         },
         {
@@ -69,13 +79,15 @@ export function generateLocalBusinessSchema(location?: string) {
       "https://wa.me/6285190459091",
       // Add social media links when available
     ],
-  }
+  };
 
-  return baseSchema
+  return baseSchema;
 }
 
 // Generate breadcrumb structured data
-export function generateBreadcrumbSchema(breadcrumbs: Array<{ name: string; url: string }>) {
+export function generateBreadcrumbSchema(
+  breadcrumbs: Array<{ name: string; url: string }>,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -85,11 +97,13 @@ export function generateBreadcrumbSchema(breadcrumbs: Array<{ name: string; url:
       name: crumb.name,
       item: crumb.url,
     })),
-  }
+  };
 }
 
 // Generate FAQ structured data
-export function generateFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+export function generateFAQSchema(
+  faqs: Array<{ question: string; answer: string }>,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -101,11 +115,15 @@ export function generateFAQSchema(faqs: Array<{ question: string; answer: string
         text: faq.answer,
       },
     })),
-  }
+  };
 }
 
 // Generate service structured data
-export function generateServiceSchema(serviceName: string, description: string, location: string) {
+export function generateServiceSchema(
+  serviceName: string,
+  description: string,
+  location: string,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -127,24 +145,24 @@ export function generateServiceSchema(serviceName: string, description: string, 
     },
     serviceType: "Equipment Rental",
     category: "Beach and Pool Party Equipment",
-  }
+  };
 }
 
 // Validate and clean URLs for sitemap
 export function validateSitemapUrl(url: string): boolean {
   try {
-    new URL(url)
-    return true
+    new URL(url);
+    return true;
   } catch {
-    return false
+    return false;
   }
 }
 
 // Generate canonical URL
 export function generateCanonicalUrl(path: string): string {
-  const baseUrl = "https://summerpartycanggu.com"
-  const cleanPath = path.startsWith("/") ? path : `/${path}`
-  return `${baseUrl}${cleanPath}`
+  const baseUrl = "https://summer.prayoga.io";
+  const cleanPath = path.startsWith("/") ? path : `/${path}`;
+  return `${baseUrl}${cleanPath}`;
 }
 
 // Extract keywords from content
@@ -187,24 +205,21 @@ export function extractKeywords(content: string, maxKeywords = 10): string[] {
     "that",
     "these",
     "those",
-  ])
+  ]);
 
   const words = content
     .toLowerCase()
     .replace(/[^\w\s]/g, " ")
     .split(/\s+/)
-    .filter((word) => word.length > 3 && !commonWords.has(word))
+    .filter((word) => word.length > 3 && !commonWords.has(word));
 
-  const wordCount = words.reduce(
-    (acc, word) => {
-      acc[word] = (acc[word] || 0) + 1
-      return acc
-    },
-    {} as Record<string, number>,
-  )
+  const wordCount = words.reduce((acc, word) => {
+    acc[word] = (acc[word] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   return Object.entries(wordCount)
     .sort(([, a], [, b]) => b - a)
     .slice(0, maxKeywords)
-    .map(([word]) => word)
+    .map(([word]) => word);
 }

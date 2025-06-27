@@ -1,41 +1,43 @@
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import StructuredData from "../../components/StructuredData"
-import { getWordPressPost, getAllPostSlugs } from "@/lib/wordpress"
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import StructuredData from "../../components/StructuredData";
+import { getWordPressPost, getAllPostSlugs } from "@/lib/wordpress";
 
 interface BlogPostPageProps {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }
 
 // Generate static params for all blog posts
 export async function generateStaticParams() {
   try {
-    const slugs = await getAllPostSlugs()
+    const slugs = await getAllPostSlugs();
     return slugs.map((slug) => ({
       slug: slug,
-    }))
+    }));
   } catch (error) {
-    console.error("Error generating static params:", error)
-    return []
+    console.error("Error generating static params:", error);
+    return [];
   }
 }
 
 // Generate metadata for each blog post
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const post = await getWordPressPost(params.slug)
+export async function generateMetadata({
+  params,
+}: BlogPostPageProps): Promise<Metadata> {
+  const post = await getWordPressPost(params.slug);
 
   if (!post) {
     return {
       title: "Post Not Found | Summer Party Canggu",
       description: "The blog post you're looking for could not be found.",
-    }
+    };
   }
 
-  const publishedTime = new Date(post.date).toISOString()
+  const publishedTime = new Date(post.date).toISOString();
 
   return {
     title: `${post.title} | Summer Party Canggu Blog`,
@@ -73,23 +75,23 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       images: [post.image],
     },
     alternates: {
-      canonical: `https://summerpartycanggu.com/blog/${params.slug}`,
+      canonical: `https://summer.prayoga.io/blog/${params.slug}`,
     },
-  }
+  };
 }
 
 // Enable ISR with 1 hour revalidation
-export const revalidate = 3600
+export const revalidate = 3600;
 
 export default async function BlogPost({ params }: BlogPostPageProps) {
-  const post = await getWordPressPost(params.slug)
+  const post = await getWordPressPost(params.slug);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
-  const publishedDate = new Date(post.date)
-  const readingTime = Math.ceil(post.content.split(" ").length / 200) // Estimate reading time
+  const publishedDate = new Date(post.date);
+  const readingTime = Math.ceil(post.content.split(" ").length / 200); // Estimate reading time
 
   const articleSchema = {
     "@context": "https://schema.org",
@@ -113,19 +115,19 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
       name: "Summer Party Canggu",
       logo: {
         "@type": "ImageObject",
-        url: "https://summerpartycanggu.com/logo.webp",
+        url: "https://summer.prayoga.io/logo.webp",
         width: 200,
         height: 60,
       },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://summerpartycanggu.com/blog/${params.slug}`,
+      "@id": `https://summer.prayoga.io/blog/${params.slug}`,
     },
     articleSection: post.category,
     wordCount: post.content.split(" ").length,
     timeRequired: `PT${readingTime}M`,
-  }
+  };
 
   return (
     <>
@@ -143,7 +145,10 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
               </li>
               <li>/</li>
               <li>
-                <Link href="/blog" className="hover:text-teal transition-colors">
+                <Link
+                  href="/blog"
+                  className="hover:text-teal transition-colors"
+                >
                   Blog
                 </Link>
               </li>
@@ -157,7 +162,9 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
           {/* Article Header */}
           <header className="mb-8">
             <div className="flex flex-wrap items-center gap-4 mb-4">
-              <span className="bg-teal text-white px-3 py-1 rounded-full text-sm font-medium">{post.category}</span>
+              <span className="bg-teal text-white px-3 py-1 rounded-full text-sm font-medium">
+                {post.category}
+              </span>
               <time className="text-gray-500 text-sm" dateTime={post.date}>
                 {publishedDate.toLocaleDateString("en-US", {
                   year: "numeric",
@@ -165,16 +172,24 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
                   day: "numeric",
                 })}
               </time>
-              <span className="text-gray-500 text-sm">{readingTime} min read</span>
+              <span className="text-gray-500 text-sm">
+                {readingTime} min read
+              </span>
             </div>
 
-            <h1 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight">{post.title}</h1>
+            <h1 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight">
+              {post.title}
+            </h1>
 
-            <p className="text-xl text-gray-600 mb-6 leading-relaxed">{post.excerpt}</p>
+            <p className="text-xl text-gray-600 mb-6 leading-relaxed">
+              {post.excerpt}
+            </p>
 
             <div className="flex items-center mb-8">
               <span className="text-gray-600">By </span>
-              <span className="font-medium text-charcoal ml-1">{post.author}</span>
+              <span className="font-medium text-charcoal ml-1">
+                {post.author}
+              </span>
             </div>
 
             <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden shadow-lg mb-8">
@@ -205,9 +220,12 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
 
           {/* Article Footer CTA */}
           <footer className="mt-12 p-6 bg-mint/20 rounded-lg">
-            <h3 className="font-display font-bold text-xl mb-4">Ready to Plan Your Summer Party?</h3>
+            <h3 className="font-display font-bold text-xl mb-4">
+              Ready to Plan Your Summer Party?
+            </h3>
             <p className="text-gray-700 mb-4">
-              Get in touch with us on WhatsApp to discuss your beach or pool party needs in Canggu!
+              Get in touch with us on WhatsApp to discuss your beach or pool
+              party needs in Canggu!
             </p>
             <a
               href="https://wa.me/6285190459091?text=Hi! I read your blog post about summer parties and I'm interested in your services"
@@ -220,7 +238,10 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
           </footer>
 
           {/* Related Posts Navigation */}
-          <nav className="mt-12 pt-8 border-t border-gray-200" aria-label="Related posts">
+          <nav
+            className="mt-12 pt-8 border-t border-gray-200"
+            aria-label="Related posts"
+          >
             <div className="flex justify-between items-center">
               <Link
                 href="/blog"
@@ -229,7 +250,10 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
                 ← Back to All Posts
               </Link>
               <div className="flex space-x-4">
-                <Link href="/products" className="text-coral hover:text-red font-medium transition-colors">
+                <Link
+                  href="/products"
+                  className="text-coral hover:text-red font-medium transition-colors"
+                >
                   View Our Equipment →
                 </Link>
               </div>
@@ -238,5 +262,5 @@ export default async function BlogPost({ params }: BlogPostPageProps) {
         </div>
       </article>
     </>
-  )
+  );
 }
