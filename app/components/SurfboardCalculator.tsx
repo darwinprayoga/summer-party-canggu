@@ -310,7 +310,7 @@ const SurfboardCalculator = memo(function SurfboardCalculator() {
                           Calculating Perfect Board...
                         </>
                       ) : (
-                        "Calculate My Perfect Bali Surfboard"
+                        "Calculate My Surfboard"
                       )}
                     </button>
                   </div>

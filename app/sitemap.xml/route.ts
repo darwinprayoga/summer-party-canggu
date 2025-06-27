@@ -106,6 +106,12 @@ export async function GET() {
         changeFrequency: "weekly",
         priority: 0.4,
       },
+      {
+        url: `${baseUrl}/products#party-essentials`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.4,
+      },
     ];
 
     // Blog category pages (dynamic based on available categories)

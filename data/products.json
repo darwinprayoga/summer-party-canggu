@@ -1,44 +1,98 @@
 [
   {
     "id": "1",
-    "name": "Premium Surfboard",
-    "description": "Professional-grade surfboard perfect for Canggu waves",
+    "name": "Second-Hand Surfboards",
+    "description": "Quality pre-owned surfboards perfect for all skill levels. Various sizes and designs available - from beginner-friendly longboards to performance shortboards.",
     "category": "beach-essentials",
-    "image": "/placeholder.svg?height=300&width=400",
-    "slug": "premium-surfboard"
+    "image": "/products/second-hand-surfboards.jpeg",
+    "slug": "second-hand-surfboards",
+    "price": "Ask via WhatsApp",
+    "features": [
+      "Various sizes available",
+      "All skill levels",
+      "Quality pre-owned",
+      "Great value"
+    ]
   },
   {
     "id": "2",
-    "name": "Beach Towel Set",
-    "description": "Ultra-soft, quick-dry beach towels in tropical colors",
-    "category": "beach-essentials",
-    "image": "/placeholder.svg?height=300&width=400",
-    "slug": "beach-towel-set"
+    "name": "Adult Gray Pool Float",
+    "description": "Perfect for relaxing in style. Durable, comfy, and pool-ready with comfortable air pocket design for ultimate relaxation.",
+    "category": "pool-day-gear",
+    "image": "/products/adult-gray-float.png",
+    "slug": "adult-gray-pool-float",
+    "price": "Rp. 100k/day",
+    "features": [
+      "Comfortable air pockets",
+      "Durable material",
+      "Perfect for relaxation"
+    ]
   },
   {
     "id": "3",
-    "name": "Inflatable Pool Float",
-    "description": "Instagram-worthy pool floats for the perfect pool day",
+    "name": "Premium Cooler Box",
+    "description": "Ice included! Stay refreshed with chilled drinks right next to your poolside setup. Stylish turquoise design with excellent insulation.",
     "category": "pool-day-gear",
-    "image": "/placeholder.svg?height=300&width=400",
-    "slug": "inflatable-pool-float"
+    "image": "/products/cooler-box-blue.png",
+    "slug": "premium-cooler-box",
+    "price": "Rp. 125k/day",
+    "features": [
+      "Ice included",
+      "Excellent insulation",
+      "Stylish design",
+      "Perfect for poolside"
+    ]
   },
   {
     "id": "4",
-    "name": "Premium Cooler Box",
-    "description": "Keep your drinks cold all day with our insulated cooler",
+    "name": "Yellow Baby Safety Float",
+    "description": "Keep your little one safe and smiling with this fun, floaty toy. Designed with safety features for toddlers and young children.",
     "category": "pool-day-gear",
-    "image": "/placeholder.svg?height=300&width=400",
-    "slug": "premium-cooler-box"
+    "image": "/products/yellow-baby-float.png",
+    "slug": "yellow-baby-safety-float",
+    "price": "Rp. 70k/day",
+    "features": ["Safety design", "Perfect for toddlers", "Fun and secure"]
   },
   {
     "id": "5",
-    "name": "Balinese Arak (Traditional Alcohol)",
-    "description": "Authentic Balinese rice wine for the ultimate local party experience",
+    "name": "Flamingo Baby Float",
+    "description": "A cute and colorful ride for your mini flamingo lover. Features cup holders and comfortable seating for little ones.",
+    "category": "pool-day-gear",
+    "image": "/products/flamingo-baby-float.png",
+    "slug": "flamingo-baby-float",
+    "price": "Rp. 50k/day",
+    "features": [
+      "Adorable flamingo design",
+      "Built-in cup holders",
+      "Perfect for kids"
+    ]
+  },
+  {
+    "id": "6",
+    "name": "Rainbow Beach Ball",
+    "description": "Classic beach ball fun, lightweight, bouncy, and splash-approved. Perfect for pool games and beach activities.",
+    "category": "pool-day-gear",
+    "image": "/products/rainbow-beach-ball.png",
+    "slug": "rainbow-beach-ball",
+    "price": "Rp. 50k/day",
+    "features": ["Classic design", "Lightweight & bouncy", "Perfect for games"]
+  },
+  {
+    "id": "7",
+    "name": "Balinese Arak",
+    "description": "Authentic Balinese rice wine with a fun tropical twist! Perfect for beach parties and cultural celebrations. Traditional distilled spirit with modern Summer Party Canggu branding.",
     "category": "party-essentials",
-    "image": "/placeholder.svg?height=300&width=400",
-    "slug": "balinese-arak",
+    "image": "/products/balinese-arak-can.png",
+    "slug": "balinese-arak-summer-edition",
+    "price": "Ask via WhatsApp",
     "isNew": true,
-    "isSpecial": true
+    "isSpecial": true,
+    "features": [
+      "Authentic Balinese",
+      "Summer Party branding",
+      "Cultural experience",
+      "21+ only",
+      "Perfect for parties"
+    ]
   }
 ]
