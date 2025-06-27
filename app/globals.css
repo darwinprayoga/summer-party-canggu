@@ -52,7 +52,7 @@
   }
 
   .section-padding {
-    @apply py-16 md:py-24;
+    @apply py-8 md:py-16;
   }
 
   .container-custom {
@@ -88,11 +88,19 @@
 
   /* Performance optimized gradients */
   .gradient-primary {
-    background: linear-gradient(135deg, theme("colors.teal") 0%, theme("colors.coral") 100%);
+    background: linear-gradient(
+      135deg,
+      theme("colors.teal") 0%,
+      theme("colors.coral") 100%
+    );
   }
 
   .gradient-secondary {
-    background: linear-gradient(135deg, theme("colors.mint") 0%, theme("colors.lime") 100%);
+    background: linear-gradient(
+      135deg,
+      theme("colors.mint") 0%,
+      theme("colors.lime") 100%
+    );
   }
 }
 

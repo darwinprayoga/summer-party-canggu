@@ -1,8 +1,8 @@
-import type { Metadata } from "next"
-import Link from "next/link"
-import Image from "next/image"
-import { getWordPressPosts, getWordPressCategories } from "@/lib/wordpress"
-import BlogCategoryFilter from "../components/BlogCategoryFilter"
+import type { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { getWordPressPosts, getWordPressCategories } from "@/lib/wordpress";
+import BlogCategoryFilter from "../components/BlogCategoryFilter";
 
 export const metadata: Metadata = {
   title: "Blog - Summer Party Tips & Canggu Guides",
@@ -10,7 +10,8 @@ export const metadata: Metadata = {
     "Discover the best tips for beach parties, pool days, and exploring Canggu, Bali. Your guide to the perfect summer experience.",
   openGraph: {
     title: "Summer Party Canggu Blog - Beach & Pool Party Tips",
-    description: "Expert guides for beach parties, pool days, and Canggu adventures in Bali",
+    description:
+      "Expert guides for beach parties, pool days, and Canggu adventures in Bali",
     type: "website",
     images: [
       {
@@ -24,51 +25,70 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Summer Party Canggu Blog - Beach & Pool Party Tips",
-    description: "Expert guides for beach parties, pool days, and Canggu adventures in Bali",
+    description:
+      "Expert guides for beach parties, pool days, and Canggu adventures in Bali",
     images: ["/icon-landscape.webp"],
   },
-}
+};
 
 // Enable ISR with 1 hour revalidation
-export const revalidate = 3600
+export const revalidate = 3600;
 
 interface BlogPageProps {
   searchParams: {
-    category?: string
-  }
+    category?: string;
+  };
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
   // Fetch posts and categories in parallel for better performance
-  const [allBlogPosts, categories] = await Promise.all([getWordPressPosts(), getWordPressCategories()])
+  const [allBlogPosts, categories] = await Promise.all([
+    getWordPressPosts(),
+    getWordPressCategories(),
+  ]);
 
   // Filter posts by category if specified
-  const selectedCategory = searchParams.category
+  const selectedCategory = searchParams.category;
   const blogPosts = selectedCategory
-    ? allBlogPosts.filter((post) => post.category.toLowerCase() === selectedCategory.toLowerCase())
-    : allBlogPosts
+    ? allBlogPosts.filter(
+        (post) =>
+          post.category.toLowerCase() === selectedCategory.toLowerCase(),
+      )
+    : allBlogPosts;
 
   return (
     <div className="section-padding">
       <div className="container-custom">
         <div className="text-center mb-16">
-          <h1 className="font-display font-bold text-4xl md:text-5xl mb-4">Our Blog</h1>
+          <h1 className="font-display font-bold text-4xl md:text-5xl mb-4">
+            Our Blog
+          </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Tips, guides, and inspiration for your perfect Canggu experience
           </p>
         </div>
 
         {/* Category Filter Section */}
-        <BlogCategoryFilter categories={categories} allPosts={allBlogPosts} selectedCategory={selectedCategory} />
+        <BlogCategoryFilter
+          categories={categories}
+          allPosts={allBlogPosts}
+          selectedCategory={selectedCategory}
+        />
 
         {/* Selected Category Header */}
         {selectedCategory && (
           <div className="mb-8 text-center">
-            <h2 className="font-display font-semibold text-2xl mb-2">{selectedCategory} Posts</h2>
+            <h2 className="font-display font-semibold text-2xl mb-2">
+              {selectedCategory} Posts
+            </h2>
             <p className="text-gray-600">
-              {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"} found
+              {blogPosts.length} {blogPosts.length === 1 ? "post" : "posts"}{" "}
+              found
             </p>
-            <Link href="/blog" className="text-teal hover:text-teal/80 font-medium transition-colors text-sm">
+            <Link
+              href="/blog"
+              className="text-teal hover:text-teal/80 font-medium transition-colors text-sm"
+            >
               ← View All Posts
             </Link>
           </div>
@@ -110,13 +130,20 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   </time>
                 </div>
                 <h2 className="font-display font-semibold text-xl mb-2">
-                  <Link href={`/blog/${post.slug}`} className="hover:text-teal transition-colors">
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="hover:text-teal transition-colors"
+                  >
                     {post.title}
                   </Link>
                 </h2>
-                <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt}</p>
+                <p className="text-gray-600 mb-4 line-clamp-3">
+                  {post.excerpt}
+                </p>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">By {post.author}</span>
+                  <span className="text-sm text-gray-500">
+                    By {post.author}
+                  </span>
                   <Link
                     href={`/blog/${post.slug}`}
                     className="text-coral hover:text-red font-medium transition-colors text-sm"
@@ -133,7 +160,9 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         {blogPosts.length === 0 && (
           <div className="text-center py-12">
             <h3 className="font-display font-semibold text-xl mb-4">
-              {selectedCategory ? `No posts found in "${selectedCategory}"` : "No posts available"}
+              {selectedCategory
+                ? `No posts found in "${selectedCategory}"`
+                : "No posts available"}
             </h3>
             <p className="text-gray-600 mb-6">
               {selectedCategory
@@ -155,10 +184,12 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
         {/* CTA Section */}
         <div className="mt-16 p-8 bg-gradient-to-r from-mint/20 to-teal/10 rounded-2xl text-center">
-          <h3 className="font-display font-bold text-2xl mb-4">Ready to Plan Your Summer Party?</h3>
+          <h3 className="font-display font-bold text-2xl mb-4">
+            Ready to Plan Your Summer Party?
+          </h3>
           <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-            Get inspired by our blog posts and let us help you create the perfect beach or pool party experience in
-            Canggu!
+            Get inspired by our blog posts and let us help you create the
+            perfect beach or pool party experience in Canggu!
           </p>
           <a
             href="https://wa.me/6285190459091?text=Hi! I read your blog and I'm interested in planning a summer party"
@@ -171,5 +202,5 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
