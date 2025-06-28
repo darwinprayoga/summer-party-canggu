@@ -96,6 +96,13 @@ const organizationSchema = {
           description:
             "Professional surfboards for all skill levels, perfect for Bali's diverse surf breaks from Canggu to Uluwatu",
           category: "Surf Equipment",
+          offers: {
+            "@type": "Offer",
+            price: "100000",
+            priceCurrency: "IDR",
+            availability: "https://schema.org/InStock",
+            url: "https://summer.prayoga.io/products#surfboard-rental",
+          },
         },
       },
       {
@@ -106,6 +113,13 @@ const organizationSchema = {
           description:
             "Complete beach party setup including umbrellas, chairs, games, and accessories for the perfect Bali beach experience",
           category: "Beach Equipment",
+          offers: {
+            "@type": "Offer",
+            price: "75000",
+            priceCurrency: "IDR",
+            availability: "https://schema.org/InStock",
+            url: "https://summer.prayoga.io/products#beach-essentials",
+          },
         },
       },
       {
@@ -116,6 +130,13 @@ const organizationSchema = {
           description:
             "Pool floats, games, and party accessories for unforgettable pool parties in Bali",
           category: "Pool Equipment",
+          offers: {
+            "@type": "Offer",
+            price: "90000",
+            priceCurrency: "IDR",
+            availability: "https://schema.org/InStock",
+            url: "https://summer.prayoga.io/products#pool-party",
+          },
         },
       },
       {
@@ -126,6 +147,13 @@ const organizationSchema = {
           description:
             "Traditional Balinese party elements including authentic Arak and cultural ceremony accessories",
           category: "Cultural Experiences",
+          offers: {
+            "@type": "Offer",
+            price: "150000",
+            priceCurrency: "IDR",
+            availability: "https://schema.org/InStock",
+            url: "https://summer.prayoga.io/products#party-essentials",
+          },
         },
       },
     ],

@@ -92,27 +92,27 @@ export async function GET() {
       priority: 0.5,
     }));
 
-    // // Product category pages (if they exist)
-    // const productCategoryEntries: SitemapEntry[] = [
-    //   {
-    //     url: `${baseUrl}/products#beach-essentials`,
-    //     lastModified: currentDate,
-    //     changeFrequency: "weekly",
-    //     priority: 0.4,
-    //   },
-    //   {
-    //     url: `${baseUrl}/products#pool-day-gear`,
-    //     lastModified: currentDate,
-    //     changeFrequency: "weekly",
-    //     priority: 0.4,
-    //   },
-    //   {
-    //     url: `${baseUrl}/products#party-essentials`,
-    //     lastModified: currentDate,
-    //     changeFrequency: "weekly",
-    //     priority: 0.4,
-    //   },
-    // ];
+    // Product category pages (if they exist)
+    const productCategoryEntries: SitemapEntry[] = [
+      {
+        url: `${baseUrl}/products#beach-essentials`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.4,
+      },
+      {
+        url: `${baseUrl}/products#pool-day-gear`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.4,
+      },
+      {
+        url: `${baseUrl}/products#party-essentials`,
+        lastModified: currentDate,
+        changeFrequency: "weekly",
+        priority: 0.4,
+      },
+    ];
 
     // Blog category pages (dynamic based on available categories)
     const blogCategoryEntries: SitemapEntry[] = [
@@ -132,7 +132,7 @@ export async function GET() {
       ...staticPages,
       ...blogPostEntries,
       ...locationEntries,
-      // ...productCategoryEntries,
+      ...productCategoryEntries,
       ...blogCategoryEntries,
     ];
 

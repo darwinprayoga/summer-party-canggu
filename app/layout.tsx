@@ -56,6 +56,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any", type: "image/x-icon" }, // for Google
       { url: "/favicon.webp", sizes: "32x32", type: "image/webp" },
       { url: "/favicon.webp", sizes: "16x16", type: "image/webp" },
     ],
