@@ -92,16 +92,60 @@ const organizationSchema = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Product",
-          name: "Surfboard Rental Bali",
+          name: "Second-Hand Surfboards",
           description:
-            "Professional surfboards for all skill levels, perfect for Bali's diverse surf breaks from Canggu to Uluwatu",
+            "Quality pre-owned surfboards perfect for all skill levels. Various sizes and designs available - from beginner-friendly longboards to performance shortboards.",
+          image:
+            "https://summer.prayoga.io/products/second-hand-surfboards.jpeg",
           category: "Surf Equipment",
+          offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "IDR",
+            availability: "http://schema.org/InStock",
+            url: "https://summer.prayoga.io/products/second-hand-surfboards",
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingDestination: {
+                "@type": "DefinedRegion",
+                addressCountry: "ID",
+              },
+            },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "ID",
+              returnPolicyCategory: "http://schema.org/NoReturns",
+            },
+          },
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Product",
+          name: "Adult Gray Pool Float",
+          description:
+            "Perfect for relaxing in style. Durable, comfy, and pool-ready with comfortable air pocket design for ultimate relaxation.",
+          image: "https://summer.prayoga.io/products/adult-gray-float.png",
+          category: "Pool Equipment",
           offers: {
             "@type": "Offer",
             price: "100000",
             priceCurrency: "IDR",
-            availability: "https://schema.org/InStock",
-            url: "https://summer.prayoga.io/products#surfboard-rental",
+            availability: "http://schema.org/InStock",
+            url: "https://summer.prayoga.io/products/adult-gray-pool-float",
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingDestination: {
+                "@type": "DefinedRegion",
+                addressCountry: "ID",
+              },
+            },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "ID",
+              returnPolicyCategory: "http://schema.org/NoReturns",
+            },
           },
         },
       },
@@ -109,16 +153,29 @@ const organizationSchema = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Product",
-          name: "Beach Party Equipment",
+          name: "Rainbow Beach Ball",
           description:
-            "Complete beach party setup including umbrellas, chairs, games, and accessories for the perfect Bali beach experience",
+            "Classic beach ball fun, lightweight, bouncy, and splash-approved. Perfect for pool games and beach activities.",
+          image: "https://summer.prayoga.io/products/rainbow-beach-ball.png",
           category: "Beach Equipment",
           offers: {
             "@type": "Offer",
-            price: "75000",
+            price: "50000",
             priceCurrency: "IDR",
-            availability: "https://schema.org/InStock",
-            url: "https://summer.prayoga.io/products#beach-essentials",
+            availability: "http://schema.org/InStock",
+            url: "https://summer.prayoga.io/products/rainbow-beach-ball",
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingDestination: {
+                "@type": "DefinedRegion",
+                addressCountry: "ID",
+              },
+            },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "ID",
+              returnPolicyCategory: "http://schema.org/NoReturns",
+            },
           },
         },
       },
@@ -126,33 +183,29 @@ const organizationSchema = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Product",
-          name: "Pool Party Equipment",
+          name: "Balinese Arak",
           description:
-            "Pool floats, games, and party accessories for unforgettable pool parties in Bali",
-          category: "Pool Equipment",
-          offers: {
-            "@type": "Offer",
-            price: "90000",
-            priceCurrency: "IDR",
-            availability: "https://schema.org/InStock",
-            url: "https://summer.prayoga.io/products#pool-party",
-          },
-        },
-      },
-      {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Product",
-          name: "Balinese Party Essentials",
-          description:
-            "Traditional Balinese party elements including authentic Arak and cultural ceremony accessories",
+            "Authentic Balinese rice wine with a fun tropical twist! Perfect for beach parties and cultural celebrations. Traditional distilled spirit with modern Summer Party Canggu branding.",
+          image: "https://summer.prayoga.io/products/balinese-arak-can.png",
           category: "Cultural Experiences",
           offers: {
             "@type": "Offer",
-            price: "150000",
+            price: "0",
             priceCurrency: "IDR",
-            availability: "https://schema.org/InStock",
-            url: "https://summer.prayoga.io/products#party-essentials",
+            availability: "http://schema.org/InStock",
+            url: "https://summer.prayoga.io/products/balinese-arak-summer-edition",
+            shippingDetails: {
+              "@type": "OfferShippingDetails",
+              shippingDestination: {
+                "@type": "DefinedRegion",
+                addressCountry: "ID",
+              },
+            },
+            hasMerchantReturnPolicy: {
+              "@type": "MerchantReturnPolicy",
+              applicableCountry: "ID",
+              returnPolicyCategory: "http://schema.org/NoReturns",
+            },
           },
         },
       },
