@@ -57,11 +57,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any", type: "image/x-icon" }, // for Google
-      { url: "/favicon.webp", sizes: "32x32", type: "image/webp" },
-      { url: "/favicon.webp", sizes: "16x16", type: "image/webp" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/webp" },
+      { url: "/favicon.ico", sizes: "16x16", type: "image/webp" },
     ],
-    apple: [{ url: "/favicon.webp", sizes: "180x180", type: "image/webp" }],
-    shortcut: "/favicon.webp",
+    apple: [{ url: "/favicon.ico", sizes: "180x180", type: "image/webp" }],
+    shortcut: "/favicon.ico",
   },
   openGraph: {
     type: "website",
@@ -178,10 +178,20 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
+        <meta
+          property="og:site_name"
+          content="Summer Party Canggu | Essentials: 🥂 Party, 🛟 Pool, 🏄‍♂️ Beach"
+        />
+        <meta name="twitter:site" content="@summerparty.canggu" />
+        <meta
+          name="application-name"
+          content="Summer Party Canggu | Essentials: 🥂 Party, 🛟 Pool, 🏄‍♂️ Beach"
+        />
+
         {/* Favicon and app icons */}
-        <link rel="icon" href="/favicon.webp" type="image/webp" />
-        <link rel="apple-touch-icon" href="/favicon.webp" />
-        <link rel="shortcut icon" href="/favicon.webp" />
+        <link rel="icon" href="/favicon.ico" type="image/webp" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
 
         {/* Theme color for mobile browsers */}
         <meta name="theme-color" content="#2CA3A7" />

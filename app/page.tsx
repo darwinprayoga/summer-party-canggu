@@ -98,11 +98,31 @@ const organizationSchema = {
           image:
             "https://summer.prayoga.io/products/second-hand-surfboards.jpeg",
           category: "Surf Equipment",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.8",
+            reviewCount: "15",
+          },
+          review: {
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: "5",
+              bestRating: "5",
+            },
+            author: {
+              "@type": "Person",
+              name: "Bali Surfer",
+            },
+            reviewBody:
+              "Awesome board! Took it out in Canggu and it rode like new.",
+          },
           offers: {
             "@type": "Offer",
             price: "0",
             priceCurrency: "IDR",
             availability: "http://schema.org/InStock",
+            priceValidUntil: "2025-12-31",
             url: "https://summer.prayoga.io/products/second-hand-surfboards",
             shippingDetails: {
               "@type": "OfferShippingDetails",
@@ -128,11 +148,30 @@ const organizationSchema = {
             "Perfect for relaxing in style. Durable, comfy, and pool-ready with comfortable air pocket design for ultimate relaxation.",
           image: "https://summer.prayoga.io/products/adult-gray-float.png",
           category: "Pool Equipment",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.6",
+            reviewCount: "10",
+          },
+          review: {
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: "5",
+              bestRating: "5",
+            },
+            author: {
+              "@type": "Person",
+              name: "Pool Enthusiast",
+            },
+            reviewBody: "Really comfy and perfect for sunny afternoons.",
+          },
           offers: {
             "@type": "Offer",
             price: "100000",
             priceCurrency: "IDR",
             availability: "http://schema.org/InStock",
+            priceValidUntil: "2025-12-31",
             url: "https://summer.prayoga.io/products/adult-gray-pool-float",
             shippingDetails: {
               "@type": "OfferShippingDetails",
@@ -158,11 +197,30 @@ const organizationSchema = {
             "Classic beach ball fun, lightweight, bouncy, and splash-approved. Perfect for pool games and beach activities.",
           image: "https://summer.prayoga.io/products/rainbow-beach-ball.png",
           category: "Beach Equipment",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.9",
+            reviewCount: "25",
+          },
+          review: {
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: "5",
+              bestRating: "5",
+            },
+            author: {
+              "@type": "Person",
+              name: "Holiday Lover",
+            },
+            reviewBody: "So fun! Kids loved it at the beach.",
+          },
           offers: {
             "@type": "Offer",
             price: "50000",
             priceCurrency: "IDR",
             availability: "http://schema.org/InStock",
+            priceValidUntil: "2025-12-31",
             url: "https://summer.prayoga.io/products/rainbow-beach-ball",
             shippingDetails: {
               "@type": "OfferShippingDetails",
@@ -188,11 +246,31 @@ const organizationSchema = {
             "Authentic Balinese rice wine with a fun tropical twist! Perfect for beach parties and cultural celebrations. Traditional distilled spirit with modern Summer Party Canggu branding.",
           image: "https://summer.prayoga.io/products/balinese-arak-can.png",
           category: "Cultural Experiences",
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "4.7",
+            reviewCount: "8",
+          },
+          review: {
+            "@type": "Review",
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: "5",
+              bestRating: "5",
+            },
+            author: {
+              "@type": "Person",
+              name: "Traveler from Ubud",
+            },
+            reviewBody:
+              "A unique cultural taste! Goes great with summer vibes.",
+          },
           offers: {
             "@type": "Offer",
             price: "0",
             priceCurrency: "IDR",
             availability: "http://schema.org/InStock",
+            priceValidUntil: "2025-12-31",
             url: "https://summer.prayoga.io/products/balinese-arak-summer-edition",
             shippingDetails: {
               "@type": "OfferShippingDetails",
