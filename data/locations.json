@@ -453,6 +453,41 @@
     ]
   },
   {
+    "slug": "nusa-dua",
+    "name": "Nusa Dua",
+    "region": "Badung Regency",
+    "description": "Bali's premier luxury resort destination, Nusa Dua offers world-class facilities and pristine white sand beaches. Perfect for upscale celebrations, corporate events, and sophisticated beach parties with five-star amenities.",
+    "highlights": [
+      "World-class luxury resorts",
+      "Pristine white sand beaches",
+      "Championship golf courses",
+      "Upscale shopping complexes",
+      "Premium spa and wellness facilities"
+    ],
+    "attractions": [
+      "Nusa Dua Beach",
+      "Bali Collection Shopping",
+      "Bali Nusa Dua Convention Center",
+      "Water Blow",
+      "Pasifika Museum"
+    ],
+    "beachType": "Pristine white sand beaches",
+    "keywords": [
+      "Nusa Dua luxury party",
+      "upscale beach events",
+      "corporate celebrations Bali",
+      "five-star party venues"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Uluwatu", "Jimbaran", "Pecatu"],
+    "specialties": [
+      "Luxury resort equipment",
+      "Corporate event setups",
+      "Five-star party packages",
+      "Premium beach amenities"
+    ]
+  },
+  {
     "slug": "amed",
     "name": "Amed",
     "region": "Karangasem Regency",
@@ -689,6 +724,175 @@
       "Traditional decorations",
       "Village ceremony items",
       "Authentic cultural gear"
+    ]
+  },
+  {
+    "slug": "bedugul",
+    "name": "Bedugul",
+    "region": "Tabanan Regency",
+    "description": "A cool mountain retreat famous for its stunning lakes and botanical gardens. Perfect for unique highland pool parties and nature-themed celebrations with breathtaking lake backdrops and cool mountain air.",
+    "highlights": [
+      "Famous Lake Bratan temple",
+      "Cool mountain climate",
+      "Botanical gardens and parks",
+      "Stunning lake views",
+      "Adventure activities"
+    ],
+    "attractions": ["Pura Ulun Danu Bratan", "Lake Bratan", "Botanical Gardens", "Strawberry Farms", "Adventure Parks"],
+    "keywords": [
+      "Bedugul lake party",
+      "mountain retreat celebration",
+      "botanical garden events",
+      "highland pool party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Munduk", "Tabanan", "Jatiluwih"],
+    "specialties": [
+      "Lake view event equipment",
+      "Mountain retreat gear",
+      "Nature celebration items",
+      "Cool climate party setups"
+    ]
+  },
+  {
+    "slug": "munduk",
+    "name": "Munduk",
+    "region": "Buleleng Regency",
+    "description": "A cool mountain retreat famous for waterfalls and coffee plantations. Ideal for unique highland pool parties and nature-themed celebrations with breathtaking waterfall backdrops.",
+    "highlights": [
+      "Famous waterfall locations",
+      "Cool mountain climate",
+      "Coffee plantation tours",
+      "Stunning lake views",
+      "Adventure hiking trails"
+    ],
+    "attractions": ["Sekumpul Waterfall", "Munduk Waterfall", "Coffee Plantations", "Lake Tamblingan", "Hiking Trails"],
+    "keywords": [
+      "Munduk waterfall party",
+      "mountain retreat celebration",
+      "coffee plantation events",
+      "highland pool party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Bedugul", "Lovina", "Singaraja"],
+    "specialties": [
+      "Waterfall event equipment",
+      "Mountain retreat gear",
+      "Nature celebration items",
+      "Adventure party setups"
+    ]
+  },
+  {
+    "slug": "tabanan",
+    "name": "Tabanan",
+    "region": "Tabanan Regency",
+    "description": "The cultural heart of Tabanan regency, offering rice terrace views and traditional Balinese experiences. Perfect for cultural celebrations and authentic village events.",
+    "highlights": [
+      "UNESCO World Heritage rice terraces",
+      "Traditional Balinese culture",
+      "Historic temples and palaces",
+      "Authentic village experiences",
+      "Agricultural tourism"
+    ],
+    "attractions": ["Jatiluwih Rice Terraces", "Pura Luhur Batukaru", "Traditional Markets", "Cultural Villages"],
+    "keywords": [
+      "Tabanan rice terrace party",
+      "cultural celebration Tabanan",
+      "traditional events Bali",
+      "heritage site party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Bedugul", "Jatiluwih", "Bedugul"],
+    "specialties": [
+      "Rice terrace event equipment",
+      "Cultural celebration gear",
+      "Traditional ceremony items",
+      "Heritage site setups"
+    ]
+  },
+  {
+    "slug": "karangasem",
+    "name": "Karangasem",
+    "region": "Karangasem Regency",
+    "description": "The eastern regency of Bali featuring majestic Mount Agung and royal water palaces. Perfect for royal-themed celebrations and cultural events with volcanic mountain backdrops.",
+    "highlights": [
+      "Majestic Mount Agung views",
+      "Royal water palaces",
+      "Traditional Balinese kingdoms",
+      "Volcanic landscape beauty",
+      "Historic cultural sites"
+    ],
+    "attractions": ["Mount Agung", "Tirta Gangga", "Ujung Water Palace", "Besakih Temple", "Lempuyang Temple"],
+    "keywords": [
+      "Karangasem royal party",
+      "Mount Agung celebration",
+      "water palace events",
+      "volcanic landscape party"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Amed", "Candidasa", "Sidemen"],
+    "specialties": [
+      "Royal theme equipment",
+      "Water palace setups",
+      "Volcanic landscape gear",
+      "Cultural ceremony items"
+    ]
+  },
+  {
+    "slug": "payangan",
+    "name": "Payangan",
+    "region": "Gianyar Regency",
+    "description": "A lush highland area near Ubud, famous for adventure activities and stunning river valleys. Perfect for adventure-themed parties and eco-friendly celebrations in tropical settings.",
+    "highlights": [
+      "Adventure activity hub",
+      "Stunning river valleys",
+      "Lush tropical forests",
+      "White water rafting",
+      "Eco-tourism experiences"
+    ],
+    "attractions": ["Ayung River", "White Water Rafting", "Jungle Trekking", "Adventure Parks", "Eco Resorts"],
+    "keywords": ["Payangan adventure party", "river valley celebration", "eco-friendly events", "jungle party Bali"],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Ubud", "Tegallalang", "Kintamani"],
+    "specialties": [
+      "Adventure party equipment",
+      "River activity gear",
+      "Eco-friendly setups",
+      "Jungle celebration items"
+    ]
+  },
+  {
+    "slug": "buwit",
+    "name": "Buwit",
+    "region": "Tabanan Regency",
+    "description": "A peaceful highland village offering authentic rural Balinese experiences and stunning mountain vistas. Ideal for intimate cultural celebrations and traditional village events.",
+    "highlights": [
+      "Authentic rural experiences",
+      "Stunning mountain vistas",
+      "Traditional village life",
+      "Peaceful highland setting",
+      "Cultural authenticity"
+    ],
+    "attractions": [
+      "Traditional Villages",
+      "Mountain Viewpoints",
+      "Local Temples",
+      "Cultural Centers",
+      "Artisan Communities"
+    ],
+    "keywords": [
+      "Buwit village party",
+      "rural celebration Bali",
+      "mountain vista events",
+      "authentic cultural gathering"
+    ],
+    "image": "/placeholder.svg?height=400&width=600",
+    "nearbyLocations": ["Tabanan", "Bedugul", "Jatiluwih"],
+    "specialties": [
+      "Village celebration equipment",
+      "Mountain vista setups",
+      "Cultural authenticity gear",
+      "Rural event items"
     ]
   }
 ]

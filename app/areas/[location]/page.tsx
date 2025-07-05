@@ -1,28 +1,24 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import StructuredData from "../../components/StructuredData";
-import {
-  generateLocalBusinessSchema,
-  generateBreadcrumbSchema,
-  generateServiceSchema,
-} from "@/lib/seo-utils";
-import locations from "@/data/locations.json";
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import Image from "next/image"
+import Link from "next/link"
+import StructuredData from "../../components/StructuredData"
+import { generateLocalBusinessSchema, generateBreadcrumbSchema, generateServiceSchema } from "@/lib/seo-utils"
+import locations from "@/data/locations.json"
 
 interface LocationData {
-  slug: string;
-  name: string;
-  region: string;
-  description: string;
-  highlights: string[];
-  attractions: string[];
-  beachType?: string;
-  surfSpots?: string[];
-  keywords: string[];
-  image: string;
-  nearbyLocations: string[];
-  specialties: string[];
+  slug: string
+  name: string
+  region: string
+  description: string
+  highlights: string[]
+  attractions: string[]
+  beachType?: string
+  surfSpots?: string[]
+  keywords: string[]
+  image: string
+  nearbyLocations: string[]
+  specialties: string[]
 }
 
 // Add this component to handle search params
@@ -34,9 +30,9 @@ function LocationContent({ params }: { params: { location: string } }) {
 function ActivityBanner({
   searchParams,
 }: {
-  searchParams: { activity?: string; time?: string };
+  searchParams: { activity?: string; time?: string }
 }) {
-  if (!searchParams.activity) return null;
+  if (!searchParams.activity) return null
 
   const activityEmojis: Record<string, string> = {
     surfing: "🏄‍♂️",
@@ -45,62 +41,57 @@ function ActivityBanner({
     relaxing: "🏖️",
     photography: "📸",
     cultural: "🏛️",
-  };
+  }
 
   return (
     <div className="bg-gradient-to-r from-coral to-teal text-white p-4 rounded-lg mb-8">
       <div className="flex items-center">
-        <span className="text-2xl mr-3">
-          {activityEmojis[searchParams.activity] || "🎯"}
-        </span>
+        <span className="text-2xl mr-3">{activityEmojis[searchParams.activity] || "🎯"}</span>
         <div>
           <h3 className="font-semibold text-lg">
-            Perfect for{" "}
-            {searchParams.activity.charAt(0).toUpperCase() +
-              searchParams.activity.slice(1)}
-            !
+            Perfect for {searchParams.activity.charAt(0).toUpperCase() + searchParams.activity.slice(1)}!
           </h3>
           {searchParams.time && (
-            <p className="text-white/90">
-              Recommended time: {decodeURIComponent(searchParams.time)}
-            </p>
+            <p className="text-white/90">Recommended time: {decodeURIComponent(searchParams.time)}</p>
           )}
         </div>
       </div>
     </div>
-  );
+  )
+}
+
+// Function to generate Google Maps URL for a location
+function getGoogleMapsUrl(locationName: string, region: string): string {
+  const query = encodeURIComponent(`${locationName}, ${region}, Indonesia`)
+  return `https://www.google.com/maps/search/?api=1&query=${query}`
 }
 
 export async function generateStaticParams() {
   return locations.map((location) => ({
     location: location.slug,
-  }));
+  }))
 }
 
 export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: { location: string };
-  searchParams: { activity?: string; time?: string };
+  params: { location: string }
+  searchParams: { activity?: string; time?: string }
 }): Promise<Metadata> {
-  const location = locations.find((loc) => loc.slug === params.location);
+  const location = locations.find((loc) => loc.slug === params.location)
 
   if (!location) {
     return {
       title: "Location Not Found",
-    };
+    }
   }
 
-  const activitySuffix = searchParams.activity
-    ? ` - Perfect for ${searchParams.activity}`
-    : "";
-  const baseTitle = `${location.name} Beach & Pool Party Equipment | Bali Activities${activitySuffix}`;
-  const baseDescription = `Premium beach and pool party equipment in ${
-    location.name
-  }, ${location.region}. ${
+  const activitySuffix = searchParams.activity ? ` - Perfect for ${searchParams.activity}` : ""
+  const baseTitle = `${location.name} Beach & Pool Party Equipment | Bali Activities${activitySuffix}`
+  const baseDescription = `Premium beach and pool party equipment in ${location.name}, ${location.region}. ${
     location.description
-  } Best activities: ${location.highlights.slice(0, 3).join(", ")}.`;
+  } Best activities: ${location.highlights.slice(0, 3).join(", ")}.`
 
   return {
     title: baseTitle,
@@ -144,27 +135,26 @@ export async function generateMetadata({
     other: {
       "geo.region": "ID-BA",
       "geo.placename": `${location.name}, Bali`,
-      "geo.position":
-        location.name === "Canggu" ? "-8.6500;115.1333" : "-8.6500;115.1333",
+      "geo.position": location.name === "Canggu" ? "-8.6500;115.1333" : "-8.6500;115.1333",
     },
-  };
+  }
 }
 
 export default function LocationPage({
   params,
   searchParams,
 }: {
-  params: { location: string };
-  searchParams: { activity?: string; time?: string };
+  params: { location: string }
+  searchParams: { activity?: string; time?: string }
 }) {
-  const location = locations.find((loc) => loc.slug === params.location);
+  const location = locations.find((loc) => loc.slug === params.location)
 
   if (!location) {
-    notFound();
+    notFound()
   }
 
   // Generate structured data
-  const localBusinessSchema = generateLocalBusinessSchema(location.name);
+  const localBusinessSchema = generateLocalBusinessSchema(location.name)
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: "https://summer.prayoga.io" },
     { name: "Our Areas", url: "https://summer.prayoga.io/areas" },
@@ -172,12 +162,12 @@ export default function LocationPage({
       name: location.name,
       url: `https://summer.prayoga.io/areas/${location.slug}`,
     },
-  ]);
+  ])
   const serviceSchema = generateServiceSchema(
     `Beach & Pool Party Equipment in ${location.name}`,
     `Premium beach and pool party equipment rental services in ${location.name}, ${location.region}`,
     location.name,
-  );
+  )
 
   return (
     <>
@@ -209,20 +199,20 @@ export default function LocationPage({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
             <div>
               <h1 className="font-display font-bold text-4xl md:text-5xl mb-4">
-                Beach & Pool Party Equipment in{" "}
-                <span className="text-teal">{location.name}</span>
+                Beach & Pool Party Equipment in <span className="text-teal">{location.name}</span>
               </h1>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                {location.description}
-              </p>
+              <p className="text-lg text-gray-700 mb-6 leading-relaxed">{location.description}</p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
-                  href={`https://wa.me/6285190459091?text=Hi! I'm interested in beach and pool party equipment in ${location.name}`}
+                  href={getGoogleMapsUrl(location.name, location.region)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary"
+                  className="btn-primary inline-flex items-center justify-center"
                 >
-                  Get Quote for {location.name}
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                  </svg>
+                  Visit on the map
                 </a>
                 <Link href="/products" className="btn-secondary">
                   View Our Equipment
@@ -277,9 +267,7 @@ export default function LocationPage({
               </div>
 
               <div>
-                <h3 className="font-display font-bold text-2xl mb-6 text-teal">
-                  Our Specialties in {location.name}
-                </h3>
+                <h3 className="font-display font-bold text-2xl mb-6 text-teal">Our Specialties in {location.name}</h3>
                 <ul className="space-y-3">
                   {location.specialties.map((specialty, index) => (
                     <li key={index} className="flex items-center text-gray-700">
@@ -295,21 +283,15 @@ export default function LocationPage({
           {/* Beach/Surf Information */}
           {location.beachType && (
             <section className="mb-16 bg-mint/10 rounded-2xl p-8">
-              <h3 className="font-display font-bold text-2xl mb-4 text-center">
-                Beach Information
-              </h3>
+              <h3 className="font-display font-bold text-2xl mb-4 text-center">Beach Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="font-semibold text-lg mb-2 text-teal">
-                    Beach Type
-                  </h4>
+                  <h4 className="font-semibold text-lg mb-2 text-teal">Beach Type</h4>
                   <p className="text-gray-700">{location.beachType}</p>
                 </div>
                 {location.surfSpots && (
                   <div>
-                    <h4 className="font-semibold text-lg mb-2 text-coral">
-                      Surf Spots
-                    </h4>
+                    <h4 className="font-semibold text-lg mb-2 text-coral">Surf Spots</h4>
                     <ul className="space-y-1">
                       {location.surfSpots.map((spot, index) => (
                         <li key={index} className="text-gray-700">
@@ -325,17 +307,12 @@ export default function LocationPage({
 
           {/* Nearby Locations */}
           <section className="mb-16">
-            <h3 className="font-display font-bold text-2xl mb-6 text-center">
-              We Also Serve Nearby Areas
-            </h3>
+            <h3 className="font-display font-bold text-2xl mb-6 text-center">We Also Serve Nearby Areas</h3>
             <div className="flex flex-wrap justify-center gap-3">
               {location.nearbyLocations.map((nearby, index) => (
                 <Link
                   key={index}
-                  href={`/areas/${nearby
-                    .toLowerCase()
-                    .replace(/\s+/g, "-")
-                    .replace(/\//g, "-")}`}
+                  href={`/areas/${nearby.toLowerCase().replace(/\s+/g, "-").replace(/\//g, "-")}`}
                   className="bg-white border border-mint hover:bg-mint hover:text-teal transition-colors px-4 py-2 rounded-full text-sm font-medium"
                 >
                   {nearby}
@@ -353,23 +330,17 @@ export default function LocationPage({
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                 <div>
-                  <h3 className="font-display font-semibold text-xl mb-4 text-teal">
-                    🏄‍♂️ Surf Activities
-                  </h3>
+                  <h3 className="font-display font-semibold text-xl mb-4 text-teal">🏄‍♂️ Surf Activities</h3>
                   <div className="space-y-3 text-sm text-gray-700">
                     <p>
-                      <strong>{location.name}</strong> offers world-class
-                      surfing opportunities for all skill levels.
+                      <strong>{location.name}</strong> offers world-class surfing opportunities for all skill levels.
                       {location.surfSpots ? (
                         <>
                           The area features renowned surf breaks including{" "}
                           {location.surfSpots.slice(0, 2).join(" and ")}.
                         </>
                       ) : (
-                        <>
-                          Perfect waves for beginners and experienced surfers
-                          alike.
-                        </>
+                        <>Perfect waves for beginners and experienced surfers alike.</>
                       )}
                     </p>
                     <ul className="space-y-1 ml-4">
@@ -388,14 +359,11 @@ export default function LocationPage({
                 </div>
 
                 <div>
-                  <h3 className="font-display font-semibold text-xl mb-4 text-coral">
-                    🏖️ Beach Activities
-                  </h3>
+                  <h3 className="font-display font-semibold text-xl mb-4 text-coral">🏖️ Beach Activities</h3>
                   <div className="space-y-3 text-sm text-gray-700">
                     <p>
-                      Transform your {location.name} beach day with our premium
-                      equipment. From sunrise yoga sessions to sunset beach
-                      parties, we have everything you need.
+                      Transform your {location.name} beach day with our premium equipment. From sunrise yoga sessions to
+                      sunset beach parties, we have everything you need.
                     </p>
                     <ul className="space-y-1 ml-4">
                       <li>• Beach umbrellas and comfortable seating</li>
@@ -413,14 +381,11 @@ export default function LocationPage({
                 </div>
 
                 <div>
-                  <h3 className="font-display font-semibold text-xl mb-4 text-lime">
-                    🎉 Party & Events
-                  </h3>
+                  <h3 className="font-display font-semibold text-xl mb-4 text-lime">🎉 Party & Events</h3>
                   <div className="space-y-3 text-sm text-gray-700">
                     <p>
-                      Host unforgettable celebrations in {location.name} with
-                      our party essentials. Perfect for birthdays,
-                      bachelor/bachelorette parties, and group celebrations.
+                      Host unforgettable celebrations in {location.name} with our party essentials. Perfect for
+                      birthdays, bachelor/bachelorette parties, and group celebrations.
                     </p>
                     <ul className="space-y-1 ml-4">
                       <li>• Pool floats and party decorations</li>
@@ -446,49 +411,37 @@ export default function LocationPage({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-mint/10 rounded-lg p-6">
-                    <h4 className="font-semibold text-lg mb-3 text-teal">
-                      🌅 Best Times to Visit
-                    </h4>
+                    <h4 className="font-semibold text-lg mb-3 text-teal">🌅 Best Times to Visit</h4>
                     <div className="space-y-2 text-sm text-gray-700">
                       <p>
-                        <strong>Sunrise (6:00-8:00 AM):</strong> Perfect for
-                        photography, yoga, and peaceful beach walks
+                        <strong>Sunrise (6:00-8:00 AM):</strong> Perfect for photography, yoga, and peaceful beach walks
                       </p>
                       <p>
-                        <strong>Morning (8:00-11:00 AM):</strong> Ideal surf
-                        conditions, less crowded beaches
+                        <strong>Morning (8:00-11:00 AM):</strong> Ideal surf conditions, less crowded beaches
                       </p>
                       <p>
-                        <strong>Afternoon (2:00-5:00 PM):</strong> Great for
-                        pool parties and beach games
+                        <strong>Afternoon (2:00-5:00 PM):</strong> Great for pool parties and beach games
                       </p>
                       <p>
-                        <strong>Sunset (5:00-7:00 PM):</strong> Magical golden
-                        hour for celebrations
+                        <strong>Sunset (5:00-7:00 PM):</strong> Magical golden hour for celebrations
                       </p>
                     </div>
                   </div>
 
                   <div className="bg-coral/10 rounded-lg p-6">
-                    <h4 className="font-semibold text-lg mb-3 text-coral">
-                      🍽️ Local Recommendations
-                    </h4>
+                    <h4 className="font-semibold text-lg mb-3 text-coral">🍽️ Local Recommendations</h4>
                     <div className="space-y-2 text-sm text-gray-700">
                       <p>
-                        <strong>Must-try Food:</strong> Fresh seafood,
-                        traditional Balinese cuisine, tropical fruits
+                        <strong>Must-try Food:</strong> Fresh seafood, traditional Balinese cuisine, tropical fruits
                       </p>
                       <p>
-                        <strong>Beach Cafes:</strong> Perfect spots for
-                        post-surf meals and refreshments
+                        <strong>Beach Cafes:</strong> Perfect spots for post-surf meals and refreshments
                       </p>
                       <p>
-                        <strong>Local Markets:</strong> Authentic shopping
-                        experiences and cultural immersion
+                        <strong>Local Markets:</strong> Authentic shopping experiences and cultural immersion
                       </p>
                       <p>
-                        <strong>Wellness:</strong> Spa treatments, yoga classes,
-                        and meditation sessions
+                        <strong>Wellness:</strong> Spa treatments, yoga classes, and meditation sessions
                       </p>
                     </div>
                   </div>
@@ -502,9 +455,7 @@ export default function LocationPage({
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                   <div>
-                    <h5 className="font-semibold mb-2 text-teal">
-                      Dry Season (April - October)
-                    </h5>
+                    <h5 className="font-semibold mb-2 text-teal">Dry Season (April - October)</h5>
                     <ul className="space-y-1 text-gray-700">
                       <li>• Perfect weather for all outdoor activities</li>
                       <li>• Consistent surf conditions</li>
@@ -513,9 +464,7 @@ export default function LocationPage({
                     </ul>
                   </div>
                   <div>
-                    <h5 className="font-semibold mb-2 text-coral">
-                      Wet Season (November - March)
-                    </h5>
+                    <h5 className="font-semibold mb-2 text-coral">Wet Season (November - March)</h5>
                     <ul className="space-y-1 text-gray-700">
                       <li>• Great for beginners learning to surf</li>
                       <li>• Lush green landscapes, fewer crowds</li>
@@ -530,13 +479,10 @@ export default function LocationPage({
 
           {/* CTA Section */}
           <section className="bg-gradient-to-r from-teal to-coral rounded-2xl p-8 md:p-12 text-center text-white">
-            <h2 className="font-display font-bold text-3xl mb-4">
-              Ready to Party in {location.name}?
-            </h2>
+            <h2 className="font-display font-bold text-3xl mb-4">Ready to Party in {location.name}?</h2>
             <p className="text-lg mb-6 max-w-2xl mx-auto">
-              Contact us now to discuss your beach or pool party needs in{" "}
-              {location.name}. We'll help you create the perfect celebration
-              with our premium equipment and local expertise.
+              Contact us now to discuss your beach or pool party needs in {location.name}. We'll help you create the
+              perfect celebration with our premium equipment and local expertise.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -558,5 +504,5 @@ export default function LocationPage({
         </div>
       </div>
     </>
-  );
+  )
 }

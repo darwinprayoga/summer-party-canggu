@@ -1,4 +1,6 @@
 // WordPress API integration with caching and error handling
+import { cleanTitle } from "./utils"
+
 interface WordPressPost {
   id: number
   date: string
@@ -194,7 +196,7 @@ export async function getWordPressPosts(): Promise<BlogPost[]> {
 
       return {
         slug: post.slug,
-        title: extractTextFromHtml(post.title.rendered),
+        title: cleanTitle(post.title.rendered),
         content: cleanContent,
         excerpt: cleanExcerpt,
         date: post.date,
@@ -259,7 +261,7 @@ export async function getWordPressPost(slug: string): Promise<BlogPost | null> {
 
     return {
       slug: post.slug,
-      title: extractTextFromHtml(post.title.rendered),
+      title: cleanTitle(post.title.rendered),
       content: cleanContent,
       excerpt: cleanExcerpt,
       date: post.date,

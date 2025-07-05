@@ -39,6 +39,7 @@
     "@radix-ui/react-tooltip": "latest",
     "@remix-run/react": "latest",
     "@sveltejs/kit": "latest",
+    "@tailwindcss/typography": "latest",
     "@vercel/analytics": "latest",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
@@ -66,7 +67,6 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
