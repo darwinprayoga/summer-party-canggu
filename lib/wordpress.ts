@@ -1,68 +1,71 @@
 // WordPress API integration with caching and error handling
-import { cleanTitle } from "./utils"
+
+import { cleanTitle } from "./utils";
 
 interface WordPressPost {
-  id: number
-  date: string
-  slug: string
+  id: number;
+  date: string;
+  slug: string;
   title: {
-    rendered: string
-  }
+    rendered: string;
+  };
   content: {
-    rendered: string
-  }
+    rendered: string;
+  };
   excerpt: {
-    rendered: string
-  }
-  featured_media: number
-  categories: number[]
-  author: number
+    rendered: string;
+  };
+  featured_media: number;
+  categories: number[];
+  author: number;
   _embedded?: {
     "wp:featuredmedia"?: Array<{
-      source_url: string
-      alt_text: string
-    }>
+      source_url: string;
+      alt_text: string;
+    }>;
     "wp:term"?: Array<
       Array<{
-        id: number
-        name: string
-        slug: string
+        id: number;
+        name: string;
+        slug: string;
       }>
-    >
+    >;
     author?: Array<{
-      name: string
-    }>
-  }
+      name: string;
+    }>;
+  };
 }
 
 interface WordPressCategory {
-  id: number
-  name: string
-  slug: string
-  description: string
-  count: number
+  id: number;
+  name: string;
+  slug: string;
+  description: string;
+  count: number;
 }
 
 interface BlogPost {
-  slug: string
-  title: string
-  content: string
-  excerpt: string
-  date: string
-  image: string
-  category: string
-  author: string
+  slug: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  date: string;
+  image: string;
+  category: string;
+  author: string;
 }
 
-const WORDPRESS_API_BASE = "https://public-api.wordpress.com/wp/v2/sites/summerpartycanggu.wordpress.com"
-const CACHE_DURATION = 3600 // 1 hour in seconds
+const WORDPRESS_API_BASE =
+  "https://public-api.wordpress.com/wp/v2/sites/summerpartycanggu.wordpress.com";
+const CACHE_DURATION = 3600; // 1 hour in seconds
 
 // Fallback data in case WordPress API is unavailable
 const fallbackPosts: BlogPost[] = [
   {
     slug: "best-beach-spots-canggu",
     title: "The Best Beach Spots in Canggu for Your Summer Party",
-    excerpt: "Discover the most Instagram-worthy and party-friendly beaches in Canggu, Bali.",
+    excerpt:
+      "Discover the most Instagram-worthy and party-friendly beaches in Canggu, Bali.",
     content: `
       <p>Canggu, Bali is home to some of the most beautiful beaches in Indonesia, perfect for hosting unforgettable summer parties. Whether you're planning a sunset celebration or a full-day beach bash, these spots offer the perfect backdrop for your event.</p>
       
@@ -122,7 +125,7 @@ const fallbackPosts: BlogPost[] = [
     category: "Surfing",
     author: "Summer Party Canggu Team",
   },
-]
+];
 
 // Clean HTML content for better performance and security
 function cleanHtmlContent(html: string): string {
@@ -130,7 +133,7 @@ function cleanHtmlContent(html: string): string {
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "") // Remove scripts
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "") // Remove styles
     .replace(/<!--[\s\S]*?-->/g, "") // Remove comments
-    .trim()
+    .trim();
 }
 
 // Extract plain text from HTML for excerpts
@@ -144,55 +147,61 @@ function extractTextFromHtml(html: string): string {
     .replace(/&quot;/g, '"') // Replace &quot; with "
     .replace(/&#039;/g, "'") // Replace &#039; with '
     .replace(/\s+/g, " ") // Replace multiple spaces with single space
-    .trim()
+    .trim();
 }
 
 // Extract the first image URL from HTML content
 function extractFirstImageFromHtml(html: string): string | null {
-  const imgRegex = /<img[^>]+src="([^">]+)"/i
-  const match = html.match(imgRegex)
-  return match ? match[1] : null
+  const imgRegex = /<img[^>]+src="([^">]+)"/i;
+  const match = html.match(imgRegex);
+  return match ? match[1] : null;
 }
 
 // Fetch WordPress posts with caching and error handling
 export async function getWordPressPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetch(`${WORDPRESS_API_BASE}/posts?_embed&per_page=20&status=publish`, {
-      next: { revalidate: CACHE_DURATION },
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "SummerPartyCanggu/1.0",
+    const response = await fetch(
+      `${WORDPRESS_API_BASE}/posts?_embed&per_page=20&status=publish`,
+      {
+        next: { revalidate: CACHE_DURATION },
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "SummerPartyCanggu/1.0",
+        },
       },
-    })
+    );
 
     if (!response.ok) {
-      console.warn("WordPress API not available, using fallback data")
-      return fallbackPosts
+      console.warn("WordPress API not available, using fallback data");
+      return fallbackPosts;
     }
 
-    const posts: WordPressPost[] = await response.json()
+    const posts: WordPressPost[] = await response.json();
 
     return posts.map((post): BlogPost => {
       // Get featured image - try featured media first, then first image in content, then fallback
-      let featuredImage = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url
+      let featuredImage = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
       if (!featuredImage) {
-        featuredImage = extractFirstImageFromHtml(post.content.rendered)
+        featuredImage = extractFirstImageFromHtml(post.content.rendered);
       }
       if (!featuredImage) {
-        featuredImage = "/icon-landscape.webp" // Use our brand image as fallback
+        featuredImage = "/icon-landscape.webp"; // Use our brand image as fallback
       }
 
       // Get category name
-      const categories = post._embedded?.["wp:term"]?.[0] || []
-      const categoryName = categories.length > 0 ? categories[0].name : "General"
+      const categories = post._embedded?.["wp:term"]?.[0] || [];
+      const categoryName =
+        categories.length > 0 ? categories[0].name : "General";
 
       // Get author name
-      const authorName = post._embedded?.author?.[0]?.name || "Summer Party Canggu Team"
+      const authorName =
+        post._embedded?.author?.[0]?.name || "Summer Party Canggu Team";
 
       // Clean and process content
-      const cleanContent = cleanHtmlContent(post.content.rendered)
+      const cleanContent = cleanHtmlContent(post.content.rendered);
       const cleanExcerpt =
-        extractTextFromHtml(post.excerpt.rendered) || extractTextFromHtml(cleanContent).substring(0, 200) + "..."
+        extractTextFromHtml(post.excerpt.rendered) ||
+        extractTextFromHtml(cleanContent).substring(0, 200) + "...";
 
       return {
         slug: post.slug,
@@ -203,61 +212,66 @@ export async function getWordPressPosts(): Promise<BlogPost[]> {
         image: featuredImage,
         category: categoryName,
         author: authorName,
-      }
-    })
+      };
+    });
   } catch (error) {
-    console.error("Error fetching WordPress posts:", error)
-    return fallbackPosts
+    console.error("Error fetching WordPress posts:", error);
+    return fallbackPosts;
   }
 }
 
 // Fetch single WordPress post
 export async function getWordPressPost(slug: string): Promise<BlogPost | null> {
   try {
-    const response = await fetch(`${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`, {
-      next: { revalidate: CACHE_DURATION },
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "SummerPartyCanggu/1.0",
+    const response = await fetch(
+      `${WORDPRESS_API_BASE}/posts?slug=${slug}&_embed`,
+      {
+        next: { revalidate: CACHE_DURATION },
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "SummerPartyCanggu/1.0",
+        },
       },
-    })
+    );
 
     if (!response.ok) {
       // Try fallback data
-      const fallbackPost = fallbackPosts.find((post) => post.slug === slug)
-      return fallbackPost || null
+      const fallbackPost = fallbackPosts.find((post) => post.slug === slug);
+      return fallbackPost || null;
     }
 
-    const posts: WordPressPost[] = await response.json()
+    const posts: WordPressPost[] = await response.json();
 
     if (posts.length === 0) {
       // Try fallback data
-      const fallbackPost = fallbackPosts.find((post) => post.slug === slug)
-      return fallbackPost || null
+      const fallbackPost = fallbackPosts.find((post) => post.slug === slug);
+      return fallbackPost || null;
     }
 
-    const post = posts[0]
+    const post = posts[0];
 
     // Get featured image - try featured media first, then first image in content, then fallback
-    let featuredImage = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url
+    let featuredImage = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
     if (!featuredImage) {
-      featuredImage = extractFirstImageFromHtml(post.content.rendered)
+      featuredImage = extractFirstImageFromHtml(post.content.rendered);
     }
     if (!featuredImage) {
-      featuredImage = "/icon-landscape.webp" // Use our brand image as fallback
+      featuredImage = "/icon-landscape.webp"; // Use our brand image as fallback
     }
 
     // Get category name
-    const categories = post._embedded?.["wp:term"]?.[0] || []
-    const categoryName = categories.length > 0 ? categories[0].name : "General"
+    const categories = post._embedded?.["wp:term"]?.[0] || [];
+    const categoryName = categories.length > 0 ? categories[0].name : "General";
 
     // Get author name
-    const authorName = post._embedded?.author?.[0]?.name || "Summer Party Canggu Team"
+    const authorName =
+      post._embedded?.author?.[0]?.name || "Summer Party Canggu Team";
 
     // Clean and process content
-    const cleanContent = cleanHtmlContent(post.content.rendered)
+    const cleanContent = cleanHtmlContent(post.content.rendered);
     const cleanExcerpt =
-      extractTextFromHtml(post.excerpt.rendered) || extractTextFromHtml(cleanContent).substring(0, 200) + "..."
+      extractTextFromHtml(post.excerpt.rendered) ||
+      extractTextFromHtml(cleanContent).substring(0, 200) + "...";
 
     return {
       slug: post.slug,
@@ -268,45 +282,48 @@ export async function getWordPressPost(slug: string): Promise<BlogPost | null> {
       image: featuredImage,
       category: categoryName,
       author: authorName,
-    }
+    };
   } catch (error) {
-    console.error("Error fetching WordPress post:", error)
+    console.error("Error fetching WordPress post:", error);
     // Try fallback data
-    const fallbackPost = fallbackPosts.find((post) => post.slug === slug)
-    return fallbackPost || null
+    const fallbackPost = fallbackPosts.find((post) => post.slug === slug);
+    return fallbackPost || null;
   }
 }
 
 // Fetch WordPress categories
 export async function getWordPressCategories(): Promise<WordPressCategory[]> {
   try {
-    const response = await fetch(`${WORDPRESS_API_BASE}/categories?per_page=50`, {
-      next: { revalidate: CACHE_DURATION },
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "SummerPartyCanggu/1.0",
+    const response = await fetch(
+      `${WORDPRESS_API_BASE}/categories?per_page=50`,
+      {
+        next: { revalidate: CACHE_DURATION },
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "SummerPartyCanggu/1.0",
+        },
       },
-    })
+    );
 
     if (!response.ok) {
-      return []
+      return [];
     }
 
-    const categories: WordPressCategory[] = await response.json()
-    return categories.filter((cat) => cat.count > 0) // Only return categories with posts
+    const categories: WordPressCategory[] = await response.json();
+    return categories.filter((cat) => cat.count > 0); // Only return categories with posts
   } catch (error) {
-    console.error("Error fetching WordPress categories:", error)
-    return []
+    console.error("Error fetching WordPress categories:", error);
+    return [];
   }
 }
 
 // Generate all post slugs for static generation
 export async function getAllPostSlugs(): Promise<string[]> {
   try {
-    const posts = await getWordPressPosts()
-    return posts.map((post) => post.slug)
+    const posts = await getWordPressPosts();
+    return posts.map((post) => post.slug);
   } catch (error) {
-    console.error("Error fetching post slugs:", error)
-    return fallbackPosts.map((post) => post.slug)
+    console.error("Error fetching post slugs:", error);
+    return fallbackPosts.map((post) => post.slug);
   }
 }
