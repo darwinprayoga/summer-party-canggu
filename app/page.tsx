@@ -244,7 +244,7 @@ const organizationSchema = {
           name: "Balinese Arak",
           description:
             "Authentic Balinese rice wine with a fun tropical twist! Perfect for beach parties and cultural celebrations. Traditional distilled spirit with modern Summer Party Canggu branding.",
-          image: "https://summer.prayoga.io/products/balinese-arak-can.png",
+          image: "https://summer.prayoga.io/products/balinese-arak-bottle.png",
           category: "Cultural Experiences",
           aggregateRating: {
             "@type": "AggregateRating",
