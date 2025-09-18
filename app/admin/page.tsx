@@ -22,7 +22,7 @@ import {
   X,
 } from "lucide-react";
 
-type Step = "login" | "form" | "dashboard";
+type Step = "login" | "form" | "approval" | "dashboard";
 
 interface AdminData {
   phone: string;
@@ -291,7 +291,22 @@ export default function AdminPage() {
     e.preventDefault();
     const adminId = `ADM${Date.now().toString().slice(-6)}`;
     setAdminData((prev) => ({ ...prev, adminId }));
-    setCurrentStep("dashboard");
+    setCurrentStep("approval");
+  };
+
+  const [approvalStatus, setApprovalStatus] = useState<
+    "pending" | "approved" | "denied"
+  >("pending");
+
+  const simulateApprovalCheck = () => {
+    // Simulate approval check - in real app, this would be an API call
+    const statuses: ("pending" | "approved" | "denied")[] = [
+      "approved",
+      "denied",
+      "pending",
+    ];
+    const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+    setApprovalStatus(randomStatus);
   };
 
   const handleSaveEvent = () => {
@@ -570,6 +585,143 @@ export default function AdminPage() {
               <ArrowRight className="w-5 h-5" />
             </button>
           </form>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentStep === "approval") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cream via-mint/20 to-teal/10 flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="relative w-32 h-32 mx-auto mb-6">
+              <Image
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/%5BSPC%5D%201st%20Poster%20-%20IG-n3sOlDEwhDML4dnjhrfIFVyz6zMEfj.png"
+                alt="Summer Party Canggu"
+                fill
+                className="rounded-2xl object-cover"
+              />
+            </div>
+            <h1 className="text-3xl font-display font-bold text-charcoal mb-2">
+              <span className="text-coral">ADMIN</span>{" "}
+              <span className="text-teal italic">Approval</span>
+            </h1>
+            <p className="text-charcoal/70">Registration Status</p>
+          </div>
+
+          {/* Approval Status */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+            {approvalStatus === "pending" && (
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto">
+                  <Clock className="w-8 h-8 text-yellow-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-charcoal">
+                  Approval Pending
+                </h2>
+                <p className="text-charcoal/70">
+                  Your admin registration is being reviewed by the owner. Please
+                  wait for approval.
+                </p>
+                <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Admin ID:</strong> {adminData.adminId}
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    <strong>Name:</strong> {adminData.fullName}
+                  </p>
+                  <p className="text-sm text-yellow-800">
+                    <strong>Instagram:</strong> @{adminData.instagram}
+                  </p>
+                </div>
+                <button
+                  onClick={simulateApprovalCheck}
+                  className="w-full bg-yellow-500 text-white p-3 rounded-lg font-medium hover:bg-yellow-600 transition-colors"
+                >
+                  Check Approval Status
+                </button>
+              </div>
+            )}
+
+            {approvalStatus === "approved" && (
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-green-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-charcoal">
+                  Registration Approved!
+                </h2>
+                <p className="text-charcoal/70">
+                  Congratulations! Your admin registration has been approved by
+                  the owner.
+                </p>
+                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <p className="text-sm text-green-800">
+                    <strong>Admin ID:</strong> {adminData.adminId}
+                  </p>
+                  <p className="text-sm text-green-800">
+                    <strong>Status:</strong> Active Administrator
+                  </p>
+                </div>
+                <button
+                  onClick={() => setCurrentStep("dashboard")}
+                  className="w-full bg-green-600 text-white p-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                >
+                  Access Admin Dashboard
+                </button>
+              </div>
+            )}
+
+            {approvalStatus === "denied" && (
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                  <X className="w-8 h-8 text-red-600" />
+                </div>
+                <h2 className="text-xl font-semibold text-charcoal">
+                  Registration Denied
+                </h2>
+                <p className="text-charcoal/70">
+                  Unfortunately, your admin registration has been denied by the
+                  owner.
+                </p>
+                <div className="bg-red-50 rounded-lg p-4 border border-red-200">
+                  <p className="text-sm text-red-800">
+                    Please contact the event organizer for more information or
+                    to reapply.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setCurrentStep("login");
+                    setAdminData({
+                      phone: "",
+                      email: "",
+                      fullName: "",
+                      instagram: "",
+                      whatsapp: "",
+                      adminId: "",
+                    });
+                    setApprovalStatus("pending");
+                  }}
+                  className="w-full bg-red-600 text-white p-3 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                  Back to Login
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Back to Form */}
+          <div className="text-center mt-6">
+            <button
+              onClick={() => setCurrentStep("form")}
+              className="text-teal hover:text-teal/80 text-sm font-medium"
+            >
+              ← Back to Form
+            </button>
+          </div>
         </div>
       </div>
     );
