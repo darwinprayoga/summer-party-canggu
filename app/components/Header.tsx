@@ -1,62 +1,85 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Instagram, MessageCircle, Menu, X, ChevronDown } from "lucide-react"
+import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Instagram, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg
+    className={className}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+  </svg>
+);
 
 export default function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
-  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = (dropdown: string) => {
     if (dropdownTimeoutRef.current) {
-      clearTimeout(dropdownTimeoutRef.current)
+      clearTimeout(dropdownTimeoutRef.current);
     }
-    setActiveDropdown(dropdown)
-  }
+    setActiveDropdown(dropdown);
+  };
 
   const handleMouseLeave = () => {
     dropdownTimeoutRef.current = setTimeout(() => {
-      setActiveDropdown(null)
-    }, 150) // Small delay to prevent flickering
-  }
+      setActiveDropdown(null);
+    }, 150); // Small delay to prevent flickering
+  };
 
   const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false)
-  }
+    setIsMobileMenuOpen(false);
+  };
 
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (isMobileMenuOpen && !(event.target as Element).closest(".mobile-menu-container")) {
-        setIsMobileMenuOpen(false)
+      if (
+        isMobileMenuOpen &&
+        !(event.target as Element).closest(".mobile-menu-container")
+      ) {
+        setIsMobileMenuOpen(false);
       }
-    }
+    };
 
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [isMobileMenuOpen])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobileMenuOpen]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = "unset"
-    }
-  }, [isMobileMenuOpen])
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
 
   const productCategories = [
-    { name: "Beach Essentials", href: "/products#beach-essentials", icon: "🏖️" },
+    {
+      name: "Beach Essentials",
+      href: "/products#beach-essentials",
+      icon: "🏖️",
+    },
     { name: "Pool Day Gear", href: "/products#pool-day-gear", icon: "🏊‍♀️" },
-    { name: "Party Essentials", href: "/products#party-essentials", icon: "🎉", isNew: true },
-  ]
+    {
+      name: "Party Essentials",
+      href: "/products#party-essentials",
+      icon: "🎉",
+      isNew: true,
+    },
+  ];
 
   const areaCategories = [
     { name: "Canggu", href: "/areas/canggu", icon: "🏄‍♂️" },
@@ -65,7 +88,7 @@ export default function Header() {
     { name: "Seminyak", href: "/areas/seminyak", icon: "🍸" },
     { name: "Uluwatu", href: "/areas/uluwatu", icon: "🏛️" },
     { name: "View All Areas", href: "/areas", icon: "📍" },
-  ]
+  ];
 
   return (
     <header className="bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-mint/20">
@@ -85,12 +108,19 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            <Link href="/" className="text-charcoal hover:text-teal transition-colors">
-              Home
+            <Link
+              href="/tools"
+              className="text-charcoal hover:text-teal transition-colors"
+            >
+              Tools
             </Link>
 
             {/* Products Dropdown */}
-            <div className="relative" onMouseEnter={() => handleMouseEnter("products")} onMouseLeave={handleMouseLeave}>
+            <div
+              className="relative"
+              onMouseEnter={() => handleMouseEnter("products")}
+              onMouseLeave={handleMouseLeave}
+            >
               <button className="flex items-center text-charcoal hover:text-teal transition-colors">
                 Our Products
                 <ChevronDown className="w-4 h-4 ml-1" />
@@ -119,12 +149,19 @@ export default function Header() {
               )}
             </div>
 
-            <Link href="/blog" className="text-charcoal hover:text-teal transition-colors">
+            <Link
+              href="/blog"
+              className="text-charcoal hover:text-teal transition-colors"
+            >
               Blog
             </Link>
 
             {/* Areas Dropdown */}
-            <div className="relative" onMouseEnter={() => handleMouseEnter("areas")} onMouseLeave={handleMouseLeave}>
+            <div
+              className="relative"
+              onMouseEnter={() => handleMouseEnter("areas")}
+              onMouseLeave={handleMouseLeave}
+            >
               <button className="flex items-center text-charcoal hover:text-teal transition-colors">
                 Our Areas
                 <ChevronDown className="w-4 h-4 ml-1" />
@@ -166,6 +203,15 @@ export default function Header() {
               >
                 <Instagram className="w-5 h-5" />
               </a>
+              <a
+                href="https://www.tiktok.com/@summerparty.canggu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-charcoal hover:text-teal transition-colors"
+                aria-label="Follow us on TikTok"
+              >
+                <TikTokIcon className="w-5 h-5" />
+              </a>
             </div>
           </div>
 
@@ -190,15 +236,24 @@ export default function Header() {
             >
               <Instagram className="w-6 h-6" />
             </a>
+            <a
+              href="https://www.tiktok.com/@summerparty.canggu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-charcoal hover:text-teal transition-colors lg:hidden"
+              aria-label="TikTok"
+            >
+              <TikTokIcon className="w-6 h-6" />
+            </a>
 
             {/* Contact Button */}
             <a
-              href="https://wa.me/6285190459091"
-              target="_blank"
+              href="/event"
               rel="noopener noreferrer"
               className="btn-primary hidden sm:block"
             >
-              Contact Us
+              RSVP NOW!
+              <span className="ml-2">🎉</span>
             </a>
 
             {/* Mobile Menu Button */}
@@ -207,7 +262,11 @@ export default function Header() {
               className="lg:hidden p-2 text-charcoal hover:text-teal transition-colors"
               aria-label="Toggle mobile menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -220,16 +279,18 @@ export default function Header() {
                 <div className="space-y-6">
                   {/* Home */}
                   <Link
-                    href="/"
+                    href="/tools"
                     onClick={closeMobileMenu}
                     className="block text-lg font-medium text-charcoal hover:text-teal transition-colors"
                   >
-                    Home
+                    Tools
                   </Link>
 
                   {/* Products Section */}
                   <div>
-                    <div className="text-lg font-medium text-charcoal mb-3">Our Products</div>
+                    <div className="text-lg font-medium text-charcoal mb-3">
+                      Our Products
+                    </div>
                     <div className="space-y-3 ml-4">
                       {productCategories.map((category) => (
                         <Link
@@ -261,7 +322,9 @@ export default function Header() {
 
                   {/* Areas Section */}
                   <div>
-                    <div className="text-lg font-medium text-charcoal mb-3">Our Areas</div>
+                    <div className="text-lg font-medium text-charcoal mb-3">
+                      Our Areas
+                    </div>
                     <div className="space-y-3 ml-4">
                       {areaCategories.map((area) => (
                         <Link
@@ -296,5 +359,5 @@ export default function Header() {
         )}
       </nav>
     </header>
-  )
+  );
 }
