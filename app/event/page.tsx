@@ -556,7 +556,7 @@ export default function EventPage() {
                   the loop!
                 </p>
                 <a
-                  href="https://chat.whatsapp.com/DUMMY_LINK_TO_BE_REPLACED"
+                  href="https://chat.whatsapp.com/FzBkoiJAlyBBFzjEYmgCeu?mode=ems_copy_t"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-lime text-white p-3 rounded-lg font-medium hover:bg-lime/90 transition-colors flex items-center justify-center gap-2"

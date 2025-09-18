@@ -11,15 +11,16 @@ import {
   Trophy,
   DollarSign,
   Users,
-  BarChart3,
   Settings,
   Edit3,
   Calendar,
   MapPin,
   Clock,
-  Network,
   Save,
   X,
+  UserCheck,
+  Check,
+  Shield,
 } from "lucide-react";
 
 type Step = "login" | "form" | "approval" | "dashboard";
@@ -51,6 +52,16 @@ interface EventData {
   description: string;
   maxCapacity: number;
   currentAttendees: number;
+}
+
+interface RegistrationData {
+  id: string;
+  fullName: string;
+  instagramUsername: string;
+  email: string;
+  whatsappNumber: string;
+  appliedAt: string;
+  loginMethod: string;
 }
 
 export default function AdminPage() {
@@ -215,7 +226,7 @@ export default function AdminPage() {
     name: "Summer Party Canggu",
     date: "2024-09-27",
     time: "14:00-21:00",
-    venue: "bauerhaus, Canggu, Bali",
+    venue: "Canggu, Bali, Indonesia",
     description:
       "The ultimate summer party experience in Canggu with live music, food, and drinks.",
     maxCapacity: 200,
@@ -253,6 +264,148 @@ export default function AdminPage() {
     (sum, user) => sum + user.earnings,
     0,
   );
+
+  const [pendingRegistrations, setPendingRegistrations] = useState({
+    staff: [
+      {
+        id: "STF001",
+        fullName: "Sarah Johnson",
+        instagramUsername: "sarahjohnson",
+        email: "sarah@example.com",
+        whatsappNumber: "+62 812-3456-7890",
+        appliedAt: "2024-01-15 14:30",
+        loginMethod: "Google",
+      },
+      {
+        id: "STF002",
+        fullName: "Mike Chen",
+        instagramUsername: "mikechen",
+        email: "mike@example.com",
+        whatsappNumber: "+62 813-4567-8901",
+        appliedAt: "2024-01-15 16:45",
+        loginMethod: "Instagram",
+      },
+    ],
+    admin: [
+      {
+        id: "ADM001",
+        fullName: "Alex Rodriguez",
+        instagramUsername: "alexrodriguez",
+        email: "alex@example.com",
+        whatsappNumber: "+62 814-5678-9012",
+        appliedAt: "2024-01-14 10:20",
+        loginMethod: "Google",
+      },
+    ],
+  });
+
+  const [approvedRegistrations, setApprovedRegistrations] = useState({
+    staff: [
+      {
+        id: "STF003",
+        fullName: "Emma Wilson",
+        instagramUsername: "emmawilson",
+        approvedAt: "2024-01-10 09:15",
+      },
+      {
+        id: "STF004",
+        fullName: "David Kim",
+        instagramUsername: "davidkim",
+        approvedAt: "2024-01-12 11:30",
+      },
+    ],
+    admin: [
+      {
+        id: "ADM002",
+        fullName: "Lisa Thompson",
+        instagramUsername: "lisathompson",
+        approvedAt: "2024-01-08 14:45",
+      },
+    ],
+  });
+
+  const handleApproval = (
+    id: string,
+    type: "staff" | "admin",
+    action: "approved" | "denied",
+  ) => {
+    console.log(`[v0] ${action} ${type} registration:`, id);
+
+    if (action === "approved") {
+      // Move from pending to approved
+      const pendingItem = pendingRegistrations[type].find(
+        (item) => item.id === id,
+      );
+      if (pendingItem) {
+        setApprovedRegistrations((prev) => ({
+          ...prev,
+          [type]: [
+            ...prev[type],
+            {
+              id: pendingItem.id,
+              fullName: pendingItem.fullName,
+              instagramUsername: pendingItem.instagramUsername,
+              approvedAt: new Date().toLocaleString("en-GB", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            },
+          ],
+        }));
+      }
+    }
+
+    // Remove from pending regardless of action
+    setPendingRegistrations((prev) => ({
+      ...prev,
+      [type]: prev[type].filter((item) => item.id !== id),
+    }));
+  };
+
+  const handleApproval_old = (
+    id: string,
+    type: "staff" | "admin",
+    action: "approved" | "denied",
+  ) => {
+    if (type === "staff") {
+      const registration = pendingRegistrations.staff.find(
+        (staff) => staff.id === id,
+      );
+      if (registration) {
+        setPendingRegistrations((prev) => ({
+          ...prev,
+          staff: prev.staff.filter((staff) => staff.id !== id),
+        }));
+
+        if (action === "approved") {
+          setApprovedRegistrations((prev: any) => ({
+            ...prev,
+            staff: [...prev.staff, registration],
+          }));
+        }
+      }
+    } else if (type === "admin") {
+      const registration = pendingRegistrations.admin.find(
+        (admin) => admin.id === id,
+      );
+      if (registration) {
+        setPendingRegistrations((prev) => ({
+          ...prev,
+          admin: prev.admin.filter((admin) => admin.id !== id),
+        }));
+
+        if (action === "approved") {
+          setApprovedRegistrations((prev: any) => ({
+            ...prev,
+            admin: [...prev.admin, registration],
+          }));
+        }
+      }
+    }
+  };
 
   // Simulate phone OTP login
   const handlePhoneLogin = () => {
@@ -752,183 +905,225 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Event Overview */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <BarChart3 className="w-6 h-6 text-teal" />
-                  <h3 className="text-xl font-semibold text-charcoal">
-                    Event Overview
-                  </h3>
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-teal">
-                    {referralStructure.totalUsers}
-                  </p>
-                  <p className="text-sm text-charcoal/60">Total Attendees</p>
-                </div>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <UserCheck className="w-6 h-6 text-coral" />
+              <h3 className="text-xl font-semibold text-charcoal">
+                Staff & Admin Management
+              </h3>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
+                <p className="text-2xl font-bold text-amber-600">
+                  {pendingRegistrations.staff.length}
+                </p>
+                <p className="text-sm text-charcoal/70">Pending Staff</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-coral/10 rounded-lg p-4 border border-coral/20">
-                  <p className="text-2xl font-bold text-coral">
-                    IDR {totalExpenses.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-charcoal/70">Total Revenue</p>
-                </div>
-                <div className="bg-lime/10 rounded-lg p-4 border border-lime/20">
-                  <p className="text-2xl font-bold text-lime">
-                    IDR {totalReferralEarnings.toLocaleString()}
-                  </p>
-                  <p className="text-sm text-charcoal/70">Referral Payouts</p>
-                </div>
+              <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                <p className="text-2xl font-bold text-blue-600">
+                  {approvedRegistrations.staff.length}
+                </p>
+                <p className="text-sm text-charcoal/70">Active Staff</p>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                <p className="text-2xl font-bold text-purple-600">
+                  {pendingRegistrations.admin.length}
+                </p>
+                <p className="text-sm text-charcoal/70">Pending Admins</p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                <p className="text-2xl font-bold text-green-600">
+                  {approvedRegistrations.admin.length}
+                </p>
+                <p className="text-sm text-charcoal/70">Active Admins</p>
               </div>
             </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
-                <Network className="w-6 h-6 text-lime" />
-                <h3 className="text-xl font-semibold text-charcoal">
-                  Referral Network
-                </h3>
-                <div className="ml-auto">
-                  <div className="w-2 h-2 bg-lime rounded-full animate-pulse"></div>
-                </div>
-              </div>
-
-              {/* Network Diagram */}
-              <div className="space-y-4 mb-6">
-                {referralStructure.referralNetwork.map((node) => (
-                  <div key={node.id} className="relative">
-                    {/* Main Node */}
-                    <div
-                      className={`flex items-center gap-3 p-3 rounded-lg border-2 ${
-                        node.level === "Gold"
-                          ? "bg-amber-50 border-amber-200"
-                          : node.level === "Silver"
-                          ? "bg-gray-50 border-gray-200"
-                          : node.level === "Bronze"
-                          ? "bg-orange-50 border-orange-200"
-                          : "bg-gray-25 border-gray-100"
-                      }`}
-                    >
+            {/* Pending Approvals */}
+            <div className="space-y-6">
+              {/* Staff Pending */}
+              {pendingRegistrations.staff.length > 0 && (
+                <div>
+                  <h4 className="text-lg font-semibold text-charcoal mb-3 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-amber-500" />
+                    Pending Staff Approvals ({pendingRegistrations.staff.length}
+                    )
+                  </h4>
+                  <div className="space-y-3">
+                    {pendingRegistrations.staff.map((staff) => (
                       <div
-                        className={`w-3 h-3 rounded-full ${
-                          node.level === "Gold"
-                            ? "bg-amber-500"
-                            : node.level === "Silver"
-                            ? "bg-gray-500"
-                            : node.level === "Bronze"
-                            ? "bg-orange-500"
-                            : "bg-gray-300"
-                        }`}
-                      ></div>
-                      <div className="flex-1">
-                        <p className="font-medium text-charcoal text-sm">
-                          @{node.username}
-                        </p>
-                        <p className="text-xs text-charcoal/60">
-                          {node.level} • {node.referrals.length} referrals
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Referral Connections */}
-                    {node.referrals.length > 0 && (
-                      <div className="ml-6 mt-2 space-y-2">
-                        {node.referrals.map((referral, index) => (
-                          <div
-                            key={referral.id}
-                            className="flex items-center gap-2"
-                          >
-                            <div className="w-px h-4 bg-gray-300"></div>
-                            <div className="w-4 h-px bg-gray-300"></div>
-                            <div
-                              className={`w-2 h-2 rounded-full ${
-                                referral.level === "Bronze"
-                                  ? "bg-orange-400"
-                                  : referral.level === "Silver"
-                                  ? "bg-gray-400"
-                                  : "bg-gray-300"
-                              }`}
-                            ></div>
-                            <p className="text-xs text-charcoal/70">
-                              @{referral.username}
-                            </p>
+                        key={staff.id}
+                        className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <p className="font-medium text-charcoal">
+                                {staff.fullName}
+                              </p>
+                              <p className="text-sm text-charcoal/60">
+                                @{staff.instagramUsername}
+                              </p>
+                            </div>
+                            <div className="text-sm text-charcoal/70">
+                              <p>{staff.email}</p>
+                              <p>{staff.whatsappNumber}</p>
+                            </div>
+                            <div className="text-xs text-charcoal/50">
+                              <p>Applied: {staff.appliedAt}</p>
+                              <p>Login: {staff.loginMethod}</p>
+                            </div>
                           </div>
-                        ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              handleApproval(staff.id, "staff", "approved")
+                            }
+                            className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center gap-2"
+                          >
+                            <Check className="w-4 h-4" />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleApproval(staff.id, "staff", "denied")
+                            }
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center gap-2"
+                          >
+                            <X className="w-4 h-4" />
+                            Deny
+                          </button>
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              )}
 
-              {/* Level Distribution */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-charcoal/70">
-                    Gold (12+ referrals)
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-amber-100 rounded-full overflow-hidden">
+              {/* Admin Pending */}
+              {pendingRegistrations.admin.length > 0 && (
+                <div>
+                  <h4 className="text-lg font-semibold text-charcoal mb-3 flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-purple-500" />
+                    Pending Admin Approvals ({pendingRegistrations.admin.length}
+                    )
+                  </h4>
+                  <div className="space-y-3">
+                    {pendingRegistrations.admin.map((admin) => (
                       <div
-                        className="h-full bg-amber-500 rounded-full"
-                        style={{
-                          width: `${
-                            (referralStructure.referralLevels.gold /
-                              referralStructure.totalUsers) *
-                            100
-                          }%`,
-                        }}
-                      ></div>
-                    </div>
-                    <span className="text-xs font-medium text-charcoal">
-                      {referralStructure.referralLevels.gold}
-                    </span>
+                        key={admin.id}
+                        className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4">
+                            <div>
+                              <p className="font-medium text-charcoal">
+                                {admin.fullName}
+                              </p>
+                              <p className="text-sm text-charcoal/60">
+                                @{admin.instagramUsername}
+                              </p>
+                            </div>
+                            <div className="text-sm text-charcoal/70">
+                              <p>{admin.email}</p>
+                              <p>{admin.whatsappNumber}</p>
+                            </div>
+                            <div className="text-xs text-charcoal/50">
+                              <p>Applied: {admin.appliedAt}</p>
+                              <p>Login: {admin.loginMethod}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              handleApproval(admin.id, "admin", "approved")
+                            }
+                            className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition-colors flex items-center gap-2"
+                          >
+                            <Check className="w-4 h-4" />
+                            Approve
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleApproval(admin.id, "admin", "denied")
+                            }
+                            className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition-colors flex items-center gap-2"
+                          >
+                            <X className="w-4 h-4" />
+                            Deny
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-charcoal/70">
-                    Silver (5-11 referrals)
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              )}
+
+              {/* Active Staff & Admins */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Active Staff */}
+                <div>
+                  <h4 className="text-lg font-semibold text-charcoal mb-3 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-blue-500" />
+                    Active Staff ({approvedRegistrations.staff.length})
+                  </h4>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {approvedRegistrations.staff.map((staff) => (
                       <div
-                        className="h-full bg-gray-500 rounded-full"
-                        style={{
-                          width: `${
-                            (referralStructure.referralLevels.silver /
-                              referralStructure.totalUsers) *
-                            100
-                          }%`,
-                        }}
-                      ></div>
-                    </div>
-                    <span className="text-xs font-medium text-charcoal">
-                      {referralStructure.referralLevels.silver}
-                    </span>
+                        key={staff.id}
+                        className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200"
+                      >
+                        <div>
+                          <p className="font-medium text-charcoal text-sm">
+                            {staff.fullName}
+                          </p>
+                          <p className="text-xs text-charcoal/60">
+                            @{staff.instagramUsername}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-charcoal/70">
+                            Active
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-charcoal/70">
-                    Bronze (1-4 referrals)
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-1.5 bg-orange-100 rounded-full overflow-hidden">
+
+                {/* Active Admins */}
+                <div>
+                  <h4 className="text-lg font-semibold text-charcoal mb-3 flex items-center gap-2">
+                    <Shield className="w-5 h-5 text-green-500" />
+                    Active Admins ({approvedRegistrations.admin.length})
+                  </h4>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {approvedRegistrations.admin.map((admin) => (
                       <div
-                        className="h-full bg-orange-500 rounded-full"
-                        style={{
-                          width: `${
-                            (referralStructure.referralLevels.bronze /
-                              referralStructure.totalUsers) *
-                            100
-                          }%`,
-                        }}
-                      ></div>
-                    </div>
-                    <span className="text-xs font-medium text-charcoal">
-                      {referralStructure.referralLevels.bronze}
-                    </span>
+                        key={admin.id}
+                        className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200"
+                      >
+                        <div>
+                          <p className="font-medium text-charcoal text-sm">
+                            {admin.fullName}
+                          </p>
+                          <p className="text-xs text-charcoal/60">
+                            @{admin.instagramUsername}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <span className="text-xs text-charcoal/70">
+                            Active
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
