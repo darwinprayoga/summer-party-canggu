@@ -304,6 +304,21 @@ export default function EventPage() {
               ← Back to Home
             </Link>
           </div>
+
+          <div className="flex gap-3 mt-4">
+            <Link
+              href="/staff"
+              className="flex-1 text-center py-2 px-4 bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 text-charcoal/70 hover:text-charcoal hover:bg-white/80 transition-all text-sm font-medium"
+            >
+              Staff Login
+            </Link>
+            <Link
+              href="/admin"
+              className="flex-1 text-center py-2 px-4 bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 text-charcoal/70 hover:text-charcoal hover:bg-white/80 transition-all text-sm font-medium"
+            >
+              Admin Login
+            </Link>
+          </div>
         </div>
       </div>
     );
