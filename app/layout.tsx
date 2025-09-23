@@ -2,10 +2,12 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import Header from "./components/Header";
+import ConditionalHeader from "./components/ConditionalHeader";
 import Footer from "./components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { Suspense } from "react";
+import ConditionalSessionProvider from "@/components/ConditionalSessionProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -211,12 +213,15 @@ export default function RootLayout({
         <meta httpEquiv="Referrer-Policy" content="origin-when-cross-origin" />
       </head>
       <body className="font-sans bg-cream text-charcoal antialiased">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Header />
-          <Analytics />
-          <main>{children}</main>
-          <Footer />
-        </Suspense>
+        <ConditionalSessionProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ConditionalHeader />
+            <Analytics />
+            <main>{children}</main>
+            <Footer />
+          </Suspense>
+          <Toaster />
+        </ConditionalSessionProvider>
 
         {/* Structured Data for Organization */}
         <script

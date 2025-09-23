@@ -2,10 +2,12 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { toast } from "sonner";
 import {
   Phone,
   ArrowRight,
@@ -17,9 +19,10 @@ import {
   DollarSign,
   Users,
   Copy,
+  Loader2,
 } from "lucide-react";
 
-type Step = "login" | "form" | "success";
+type Step = "login" | "form" | "phone-verify" | "success";
 
 interface UserData {
   phone: string;
@@ -28,6 +31,72 @@ interface UserData {
   instagram: string;
   whatsapp: string;
   userId: string;
+  isRSVP?: boolean;
+  rsvpAt?: string;
+  createdAt?: string;
+}
+
+interface DashboardData {
+  user: {
+    id: number;
+    userId: string;
+    fullName: string;
+    email: string | null;
+    phone: string | null;
+    whatsapp: string | null;
+    instagram: string;
+    referralCode: string;
+    isRSVP: boolean;
+    rsvpAt: string | null;
+    createdAt: string;
+  };
+  expenseStats: {
+    totalExpenses: number;
+    expenseCount: number;
+    expenses: Array<{
+      id: string;
+      expenseId: string;
+      amount: number;
+      description: string;
+      category: string;
+      timestamp: string;
+      photoUrl: string | null;
+      staff: {
+        fullName: string;
+        staffId: string;
+      } | null;
+    }>;
+  };
+  referralStats: {
+    totalReferrals: number;
+    referralEarnings: number;
+    referrals: Array<{
+      id: number;
+      fullName: string;
+      instagram: string;
+      joinedAt: string;
+    }>;
+  };
+  referrer: {
+    fullName: string;
+    instagram: string;
+    userId: string;
+  } | null;
+  leaderboard: {
+    topSpenders: Array<{
+      userId: string;
+      username: string;
+      fullName: string;
+      totalExpenses: number;
+      rank: number;
+    }>;
+    currentUserRank: number | null;
+    currentUserExpenses: number;
+  };
+  qrCode: {
+    data: string;
+    url: string;
+  };
 }
 
 interface ReferralData {
@@ -50,6 +119,7 @@ interface LeaderboardEntry {
 export default function EventPage() {
   const searchParams = useSearchParams();
   const referralCode = searchParams?.get("referral");
+  const { data: session } = useSession();
 
   const [currentStep, setCurrentStep] = useState<Step>("login");
   const [loginMethod, setLoginMethod] = useState<"phone" | "google" | null>(
@@ -58,6 +128,10 @@ export default function EventPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otpCode, setOtpCode] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tempToken, setTempToken] = useState<string>("");
+  const [authToken, setAuthToken] = useState<string>("");
+  const [verificationToken, setVerificationToken] = useState<string>("");
   const [userData, setUserData] = useState<UserData>({
     phone: "",
     email: "",
@@ -67,34 +141,316 @@ export default function EventPage() {
     userId: "",
   });
 
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
+
   const [referralData, setReferralData] = useState<ReferralData>({
     referrerUsername: "beach_vibes_bali",
-    myExpenses: 1250000, // IDR
-    myEarnings: 187500, // IDR (5% of 3,750,000)
-    referredUsers: [
-      { username: "surfergirl_indo", expenses: 850000, earnings: 42500 },
-      { username: "bali_nomad_life", expenses: 1200000, earnings: 60000 },
-      { username: "tropical_dreams", expenses: 1700000, earnings: 85000 },
-    ],
+    myExpenses: 0, // Will be updated from real data
+    myEarnings: 0, // Will be updated from real data
+    referredUsers: [], // Will be updated from real data
   });
 
-  const [leaderboard] = useState<LeaderboardEntry[]>([
-    { username: "party_king_canggu", expenses: 2500000, rank: 1 },
-    { username: "bali_lifestyle", expenses: 2200000, rank: 2 },
-    { username: "surf_and_party", expenses: 1950000, rank: 3 },
-    {
-      username: userData.instagram || "you",
-      expenses: referralData.myExpenses,
-      rank: 8,
-    },
-    { username: "beach_lover_id", expenses: 1100000, rank: 12 },
-  ]);
+  const [referrerInfo, setReferrerInfo] = useState<{
+    userId: string;
+    fullName: string;
+    instagram: string;
+    memberSince: string;
+  } | null>(null);
+
+  const [referralValidated, setReferralValidated] = useState(false);
+
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
 
   const [copiedReferral, setCopiedReferral] = useState(false);
+  const [hasProcessedOAuth, setHasProcessedOAuth] = useState(false);
+
+  // Field-specific error states
+  const [fieldErrors, setFieldErrors] = useState({
+    fullName: "",
+    instagram: "",
+    email: "",
+    whatsapp: "",
+  });
+
+  // Validate referral code
+  const validateReferralCode = async (code: string) => {
+    try {
+      console.log('🔍 Validating referral code:', code);
+      const response = await fetch(`/api/referral/validate?code=${encodeURIComponent(code)}`);
+      const result = await response.json();
+
+      if (result.success && result.data.referrer) {
+        console.log('✅ Valid referral code:', result.data.referrer);
+        setReferrerInfo(result.data.referrer);
+        setReferralValidated(true);
+
+        // Update referral data with real referrer info
+        setReferralData(prev => ({
+          ...prev,
+          referrerUsername: result.data.referrer.instagram,
+        }));
+
+        toast.success("Referral Code Valid!", {
+          description: `You're invited by @${result.data.referrer.instagram}`,
+        });
+      } else {
+        console.log('❌ Invalid referral code:', result.message);
+        setReferralValidated(false);
+        toast.error("Invalid Referral Code", {
+          description: result.message || "The referral code is not valid",
+        });
+      }
+    } catch (error) {
+      console.error('Referral validation error:', error);
+      setReferralValidated(false);
+      toast.error("Referral Validation Failed", {
+        description: "Could not validate referral code",
+      });
+    }
+  };
+
+  // Load user profile data from server
+  const loadUserProfile = async (token: string) => {
+    try {
+      const response = await fetch("/api/auth/user/profile", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const user = result.data;
+        setUserData({
+          phone: user.phone || "",
+          email: user.email || "",
+          fullName: user.fullName,
+          instagram: user.instagram,
+          whatsapp: user.whatsapp || "",
+          userId: user.userId,
+        });
+      } else {
+        // If profile fetch fails, the token might be invalid
+        console.error('Failed to load user profile:', result.message);
+        localStorage.removeItem('user_token');
+        setAuthToken("");
+        setCurrentStep("login");
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      // Don't redirect on network errors, keep user authenticated
+    }
+  };
+
+  // Load real dashboard data
+  const loadDashboardData = async (token: string) => {
+    setIsLoadingDashboard(true);
+    try {
+      const response = await fetch("/api/user/dashboard", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setDashboardData(result.data);
+
+        // Update referral data with real API data
+        setReferralData({
+          referrerUsername: result.data.referrer?.instagram || "beach_vibes_bali",
+          myExpenses: result.data.expenseStats.totalExpenses,
+          myEarnings: result.data.referralStats.referralEarnings,
+          referredUsers: result.data.referralStats.referrals.map((referral: any) => ({
+            username: referral.instagram,
+            expenses: 0, // We'll need to calculate this separately if needed
+            earnings: 0, // We'll need to calculate this separately if needed
+          })),
+        });
+
+        // Update leaderboard with real API data
+        setLeaderboard(
+          result.data.leaderboard.topSpenders.map((spender: any) => ({
+            username: spender.username,
+            expenses: spender.totalExpenses,
+            rank: spender.rank,
+          }))
+        );
+
+        console.log('✅ Dashboard data loaded successfully', result.data);
+      } else {
+        console.error('Failed to load dashboard data:', result.message);
+        toast.error('Failed to load dashboard data');
+      }
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      toast.error('Failed to load dashboard data');
+    } finally {
+      setIsLoadingDashboard(false);
+    }
+  };
+
+  // Check for existing authentication on component mount
+  useEffect(() => {
+    const checkExistingAuth = () => {
+      console.log('🔍 Event page loading - checking tokens...');
+      const userToken = localStorage.getItem('user_token');
+      const staffToken = localStorage.getItem('staff_token');
+      const adminToken = localStorage.getItem('admin_token');
+
+      console.log('📋 Token status:', {
+        userToken: !!userToken,
+        staffToken: !!staffToken,
+        adminToken: !!adminToken
+      });
+
+      // Security check: if user has non-user tokens, prevent access
+      if (!userToken && (staffToken || adminToken)) {
+        // User is trying to access event page with staff/admin credentials
+        if (staffToken) {
+          console.warn('🚨 Security: Staff token detected on event page - access denied');
+        }
+        if (adminToken) {
+          console.warn('🚨 Security: Admin token detected on event page - access denied');
+        }
+        console.log('❌ No user token found - staying on login page');
+        setCurrentStep("login");
+        return;
+      }
+
+      if (userToken) {
+        console.log('✅ Valid user token found - proceeding to dashboard');
+        // User is already authenticated, go to success page
+        setCurrentStep("success");
+
+        // Try to validate the token and load user data
+        try {
+          // Decode the token to get user info (basic validation)
+          const payload = JSON.parse(atob(userToken.split('.')[1]));
+          if (payload.id && payload.role === 'USER') {
+            setAuthToken(userToken);
+            // Load complete user data from server
+            loadUserProfile(userToken);
+            // Load dashboard data
+            loadDashboardData(userToken);
+          }
+        } catch (error) {
+          // Invalid token, clear it and stay on login
+          console.error('Invalid token found:', error);
+          localStorage.removeItem('user_token');
+          setCurrentStep("login");
+        }
+      } else {
+        console.log('ℹ️ No user token found - staying on login page');
+      }
+    };
+
+    checkExistingAuth();
+  }, []); // Run only on component mount
+
+  // Validate referral code on component mount
+  useEffect(() => {
+    if (referralCode && !referralValidated) {
+      validateReferralCode(referralCode);
+    }
+  }, [referralCode, referralValidated]);
+
+  // Auto-handle Google OAuth return
+  useEffect(() => {
+    const handleGoogleOAuthReturn = async () => {
+      // Security check: Only process Google OAuth if user doesn't have non-user tokens
+      const staffToken = localStorage.getItem('staff_token');
+      const adminToken = localStorage.getItem('admin_token');
+
+      if (staffToken || adminToken) {
+        console.warn('🚨 Security: Google OAuth session detected but user has non-user tokens - ignoring OAuth for event page');
+        return;
+      }
+
+      // Check if we have a session but no user_token and haven't processed this session yet
+      if (session?.user?.email && !localStorage.getItem('user_token') && !hasProcessedOAuth && !isLoading) {
+        setHasProcessedOAuth(true); // Prevent multiple calls
+        setIsLoading(true);
+        try {
+          const response = await fetch("/api/auth/google/user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const authResult = await response.json();
+
+          if (authResult.success) {
+            if (authResult.data.isExisting) {
+              if (authResult.data.requiresPhoneVerification) {
+                // Existing user - needs phone verification first
+                setVerificationToken(authResult.data.verificationToken);
+                setUserData({
+                  phone: authResult.data.user.phone || "",
+                  email: authResult.data.user.email || "",
+                  fullName: authResult.data.user.fullName,
+                  instagram: authResult.data.user.instagram,
+                  whatsapp: authResult.data.user.whatsapp || "",
+                  userId: authResult.data.user.userId,
+                });
+                setPhoneNumber(authResult.data.user.whatsapp || ""); // Pre-fill with user's WhatsApp
+                setCurrentStep("phone-verify");
+              } else {
+                // Existing user with verified phone - go to success page
+                setAuthToken(authResult.data.token);
+                localStorage.setItem('user_token', authResult.data.token);
+                setUserData({
+                  phone: authResult.data.user.phone || "",
+                  email: authResult.data.user.email || "",
+                  fullName: authResult.data.user.fullName,
+                  instagram: authResult.data.user.instagram,
+                  whatsapp: authResult.data.user.whatsapp || "",
+                  userId: authResult.data.user.userId,
+                });
+                setCurrentStep("success");
+                // Load dashboard data for existing user
+                loadDashboardData(authResult.data.token);
+              }
+            } else {
+              // New user - go to registration form
+              setTempToken(authResult.data.tempToken);
+              setUserData((prev) => ({
+                ...prev,
+                email: authResult.data.googleUser.email,
+                fullName: authResult.data.googleUser.name,
+              }));
+              setCurrentStep("form");
+            }
+          } else {
+            alert(authResult.message || "Google authentication failed");
+            setHasProcessedOAuth(false); // Allow retry
+          }
+        } catch (error) {
+          alert("Google authentication failed. Please try again.");
+          setHasProcessedOAuth(false); // Allow retry
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    // Small delay to ensure session is ready
+    const timer = setTimeout(handleGoogleOAuthReturn, 500);
+    return () => clearTimeout(timer);
+  }, [session, hasProcessedOAuth]); // Removed isLoading from dependencies
 
   const generateReferralLink = () => {
     const baseUrl = window.location.origin;
-    return `${baseUrl}/event?referral=${userData.userId}`;
+    const userId = dashboardData?.user.userId || userData.userId;
+    return `${baseUrl}/event?referral=${userId}`;
   };
 
   const copyReferralLink = async () => {
@@ -103,51 +459,353 @@ export default function EventPage() {
       setCopiedReferral(true);
       setTimeout(() => setCopiedReferral(false), 2000);
     } catch (err) {
-      console.error("Failed to copy referral link:", err);
+      // Silently fail
     }
   };
 
-  // Simulate phone OTP login
-  const handlePhoneLogin = () => {
-    if (!phoneNumber) return;
-    setShowOtpInput(true);
-  };
+  // Send OTP to WhatsApp number
+  const handlePhoneLogin = async (whatsappNumber?: string) => {
+    const phoneToUse = whatsappNumber || phoneNumber;
+    console.log('🔍 Attempting to send OTP to:', phoneToUse);
 
-  const handleOtpVerification = () => {
-    if (otpCode.length === 6) {
-      // Simulate successful OTP verification
-      setUserData((prev) => ({
-        ...prev,
-        phone: phoneNumber,
-        whatsapp: phoneNumber, // Auto-fill WhatsApp with phone number
-        email: "", // Will be filled in form
-      }));
-      setCurrentStep("form");
+    if (!phoneToUse || isLoading) {
+      console.log('❌ Validation failed:', { phoneToUse, isLoading });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      console.log('📱 Making request to /api/auth/phone/send-otp');
+      const response = await fetch("/api/auth/phone/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phone: phoneToUse }),
+      });
+
+      console.log('📡 Response status:', response.status);
+      const result = await response.json();
+      console.log('📋 Response data:', result);
+
+      if (result.success) {
+        console.log('✅ OTP sent successfully');
+        setShowOtpInput(true);
+      } else {
+        console.log('❌ OTP sending failed:', result.message);
+        alert(result.message || "Failed to send OTP");
+      }
+    } catch (error) {
+      console.error('❌ Request error:', error);
+      alert("Failed to send OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Simulate Google login
-  const handleGoogleLogin = () => {
-    // Simulate Google OAuth response
-    const mockGoogleData = {
-      phone: "+62 812-3456-7890",
-      email: "user@gmail.com",
-      whatsapp: "+62 812-3456-7890",
-    };
-    setUserData((prev) => ({
-      ...prev,
-      ...mockGoogleData,
-    }));
-    setCurrentStep("form");
+  const handleOtpVerification = async () => {
+    if (otpCode.length !== 6 || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      // Step 1: Verify the OTP code
+      const otpResponse = await fetch("/api/auth/phone/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: userData.whatsapp,
+          code: otpCode
+        }),
+      });
+
+      const otpResult = await otpResponse.json();
+
+      if (otpResult.success) {
+        // Step 2: Register the user with verified WhatsApp number
+        const registerResponse = await fetch("/api/auth/user/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${otpResult.data.tempToken}`,
+          },
+          body: JSON.stringify({
+            fullName: userData.fullName,
+            email: userData.email || undefined,
+            phone: userData.whatsapp, // Use WhatsApp number as phone
+            whatsapp: userData.whatsapp,
+            instagram: userData.instagram,
+            loginMethod: loginMethod === "phone" ? "PHONE" : "GOOGLE",
+            referralCode: referralCode || undefined,
+          }),
+        });
+
+        const registerResult = await registerResponse.json();
+
+        if (registerResult.success) {
+          setAuthToken(registerResult.data.token);
+          localStorage.setItem('user_token', registerResult.data.token);
+          setUserData((prev) => ({
+            ...prev,
+            userId: registerResult.data.user.userId,
+          }));
+          setCurrentStep("success");
+          // Load dashboard data for new user
+          loadDashboardData(registerResult.data.token);
+        } else {
+          // Handle registration errors
+          if (registerResult.errors) {
+            // Handle field-specific errors
+            if (registerResult.errors.some((err: any) => err.path?.includes('instagram'))) {
+              alert("Instagram username is invalid or already taken");
+            } else if (registerResult.errors.some((err: any) => err.path?.includes('email'))) {
+              alert("Email is invalid or already taken");
+            } else if (registerResult.errors.some((err: any) => err.path?.includes('whatsapp'))) {
+              alert("WhatsApp number is invalid or already taken");
+            } else {
+              alert(registerResult.message || "Registration failed");
+            }
+          }
+        }
+      } else {
+        alert(otpResult.message || "Invalid OTP code");
+      }
+    } catch (error) {
+      alert("Failed to verify OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLoginOtpVerification = async () => {
+    if (otpCode.length !== 6 || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          code: otpCode
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        if (result.data.isExisting) {
+          // Existing user - go to success page
+          setAuthToken(result.data.token);
+          localStorage.setItem('user_token', result.data.token);
+          setUserData({
+            phone: result.data.user.phone || "",
+            email: result.data.user.email || "",
+            fullName: result.data.user.fullName,
+            instagram: result.data.user.instagram,
+            whatsapp: result.data.user.whatsapp || "",
+            userId: result.data.user.userId,
+          });
+          setCurrentStep("success");
+          // Load dashboard data for existing user
+          loadDashboardData(result.data.token);
+        } else {
+          // New user - go to registration form
+          setTempToken(result.data.tempToken);
+          setUserData((prev) => ({
+            ...prev,
+            phone: phoneNumber,
+            whatsapp: phoneNumber, // Auto-fill WhatsApp with phone number
+            email: "", // Will be filled in form
+          }));
+          setCurrentStep("form");
+        }
+      } else {
+        alert(result.message || "Invalid OTP code");
+      }
+    } catch (error) {
+      alert("Failed to verify OTP. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleExistingUserVerification = async () => {
+    if (otpCode.length !== 6 || isLoading || !verificationToken) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/auth/user/verify-existing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          code: otpCode,
+          verificationToken: verificationToken
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Verification successful - go to success page
+        setAuthToken(result.data.token);
+        localStorage.setItem('user_token', result.data.token);
+        setUserData({
+          phone: result.data.user.phone || "",
+          email: result.data.user.email || "",
+          fullName: result.data.user.fullName,
+          instagram: result.data.user.instagram,
+          whatsapp: result.data.user.whatsapp || "",
+          userId: result.data.user.userId,
+        });
+        setCurrentStep("success");
+        // Load dashboard data after verification
+        loadDashboardData(result.data.token);
+      } else {
+        alert(result.message || "Invalid verification code");
+      }
+    } catch (error) {
+      alert("Failed to verify phone. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle Google login
+  const handleGoogleLogin = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      // Sign in with NextAuth Google provider - page will redirect and useEffect will handle the rest
+      await signIn("google", { callbackUrl: "/event" });
+    } catch (error) {
+      alert("Google sign-in failed. Please try again.");
+      setIsLoading(false);
+    }
   };
 
   // Handle form submission
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Generate user ID (simulate)
-    const userId = `SP${Date.now().toString().slice(-6)}`;
-    setUserData((prev) => ({ ...prev, userId }));
-    setCurrentStep("success");
+    if (isLoading) return;
+
+    // Clear any existing field errors
+    setFieldErrors({ fullName: "", instagram: "", email: "", whatsapp: "" });
+
+    // Client-side validation
+    if (!userData.fullName || !userData.instagram || !userData.whatsapp || !userData.email) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Validate user data for conflicts before proceeding
+      const validationResponse = await fetch("/api/auth/user/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          instagram: userData.instagram,
+          email: userData.email,
+          whatsapp: userData.whatsapp,
+        }),
+      });
+
+      const validationResult = await validationResponse.json();
+
+      if (!validationResult.success) {
+        // Show toast notification
+        toast.error("Registration Error", {
+          description: validationResult.message,
+        });
+
+        // Set field-specific error if available
+        if (validationResult.data?.conflictField) {
+          const field = validationResult.data.conflictField;
+          if (field === 'instagram_handle') {
+            setFieldErrors(prev => ({ ...prev, instagram: validationResult.message }));
+          } else if (field === 'email') {
+            setFieldErrors(prev => ({ ...prev, email: validationResult.message }));
+          } else if (field === 'whatsapp_number') {
+            setFieldErrors(prev => ({ ...prev, whatsapp: validationResult.message }));
+          }
+        }
+        return;
+      }
+
+      // Check if WhatsApp number is different from already verified phone number
+      const phoneNormalized = phoneNumber.replace(/\D/g, '');
+      const whatsappNormalized = userData.whatsapp.replace(/\D/g, '');
+
+      if (phoneNormalized === whatsappNormalized) {
+        // Same number already verified - skip WhatsApp verification and register directly
+        toast.success("Using verified phone number", {
+          description: "Registering with already verified phone number...",
+        });
+
+        try {
+          const registerResponse = await fetch("/api/auth/user/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tempToken}`,
+            },
+            body: JSON.stringify({
+              fullName: userData.fullName,
+              email: userData.email || undefined,
+              phone: phoneNumber, // Use the already verified phone number
+              whatsapp: userData.whatsapp,
+              instagram: userData.instagram,
+              loginMethod: loginMethod === "phone" ? "PHONE" : "GOOGLE",
+              referralCode: referralCode || undefined,
+            }),
+          });
+
+          const registerResult = await registerResponse.json();
+
+          if (registerResult.success) {
+            setAuthToken(registerResult.data.token);
+            localStorage.setItem('user_token', registerResult.data.token);
+            setUserData((prev) => ({
+              ...prev,
+              userId: registerResult.data.user.userId,
+            }));
+            setCurrentStep("success");
+            // Load dashboard data for new user
+            loadDashboardData(registerResult.data.token);
+          } else {
+            throw new Error(registerResult.message || "Registration failed");
+          }
+        } catch (error: any) {
+          console.error("Registration error:", error);
+          toast.error("Registration Error", {
+            description: error.message || "Failed to register. Please try again.",
+          });
+        }
+      } else {
+        // Different number - need WhatsApp verification
+        toast.success("Validation passed", {
+          description: "Proceeding to WhatsApp verification...",
+        });
+        setCurrentStep("phone-verify");
+      }
+    } catch (error) {
+      console.error("Validation error:", error);
+      toast.error("Validation Error", {
+        description: "Failed to validate user data. Please try again.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (currentStep === "login") {
@@ -172,12 +830,28 @@ export default function EventPage() {
 
             {referralCode ? (
               <div className="bg-lime/10 border border-lime/20 rounded-xl p-4 mt-4">
-                <p className="text-sm text-charcoal/80">
-                  🎉 Hey, you are invited from{" "}
-                  <span className="font-semibold text-lime">
-                    @{referralData.referrerUsername}
-                  </span>
-                </p>
+                {referralValidated && referrerInfo ? (
+                  <div>
+                    <p className="text-sm text-charcoal/80">
+                      🎉 Hey! You're invited by{" "}
+                      <span className="font-semibold text-lime">
+                        {referrerInfo.fullName} (@{referrerInfo.instagram})
+                      </span>
+                    </p>
+                    <p className="text-xs text-charcoal/60 mt-1">
+                      Member since {new Date(referrerInfo.memberSince).toLocaleDateString()}
+                    </p>
+                  </div>
+                ) : (
+                  <div>
+                    <p className="text-sm text-charcoal/80">
+                      🔍 Validating referral code: <span className="font-mono text-teal">{referralCode}</span>
+                    </p>
+                    <p className="text-xs text-charcoal/60 mt-1">
+                      Please wait...
+                    </p>
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-sm text-charcoal/60 mt-2">
@@ -217,11 +891,18 @@ export default function EventPage() {
                           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                         />
                         <button
-                          onClick={handlePhoneLogin}
-                          disabled={!phoneNumber}
-                          className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          onClick={() => handlePhoneLogin()}
+                          disabled={!phoneNumber || isLoading}
+                          className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                         >
-                          Send OTP Code
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Sending...
+                            </>
+                          ) : (
+                            "Send OTP Code"
+                          )}
                         </button>
                       </div>
                     ) : (
@@ -240,11 +921,18 @@ export default function EventPage() {
                           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent text-center text-lg tracking-widest"
                         />
                         <button
-                          onClick={handleOtpVerification}
-                          disabled={otpCode.length !== 6}
-                          className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          onClick={handleLoginOtpVerification}
+                          disabled={otpCode.length !== 6 || isLoading}
+                          className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                         >
-                          Verify & Continue
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Verifying...
+                            </>
+                          ) : (
+                            "Verify & Continue"
+                          )}
                         </button>
                       </div>
                     )}
@@ -265,7 +953,8 @@ export default function EventPage() {
               {/* Google Login */}
               <button
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-coral/50 text-charcoal transition-all hover:bg-coral/5"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-3 p-4 rounded-xl border-2 border-gray-200 hover:border-coral/50 text-charcoal transition-all hover:bg-coral/5 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -285,7 +974,14 @@ export default function EventPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="font-medium">Continue with Google</span>
+{isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="font-medium">Signing in...</span>
+                  </>
+                ) : (
+                  <span className="font-medium">Continue with Google</span>
+                )}
               </button>
             </div>
 
@@ -317,6 +1013,113 @@ export default function EventPage() {
               className="flex-1 text-center py-2 px-4 bg-white/60 backdrop-blur-sm rounded-lg border border-white/20 text-charcoal/70 hover:text-charcoal hover:bg-white/80 transition-all text-sm font-medium"
             >
               Admin Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (currentStep === "phone-verify") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-cream via-mint/20 to-teal/10 flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-teal/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Phone className="w-8 h-8 text-teal" />
+            </div>
+            <h1 className="text-2xl font-display font-bold text-charcoal mb-2">
+              Verify Your WhatsApp
+            </h1>
+            <p className="text-charcoal/70">
+              Hi {userData.fullName}! We'll send a verification code to your WhatsApp number
+            </p>
+          </div>
+
+          {/* Phone Verification */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg space-y-4">
+            {!showOtpInput ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-charcoal mb-2">
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={userData.whatsapp}
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent bg-gray-50"
+                    placeholder="+62 812-3456-7890"
+                    readOnly
+                  />
+                  <p className="text-xs text-charcoal/60 mt-1">
+                    We'll send the verification code to this WhatsApp number
+                  </p>
+                </div>
+                <button
+                  onClick={() => handlePhoneLogin(userData.whatsapp)}
+                  disabled={!userData.whatsapp || isLoading}
+                  className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Verification Code"
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-charcoal/70">
+                  Enter the 6-digit code sent to {userData.whatsapp}
+                </p>
+                <input
+                  type="text"
+                  placeholder="123456"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) =>
+                    setOtpCode(e.target.value.replace(/\D/g, ""))
+                  }
+                  className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent text-center text-lg tracking-widest"
+                />
+                <button
+                  onClick={verificationToken ? handleExistingUserVerification : handleOtpVerification}
+                  disabled={otpCode.length !== 6 || isLoading}
+                  className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    verificationToken ? "Verify & Login" : "Verify & Complete Registration"
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    setOtpCode("");
+                    setShowOtpInput(false);
+                  }}
+                  className="w-full text-teal p-2 text-sm font-medium hover:text-teal/80 transition-colors"
+                >
+                  ← Change Phone Number
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Back to Home */}
+          <div className="text-center mt-6">
+            <Link
+              href="/"
+              className="text-teal hover:text-teal/80 text-sm font-medium"
+            >
+              ← Back to Home
             </Link>
           </div>
         </div>
@@ -356,9 +1159,17 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, fullName: e.target.value }))
                 }
-                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                onFocus={() => setFieldErrors(prev => ({ ...prev, fullName: "" }))}
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
+                  fieldErrors.fullName
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-200 focus:ring-teal'
+                }`}
                 placeholder="Enter your full name"
               />
+              {fieldErrors.fullName && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.fullName}</p>
+              )}
             </div>
 
             {/* Instagram Username */}
@@ -380,10 +1191,18 @@ export default function EventPage() {
                       instagram: e.target.value,
                     }))
                   }
-                  className="w-full p-3 pl-8 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                  onFocus={() => setFieldErrors(prev => ({ ...prev, instagram: "" }))}
+                  className={`w-full p-3 pl-8 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
+                    fieldErrors.instagram
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 focus:ring-teal'
+                  }`}
                   placeholder="your_username"
                 />
               </div>
+              {fieldErrors.instagram && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.instagram}</p>
+              )}
             </div>
 
             {/* WhatsApp Number (Auto-filled) */}
@@ -398,12 +1217,21 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, whatsapp: e.target.value }))
                 }
-                className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent bg-gray-50"
+                onFocus={() => setFieldErrors(prev => ({ ...prev, whatsapp: "" }))}
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
+                  fieldErrors.whatsapp
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-200 focus:ring-teal'
+                } ${userData.whatsapp ? 'bg-gray-50' : ''}`}
                 placeholder="+62 812-3456-7890"
               />
-              <p className="text-xs text-charcoal/60 mt-1">
-                Auto-filled from your login method
-              </p>
+              {fieldErrors.whatsapp ? (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.whatsapp}</p>
+              ) : (
+                <p className="text-xs text-charcoal/60 mt-1">
+                  Auto-filled from your login method
+                </p>
+              )}
             </div>
 
             {/* Email (Auto-filled for Google, manual for phone) */}
@@ -418,24 +1246,39 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, email: e.target.value }))
                 }
-                className={`w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent ${
-                  userData.email ? "bg-gray-50" : ""
-                }`}
+                onFocus={() => setFieldErrors(prev => ({ ...prev, email: "" }))}
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
+                  fieldErrors.email
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-200 focus:ring-teal'
+                } ${userData.email ? "bg-gray-50" : ""}`}
                 placeholder="your.email@example.com"
               />
-              {userData.email && (
+              {fieldErrors.email ? (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+              ) : userData.email ? (
                 <p className="text-xs text-charcoal/60 mt-1">
                   Auto-filled from your Google account
                 </p>
-              )}
+              ) : null}
             </div>
 
             <button
               type="submit"
-              className="w-full bg-coral text-white p-4 rounded-lg font-medium hover:bg-coral/90 transition-colors flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full bg-coral text-white p-4 rounded-lg font-medium hover:bg-coral/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
-              Complete RSVP
-              <ArrowRight className="w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Validating...
+                </>
+              ) : (
+                <>
+                  Continue to Verification
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
           </form>
         </div>
@@ -472,13 +1315,27 @@ export default function EventPage() {
               {/* QR Code Section */}
               <div className="bg-white rounded-xl p-6 border border-gray-100 mb-6">
                 <div className="text-center space-y-4">
-                  <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center mx-auto">
-                    <QrCode className="w-16 h-16 text-charcoal/40" />
-                  </div>
+                  {isLoadingDashboard ? (
+                    <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center mx-auto">
+                      <div className="animate-spin h-6 w-6 border-2 border-coral border-t-transparent rounded-full"></div>
+                    </div>
+                  ) : dashboardData?.qrCode ? (
+                    <div className="w-32 h-32 mx-auto">
+                      <img
+                        src={dashboardData.qrCode.url}
+                        alt="Event QR Code"
+                        className="w-full h-full rounded-lg"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center mx-auto">
+                      <QrCode className="w-16 h-16 text-charcoal/40" />
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm text-charcoal/60">Your Event ID</p>
                     <p className="text-2xl font-bold text-charcoal font-mono">
-                      {userData.userId}
+                      {dashboardData?.user.userId || userData.userId}
                     </p>
                   </div>
                   <p className="text-xs text-charcoal/60">
@@ -491,33 +1348,99 @@ export default function EventPage() {
                 <h4 className="font-medium text-charcoal mb-3">
                   Account Details
                 </h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-charcoal/60">Full Name:</span>
-                    <span className="text-charcoal font-medium">
-                      {userData.fullName}
-                    </span>
+                {isLoadingDashboard ? (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-charcoal/60">Loading...</span>
+                      <div className="animate-pulse bg-gray-200 h-4 w-24 rounded"></div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-charcoal/60">Instagram:</span>
-                    <span className="text-charcoal font-medium">
-                      @{userData.instagram}
-                    </span>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-charcoal/60">Full Name:</span>
+                      <span className="text-charcoal font-medium">
+                        {dashboardData?.user.fullName || userData.fullName}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-charcoal/60">Instagram:</span>
+                      <span className="text-charcoal font-medium">
+                        @{dashboardData?.user.instagram || userData.instagram}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-charcoal/60">WhatsApp:</span>
+                      <span className="text-charcoal font-medium">
+                        {dashboardData?.user.whatsapp || userData.whatsapp}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-charcoal/60">Email:</span>
+                      <span className="text-charcoal font-medium">
+                        {dashboardData?.user.email || userData.email}
+                      </span>
+                    </div>
+                    {dashboardData?.user.rsvpAt && (
+                      <div className="flex justify-between">
+                        <span className="text-charcoal/60">RSVP'd:</span>
+                        <span className="text-charcoal font-medium">
+                          {new Date(dashboardData.user.rsvpAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-charcoal/60">WhatsApp:</span>
-                    <span className="text-charcoal font-medium">
-                      {userData.whatsapp}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-charcoal/60">Email:</span>
-                    <span className="text-charcoal font-medium">
-                      {userData.email}
-                    </span>
-                  </div>
-                </div>
+                )}
               </div>
+
+              {/* Referral Statistics */}
+              {dashboardData?.referralStats && (
+                <div className="bg-teal/10 rounded-xl p-4 border border-teal/20 mb-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Users className="w-6 h-6 text-teal" />
+                    <h3 className="font-semibold text-charcoal">
+                      Referral Statistics
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-teal">
+                        {dashboardData.referralStats.totalReferrals}
+                      </p>
+                      <p className="text-xs text-charcoal/60">Friends Referred</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-teal">
+                        ${dashboardData.referralStats.referralEarnings}
+                      </p>
+                      <p className="text-xs text-charcoal/60">Earnings</p>
+                    </div>
+                  </div>
+                  {dashboardData.referralStats.referrals.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-charcoal mb-2">Recent Referrals:</p>
+                      <div className="space-y-1">
+                        {dashboardData.referralStats.referrals.slice(0, 3).map((referral) => (
+                          <div key={referral.id} className="flex justify-between text-xs">
+                            <span className="text-charcoal/70">@{referral.instagram}</span>
+                            <span className="text-charcoal/60">
+                              {new Date(referral.joinedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {dashboardData.referrer && (
+                    <div className="mt-4 pt-4 border-t border-teal/20">
+                      <p className="text-xs text-charcoal/60 mb-1">Referred by:</p>
+                      <p className="text-sm font-medium text-charcoal">
+                        {dashboardData.referrer.fullName} (@{dashboardData.referrer.instagram})
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="bg-coral/10 rounded-xl p-4 border border-coral/20 mb-6">
                 <div className="flex items-center gap-3 mb-3">
@@ -527,7 +1450,7 @@ export default function EventPage() {
                   </h3>
                 </div>
                 <p className="text-sm text-charcoal/70 mb-4">
-                  Invite friends and earn 5% of their event expenses!
+                  Invite friends and earn $5 for each successful referral!
                 </p>
                 <button
                   onClick={copyReferralLink}
@@ -591,53 +1514,97 @@ export default function EventPage() {
                   Top Spenders Leaderboard
                 </h3>
               </div>
-              <div className="space-y-3">
-                {leaderboard.slice(0, 5).map((entry, index) => (
-                  <div
-                    key={entry.username}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      entry.username === userData.instagram ||
-                      entry.username === "you"
-                        ? "bg-coral/10 border border-coral/20"
-                        : "bg-gray-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                          index === 0
-                            ? "bg-amber-100 text-amber-600"
-                            : index === 1
-                            ? "bg-gray-100 text-gray-600"
-                            : index === 2
-                            ? "bg-orange-100 text-orange-600"
-                            : "bg-gray-50 text-gray-500"
-                        }`}
-                      >
-                        #{entry.rank}
+              {isLoadingDashboard ? (
+                <div className="space-y-3">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-24"></div>
                       </div>
-                      <span className="font-medium text-charcoal">
-                        @{entry.username}
-                        {(entry.username === userData.instagram ||
-                          entry.username === "you") &&
-                          " (You)"}
+                      <div className="h-4 bg-gray-200 rounded animate-pulse w-20"></div>
+                    </div>
+                  ))}
+                </div>
+              ) : leaderboard.length > 0 ? (
+                <div className="space-y-3">
+                  {leaderboard.slice(0, 5).map((entry, index) => (
+                    <div
+                      key={entry.username}
+                      className={`flex items-center justify-between p-3 rounded-lg ${
+                        entry.username === userData.instagram
+                          ? "bg-coral/10 border border-coral/20"
+                          : "bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                            index === 0
+                              ? "bg-amber-100 text-amber-600"
+                              : index === 1
+                              ? "bg-gray-100 text-gray-600"
+                              : index === 2
+                              ? "bg-orange-100 text-orange-600"
+                              : "bg-gray-50 text-gray-500"
+                          }`}
+                        >
+                          #{entry.rank}
+                        </div>
+                        <span className="font-medium text-charcoal">
+                          @{entry.username}
+                          {entry.username === userData.instagram && " (You)"}
+                        </span>
+                      </div>
+                      <span className="font-semibold text-charcoal">
+                        IDR {entry.expenses.toLocaleString()}
                       </span>
                     </div>
-                    <span className="font-semibold text-charcoal">
-                      IDR {entry.expenses.toLocaleString()}
-                    </span>
+                  ))}
+
+                  {/* Show current user's rank if not in top 5 */}
+                  {dashboardData?.leaderboard.currentUserRank &&
+                   dashboardData.leaderboard.currentUserRank > 5 && (
+                    <>
+                      <div className="text-center py-2">
+                        <span className="text-sm text-charcoal/60">...</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-lg bg-coral/10 border border-coral/20">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-coral/20 text-coral">
+                            #{dashboardData.leaderboard.currentUserRank}
+                          </div>
+                          <span className="font-medium text-charcoal">
+                            @{userData.instagram} (You)
+                          </span>
+                        </div>
+                        <span className="font-semibold text-charcoal">
+                          IDR {dashboardData.leaderboard.currentUserExpenses.toLocaleString()}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 mb-2">
+                    <Trophy className="w-12 h-12 mx-auto" />
                   </div>
-                ))}
-              </div>
+                  <p className="text-charcoal/60">No spenders yet</p>
+                  <p className="text-sm text-charcoal/50">
+                    Be the first to make a purchase at the event!
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-              {referralCode && (
+              {referralCode && referralValidated && referrerInfo && (
                 <div className="bg-lime/10 rounded-lg p-3 border border-lime/20 mb-4">
                   <p className="text-sm text-charcoal/70 text-center">
                     Your account connected to{" "}
                     <span className="font-semibold text-lime">
-                      @{referralData.referrerUsername}
+                      {referrerInfo.fullName} (@{referrerInfo.instagram})
                     </span>
                   </p>
                 </div>
@@ -693,6 +1660,97 @@ export default function EventPage() {
                   commission)
                 </p>
               </div>
+            </div>
+
+            {/* Expense History */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
+              <h3 className="font-semibold text-charcoal mb-4">
+                My Event Expenses
+              </h3>
+              {isLoadingDashboard ? (
+                <div className="text-center py-4">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              ) : dashboardData?.expenseStats.expenses.length > 0 ? (
+                <div className="space-y-3">
+                  {dashboardData.expenseStats.expenses.slice(0, 5).map((expense) => (
+                    <div
+                      key={expense.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
+                    >
+                      <div className="flex items-center gap-3">
+                        {expense.photoUrl && (
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                            <img
+                              src={expense.photoUrl}
+                              alt="Expense photo"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium text-charcoal text-sm">
+                            {expense.description || expense.category}
+                          </p>
+                          <p className="text-xs text-charcoal/60">
+                            {new Date(expense.timestamp).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                            {expense.staff && ` • by ${expense.staff.fullName}`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-charcoal">
+                          IDR {expense.amount.toLocaleString()}
+                        </p>
+                        <p className="text-xs text-charcoal/60">
+                          #{expense.expenseId}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+
+                  {dashboardData.expenseStats.expenses.length > 5 && (
+                    <div className="text-center pt-2">
+                      <p className="text-sm text-charcoal/60">
+                        and {dashboardData.expenseStats.expenses.length - 5} more expenses...
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="pt-3 border-t border-gray-200">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-charcoal">Total Expenses:</span>
+                      <span className="text-lg font-bold text-charcoal">
+                        IDR {dashboardData.expenseStats.totalExpenses.toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-charcoal/60 mt-1">
+                      {dashboardData.expenseStats.expenseCount} transaction{dashboardData.expenseStats.expenseCount !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-400 mb-2">
+                    <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-charcoal/60">No expenses yet</p>
+                  <p className="text-sm text-charcoal/50">
+                    Your purchases at the event will appear here
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Event Details Reminder */}

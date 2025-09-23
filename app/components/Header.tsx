@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import { Instagram, MessageCircle, Menu, X, ChevronDown, User, LogOut, Shield, Users } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg
@@ -17,8 +18,10 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Header() {
+  const { data: session } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = (dropdown: string) => {
@@ -36,6 +39,100 @@ export default function Header() {
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+  };
+
+  // Check authentication state
+  useEffect(() => {
+    const checkAuthState = () => {
+      const adminToken = localStorage.getItem('admin_token');
+      const staffToken = localStorage.getItem('staff_token');
+      const userToken = localStorage.getItem('user_token');
+
+      if (adminToken) {
+        setUserRole('admin');
+      } else if (staffToken) {
+        setUserRole('staff');
+      } else if (userToken) {
+        setUserRole('user');
+      } else if (session?.user) {
+        // Check if we're on event page - if so, they're likely an event user
+        const currentPath = window.location.pathname;
+        if (currentPath === '/event') {
+          setUserRole('user');
+        } else {
+          // For other pages, check if they have specific admin/staff access
+          setUserRole(null);
+        }
+      } else {
+        setUserRole(null);
+      }
+    };
+
+    checkAuthState();
+
+    // Listen for storage changes to update auth state
+    window.addEventListener('storage', checkAuthState);
+    return () => window.removeEventListener('storage', checkAuthState);
+  }, [session]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      console.log('🚪 Header logout - Setting logout flags in localStorage');
+
+      // Set logout flags to prevent automatic re-login
+      localStorage.setItem('admin_explicitly_logged_out', 'true');
+      localStorage.setItem('staff_explicitly_logged_out', 'true');
+      localStorage.setItem('user_explicitly_logged_out', 'true');
+
+      // Clear local storage tokens
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('staff_token');
+      localStorage.removeItem('user_token');
+      setUserRole(null);
+
+      // Sign out from NextAuth if using Google OAuth
+      if (session) {
+        await signOut({ redirect: false });
+      }
+
+      closeMobileMenu();
+
+      console.log('✅ Header logout successful - logout flags set to prevent auto-login');
+
+      // Redirect to home page after logout
+      window.location.href = '/';
+    } catch (error) {
+      console.error('❌ Header logout error:', error);
+      // Still perform cleanup even if error occurs
+      localStorage.setItem('admin_explicitly_logged_out', 'true');
+      localStorage.setItem('staff_explicitly_logged_out', 'true');
+      localStorage.setItem('user_explicitly_logged_out', 'true');
+      localStorage.removeItem('admin_token');
+      localStorage.removeItem('staff_token');
+      localStorage.removeItem('user_token');
+      setUserRole(null);
+      closeMobileMenu();
+      window.location.href = '/';
+    }
+  };
+
+  // Get dashboard URL based on user role
+  const getDashboardUrl = () => {
+    const adminToken = localStorage.getItem('admin_token');
+    const staffToken = localStorage.getItem('staff_token');
+    const userToken = localStorage.getItem('user_token');
+
+    // If user has tokens, use those to determine dashboard
+    if (adminToken) return '/admin';
+    if (staffToken) return '/staff';
+    if (userToken) return '/event';
+
+    // Default fallback based on user role
+    if (userRole === 'admin') return '/admin';
+    if (userRole === 'staff') return '/staff';
+    if (userRole === 'user') return '/event';
+    return '/';
   };
 
   // Close mobile menu when clicking outside
@@ -256,6 +353,56 @@ export default function Header() {
               <span className="ml-2">🎉</span>
             </a>
 
+            {/* Authentication Menu */}
+            {userRole && (
+              <div
+                className="relative hidden lg:block"
+                onMouseEnter={() => handleMouseEnter("auth")}
+                onMouseLeave={handleMouseLeave}
+              >
+                <button className="flex items-center text-charcoal hover:text-teal transition-colors">
+                  <User className="w-5 h-5 mr-1" />
+                  {userRole === 'admin' ? (
+                    <Shield className="w-4 h-4" />
+                  ) : userRole === 'staff' ? (
+                    <Users className="w-4 h-4" />
+                  ) : (
+                    <User className="w-4 h-4" />
+                  )}
+                  <ChevronDown className="w-4 h-4 ml-1" />
+                </button>
+
+                {activeDropdown === "auth" && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-2 z-50">
+                    <Link
+                      href={getDashboardUrl()}
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-mint/10 hover:text-teal transition-colors"
+                    >
+                      {userRole === 'admin' ? (
+                        <Shield className="w-4 h-4 mr-3" />
+                      ) : userRole === 'staff' ? (
+                        <Users className="w-4 h-4 mr-3" />
+                      ) : (
+                        <User className="w-4 h-4 mr-3" />
+                      )}
+                      <span>
+                        {userRole === 'admin' ? 'Admin Dashboard' :
+                         userRole === 'staff' ? 'Staff Dashboard' :
+                         'My Event Page'}
+                      </span>
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    >
+                      <LogOut className="w-4 h-4 mr-3" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -339,6 +486,42 @@ export default function Header() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Authentication Section */}
+                  {userRole && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <div className="text-lg font-medium text-charcoal mb-3">
+                        Account
+                      </div>
+                      <div className="space-y-3 ml-4">
+                        <Link
+                          href={getDashboardUrl()}
+                          onClick={closeMobileMenu}
+                          className="flex items-center text-gray-600 hover:text-teal transition-colors"
+                        >
+                          {userRole === 'admin' ? (
+                            <Shield className="w-5 h-5 mr-3" />
+                          ) : userRole === 'staff' ? (
+                            <Users className="w-5 h-5 mr-3" />
+                          ) : (
+                            <User className="w-5 h-5 mr-3" />
+                          )}
+                          <span>
+                            {userRole === 'admin' ? 'Admin Dashboard' :
+                             userRole === 'staff' ? 'Staff Dashboard' :
+                             'My Event Page'}
+                          </span>
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center text-gray-600 hover:text-red-600 transition-colors w-full text-left"
+                        >
+                          <LogOut className="w-5 h-5 mr-3" />
+                          <span>Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Mobile Contact Button */}
                   <div className="pt-4 border-t border-gray-200">

@@ -1,0 +1,225 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+enum LoginMethod {
+  PHONE
+  GOOGLE
+  INSTAGRAM
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  DENIED
+}
+
+// User model for event attendees
+model User {
+  id            String   @id @default(cuid())
+  userId        String   @unique // Custom user ID like SP123456
+
+  // Personal information
+  fullName      String
+  email         String?  @unique
+  phone         String?  @unique
+  whatsapp      String?
+  instagram     String   @unique
+
+  // Authentication
+  loginMethod   LoginMethod
+  isActive      Boolean  @default(true)
+
+  // Event participation
+  isRSVP        Boolean  @default(false)
+  rsvpAt        DateTime?
+
+  // Referral system
+  referralCode  String?  @unique
+  referredBy    String?
+  referrer      User?    @relation("UserReferrals", fields: [referredBy], references: [id])
+  referrals     User[]   @relation("UserReferrals")
+
+  // Relations
+  expenses      Expense[]
+  otpCodes      OtpCode[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Staff model
+model Staff {
+  id               String             @id @default(cuid())
+  staffId          String             @unique // Custom staff ID like STF001
+
+  // Personal information
+  fullName         String
+  email            String?            @unique
+  phone            String?            @unique
+  whatsapp         String?
+  instagram        String             @unique
+
+  // Authentication
+  loginMethod      LoginMethod
+  googleId         String?            @unique // Google OAuth ID
+
+  // Status
+  registrationStatus RegistrationStatus @default(PENDING)
+  isActive         Boolean            @default(false)
+  approvedAt       DateTime?
+  approvedBy       String?            // Admin ID who approved
+
+  // Relations
+  expensesCreated  Expense[]
+  otpCodes         OtpCode[]
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@map("staff")
+}
+
+// Admin model
+model Admin {
+  id               String             @id @default(cuid())
+  adminId          String             @unique // Custom admin ID like ADM001
+
+  // Personal information
+  fullName         String
+  email            String?            @unique
+  phone            String?            @unique
+  whatsapp         String?
+  instagram        String             @unique
+
+  // Authentication
+  loginMethod      LoginMethod
+  googleId         String?            @unique // Google OAuth ID
+
+  // Status
+  registrationStatus RegistrationStatus @default(PENDING)
+  isActive         Boolean            @default(false)
+  isSuperAdmin     Boolean            @default(false)
+  approvedAt       DateTime?
+  approvedBy       String?            // Super admin ID who approved
+
+  // Relations
+  otpCodes         OtpCode[]
+
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@map("admins")
+}
+
+// Expense tracking
+model Expense {
+  id               String   @id @default(cuid())
+  expenseId        String   @unique // Custom expense ID like EXP001
+
+  // Customer information
+  customerId       String
+  customerName     String
+  customerInstagram String
+
+  // Expense details
+  amount           Int      // Amount in IDR (cents)
+  description      String
+  category         String?  // Food & Beverages, Merchandise, etc.
+  photoUrl         String?  @db.Text // Base64 encoded photo data
+
+  // Staff who recorded the expense
+  staffId          String
+  staff            Staff    @relation(fields: [staffId], references: [id])
+
+  // User who made the expense (if registered)
+  userId           String?
+  user             User?    @relation(fields: [userId], references: [id])
+
+  // Metadata
+  timestamp        DateTime @default(now())
+  isEdited         Boolean  @default(false)
+  editedAt         DateTime?
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("expenses")
+}
+
+// OTP codes for authentication
+model OtpCode {
+  id         String   @id @default(cuid())
+  code       String
+  phone      String
+  purpose    String   // LOGIN, VERIFICATION
+  expiresAt  DateTime
+  isUsed     Boolean  @default(false)
+  usedAt     DateTime?
+
+  // Rate limiting
+  attemptCount Int      @default(1)
+  lastAttempt  DateTime @default(now())
+  cooldownUntil DateTime?
+
+  // Relations
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  staffId    String?
+  staff      Staff?   @relation(fields: [staffId], references: [id])
+  adminId    String?
+  admin      Admin?   @relation(fields: [adminId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@map("otp_codes")
+}
+
+// Event configuration
+model EventConfig {
+  id              String   @id @default(cuid())
+
+  // Event details
+  name            String   @default("Summer Party Canggu")
+  date            String   @default("2024-09-27")
+  time            String   @default("14:00-21:00")
+  venue           String   @default("Canggu, Bali, Indonesia")
+  description     String?
+  maxCapacity     Int      @default(200)
+
+  // Event media
+  bannerImage     String?
+  eventHighlights String[] // Array of highlight strings
+
+  // Announcements
+  mainPageAnnouncement     String?
+  customerPageAnnouncement String?
+
+  // Social media
+  instagramHandle String?  @default("@summerpartycanggu")
+  whatsappNumber  String?  @default("+62 812-3456-7890")
+
+  // Settings
+  isActive        Boolean  @default(true)
+  allowRSVP       Boolean  @default(true)
+  allowReferrals  Boolean  @default(true)
+
+  // Referral settings
+  referralCommissionRate Float @default(0.05) // 5%
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("event_config")
+}
