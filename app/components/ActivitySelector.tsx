@@ -23,7 +23,7 @@ export default function ActivitySelector() {
   const selectedActivityData = activities.find(
     (a) => a.id === selectedActivity,
   );
-  const recommendations = selectedActivity
+  const recommendations: any = selectedActivity
     ? locationRecommendations[selectedActivity] || []
     : [];
 
