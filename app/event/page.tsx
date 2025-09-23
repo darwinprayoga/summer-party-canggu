@@ -141,7 +141,9 @@ export default function EventPage() {
     userId: "",
   });
 
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null,
+  );
   const [isLoadingDashboard, setIsLoadingDashboard] = useState(false);
 
   const [referralData, setReferralData] = useState<ReferralData>({
@@ -176,17 +178,19 @@ export default function EventPage() {
   // Validate referral code
   const validateReferralCode = async (code: string) => {
     try {
-      console.log('🔍 Validating referral code:', code);
-      const response = await fetch(`/api/referral/validate?code=${encodeURIComponent(code)}`);
+      console.log("🔍 Validating referral code:", code);
+      const response = await fetch(
+        `/api/referral/validate?code=${encodeURIComponent(code)}`,
+      );
       const result = await response.json();
 
       if (result.success && result.data.referrer) {
-        console.log('✅ Valid referral code:', result.data.referrer);
+        console.log("✅ Valid referral code:", result.data.referrer);
         setReferrerInfo(result.data.referrer);
         setReferralValidated(true);
 
         // Update referral data with real referrer info
-        setReferralData(prev => ({
+        setReferralData((prev) => ({
           ...prev,
           referrerUsername: result.data.referrer.instagram,
         }));
@@ -195,14 +199,14 @@ export default function EventPage() {
           description: `You're invited by @${result.data.referrer.instagram}`,
         });
       } else {
-        console.log('❌ Invalid referral code:', result.message);
+        console.log("❌ Invalid referral code:", result.message);
         setReferralValidated(false);
         toast.error("Invalid Referral Code", {
           description: result.message || "The referral code is not valid",
         });
       }
     } catch (error) {
-      console.error('Referral validation error:', error);
+      console.error("Referral validation error:", error);
       setReferralValidated(false);
       toast.error("Referral Validation Failed", {
         description: "Could not validate referral code",
@@ -216,7 +220,7 @@ export default function EventPage() {
       const response = await fetch("/api/auth/user/profile", {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -235,13 +239,13 @@ export default function EventPage() {
         });
       } else {
         // If profile fetch fails, the token might be invalid
-        console.error('Failed to load user profile:', result.message);
-        localStorage.removeItem('user_token');
+        console.error("Failed to load user profile:", result.message);
+        localStorage.removeItem("user_token");
         setAuthToken("");
         setCurrentStep("login");
       }
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error("Error loading user profile:", error);
       // Don't redirect on network errors, keep user authenticated
     }
   };
@@ -253,7 +257,7 @@ export default function EventPage() {
       const response = await fetch("/api/user/dashboard", {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
@@ -265,14 +269,17 @@ export default function EventPage() {
 
         // Update referral data with real API data
         setReferralData({
-          referrerUsername: result.data.referrer?.instagram || "beach_vibes_bali",
+          referrerUsername:
+            result.data.referrer?.instagram || "beach_vibes_bali",
           myExpenses: result.data.expenseStats.totalExpenses,
           myEarnings: result.data.referralStats.referralEarnings,
-          referredUsers: result.data.referralStats.referrals.map((referral: any) => ({
-            username: referral.instagram,
-            expenses: 0, // We'll need to calculate this separately if needed
-            earnings: 0, // We'll need to calculate this separately if needed
-          })),
+          referredUsers: result.data.referralStats.referrals.map(
+            (referral: any) => ({
+              username: referral.instagram,
+              expenses: 0, // We'll need to calculate this separately if needed
+              earnings: 0, // We'll need to calculate this separately if needed
+            }),
+          ),
         });
 
         // Update leaderboard with real API data
@@ -281,17 +288,17 @@ export default function EventPage() {
             username: spender.username,
             expenses: spender.totalExpenses,
             rank: spender.rank,
-          }))
+          })),
         );
 
-        console.log('✅ Dashboard data loaded successfully', result.data);
+        console.log("✅ Dashboard data loaded successfully", result.data);
       } else {
-        console.error('Failed to load dashboard data:', result.message);
-        toast.error('Failed to load dashboard data');
+        console.error("Failed to load dashboard data:", result.message);
+        toast.error("Failed to load dashboard data");
       }
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      toast.error('Failed to load dashboard data');
+      console.error("Error loading dashboard data:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setIsLoadingDashboard(false);
     }
@@ -300,41 +307,45 @@ export default function EventPage() {
   // Check for existing authentication on component mount
   useEffect(() => {
     const checkExistingAuth = () => {
-      console.log('🔍 Event page loading - checking tokens...');
-      const userToken = localStorage.getItem('user_token');
-      const staffToken = localStorage.getItem('staff_token');
-      const adminToken = localStorage.getItem('admin_token');
+      console.log("🔍 Event page loading - checking tokens...");
+      const userToken = localStorage.getItem("user_token");
+      const staffToken = localStorage.getItem("staff_token");
+      const adminToken = localStorage.getItem("admin_token");
 
-      console.log('📋 Token status:', {
+      console.log("📋 Token status:", {
         userToken: !!userToken,
         staffToken: !!staffToken,
-        adminToken: !!adminToken
+        adminToken: !!adminToken,
       });
 
       // Security check: if user has non-user tokens, prevent access
       if (!userToken && (staffToken || adminToken)) {
         // User is trying to access event page with staff/admin credentials
         if (staffToken) {
-          console.warn('🚨 Security: Staff token detected on event page - access denied');
+          console.warn(
+            "🚨 Security: Staff token detected on event page - access denied",
+          );
         }
         if (adminToken) {
-          console.warn('🚨 Security: Admin token detected on event page - access denied');
+          console.warn(
+            "🚨 Security: Admin token detected on event page - access denied",
+          );
         }
-        console.log('❌ No user token found - staying on login page');
+        console.log("❌ No user token found - staying on login page");
         setCurrentStep("login");
         return;
       }
 
       if (userToken) {
-        console.log('✅ Valid user token found - proceeding to dashboard');
+        console.log("✅ Valid user token found - proceeding to dashboard");
         // User is already authenticated, go to success page
         setCurrentStep("success");
 
         // Try to validate the token and load user data
         try {
           // Decode the token to get user info (basic validation)
-          const payload = JSON.parse(atob(userToken.split('.')[1]));
-          if (payload.id && payload.role === 'USER') {
+          const payload = JSON.parse(atob(userToken.split(".")[1]));
+          if (payload.id && payload.role === "USER") {
             setAuthToken(userToken);
             // Load complete user data from server
             loadUserProfile(userToken);
@@ -343,12 +354,12 @@ export default function EventPage() {
           }
         } catch (error) {
           // Invalid token, clear it and stay on login
-          console.error('Invalid token found:', error);
-          localStorage.removeItem('user_token');
+          console.error("Invalid token found:", error);
+          localStorage.removeItem("user_token");
           setCurrentStep("login");
         }
       } else {
-        console.log('ℹ️ No user token found - staying on login page');
+        console.log("ℹ️ No user token found - staying on login page");
       }
     };
 
@@ -366,16 +377,23 @@ export default function EventPage() {
   useEffect(() => {
     const handleGoogleOAuthReturn = async () => {
       // Security check: Only process Google OAuth if user doesn't have non-user tokens
-      const staffToken = localStorage.getItem('staff_token');
-      const adminToken = localStorage.getItem('admin_token');
+      const staffToken = localStorage.getItem("staff_token");
+      const adminToken = localStorage.getItem("admin_token");
 
       if (staffToken || adminToken) {
-        console.warn('🚨 Security: Google OAuth session detected but user has non-user tokens - ignoring OAuth for event page');
+        console.warn(
+          "🚨 Security: Google OAuth session detected but user has non-user tokens - ignoring OAuth for event page",
+        );
         return;
       }
 
       // Check if we have a session but no user_token and haven't processed this session yet
-      if (session?.user?.email && !localStorage.getItem('user_token') && !hasProcessedOAuth && !isLoading) {
+      if (
+        session?.user?.email &&
+        !localStorage.getItem("user_token") &&
+        !hasProcessedOAuth &&
+        !isLoading
+      ) {
         setHasProcessedOAuth(true); // Prevent multiple calls
         setIsLoading(true);
         try {
@@ -406,7 +424,7 @@ export default function EventPage() {
               } else {
                 // Existing user with verified phone - go to success page
                 setAuthToken(authResult.data.token);
-                localStorage.setItem('user_token', authResult.data.token);
+                localStorage.setItem("user_token", authResult.data.token);
                 setUserData({
                   phone: authResult.data.user.phone || "",
                   email: authResult.data.user.email || "",
@@ -466,16 +484,16 @@ export default function EventPage() {
   // Send OTP to WhatsApp number
   const handlePhoneLogin = async (whatsappNumber?: string) => {
     const phoneToUse = whatsappNumber || phoneNumber;
-    console.log('🔍 Attempting to send OTP to:', phoneToUse);
+    console.log("🔍 Attempting to send OTP to:", phoneToUse);
 
     if (!phoneToUse || isLoading) {
-      console.log('❌ Validation failed:', { phoneToUse, isLoading });
+      console.log("❌ Validation failed:", { phoneToUse, isLoading });
       return;
     }
 
     setIsLoading(true);
     try {
-      console.log('📱 Making request to /api/auth/phone/send-otp');
+      console.log("📱 Making request to /api/auth/phone/send-otp");
       const response = await fetch("/api/auth/phone/send-otp", {
         method: "POST",
         headers: {
@@ -484,19 +502,19 @@ export default function EventPage() {
         body: JSON.stringify({ phone: phoneToUse }),
       });
 
-      console.log('📡 Response status:', response.status);
+      console.log("📡 Response status:", response.status);
       const result = await response.json();
-      console.log('📋 Response data:', result);
+      console.log("📋 Response data:", result);
 
       if (result.success) {
-        console.log('✅ OTP sent successfully');
+        console.log("✅ OTP sent successfully");
         setShowOtpInput(true);
       } else {
-        console.log('❌ OTP sending failed:', result.message);
+        console.log("❌ OTP sending failed:", result.message);
         alert(result.message || "Failed to send OTP");
       }
     } catch (error) {
-      console.error('❌ Request error:', error);
+      console.error("❌ Request error:", error);
       alert("Failed to send OTP. Please try again.");
     } finally {
       setIsLoading(false);
@@ -516,7 +534,7 @@ export default function EventPage() {
         },
         body: JSON.stringify({
           phone: userData.whatsapp,
-          code: otpCode
+          code: otpCode,
         }),
       });
 
@@ -545,7 +563,7 @@ export default function EventPage() {
 
         if (registerResult.success) {
           setAuthToken(registerResult.data.token);
-          localStorage.setItem('user_token', registerResult.data.token);
+          localStorage.setItem("user_token", registerResult.data.token);
           setUserData((prev) => ({
             ...prev,
             userId: registerResult.data.user.userId,
@@ -557,11 +575,23 @@ export default function EventPage() {
           // Handle registration errors
           if (registerResult.errors) {
             // Handle field-specific errors
-            if (registerResult.errors.some((err: any) => err.path?.includes('instagram'))) {
+            if (
+              registerResult.errors.some((err: any) =>
+                err.path?.includes("instagram"),
+              )
+            ) {
               alert("Instagram username is invalid or already taken");
-            } else if (registerResult.errors.some((err: any) => err.path?.includes('email'))) {
+            } else if (
+              registerResult.errors.some((err: any) =>
+                err.path?.includes("email"),
+              )
+            ) {
               alert("Email is invalid or already taken");
-            } else if (registerResult.errors.some((err: any) => err.path?.includes('whatsapp'))) {
+            } else if (
+              registerResult.errors.some((err: any) =>
+                err.path?.includes("whatsapp"),
+              )
+            ) {
               alert("WhatsApp number is invalid or already taken");
             } else {
               alert(registerResult.message || "Registration failed");
@@ -590,7 +620,7 @@ export default function EventPage() {
         },
         body: JSON.stringify({
           phone: phoneNumber,
-          code: otpCode
+          code: otpCode,
         }),
       });
 
@@ -600,7 +630,7 @@ export default function EventPage() {
         if (result.data.isExisting) {
           // Existing user - go to success page
           setAuthToken(result.data.token);
-          localStorage.setItem('user_token', result.data.token);
+          localStorage.setItem("user_token", result.data.token);
           setUserData({
             phone: result.data.user.phone || "",
             email: result.data.user.email || "",
@@ -646,7 +676,7 @@ export default function EventPage() {
         body: JSON.stringify({
           phone: phoneNumber,
           code: otpCode,
-          verificationToken: verificationToken
+          verificationToken: verificationToken,
         }),
       });
 
@@ -655,7 +685,7 @@ export default function EventPage() {
       if (result.success) {
         // Verification successful - go to success page
         setAuthToken(result.data.token);
-        localStorage.setItem('user_token', result.data.token);
+        localStorage.setItem("user_token", result.data.token);
         setUserData({
           phone: result.data.user.phone || "",
           email: result.data.user.email || "",
@@ -700,7 +730,12 @@ export default function EventPage() {
     setFieldErrors({ fullName: "", instagram: "", email: "", whatsapp: "" });
 
     // Client-side validation
-    if (!userData.fullName || !userData.instagram || !userData.whatsapp || !userData.email) {
+    if (
+      !userData.fullName ||
+      !userData.instagram ||
+      !userData.whatsapp ||
+      !userData.email
+    ) {
       alert("Please fill in all required fields");
       return;
     }
@@ -731,20 +766,29 @@ export default function EventPage() {
         // Set field-specific error if available
         if (validationResult.data?.conflictField) {
           const field = validationResult.data.conflictField;
-          if (field === 'instagram_handle') {
-            setFieldErrors(prev => ({ ...prev, instagram: validationResult.message }));
-          } else if (field === 'email') {
-            setFieldErrors(prev => ({ ...prev, email: validationResult.message }));
-          } else if (field === 'whatsapp_number') {
-            setFieldErrors(prev => ({ ...prev, whatsapp: validationResult.message }));
+          if (field === "instagram_handle") {
+            setFieldErrors((prev) => ({
+              ...prev,
+              instagram: validationResult.message,
+            }));
+          } else if (field === "email") {
+            setFieldErrors((prev) => ({
+              ...prev,
+              email: validationResult.message,
+            }));
+          } else if (field === "whatsapp_number") {
+            setFieldErrors((prev) => ({
+              ...prev,
+              whatsapp: validationResult.message,
+            }));
           }
         }
         return;
       }
 
       // Check if WhatsApp number is different from already verified phone number
-      const phoneNormalized = phoneNumber.replace(/\D/g, '');
-      const whatsappNormalized = userData.whatsapp.replace(/\D/g, '');
+      const phoneNormalized = phoneNumber.replace(/\D/g, "");
+      const whatsappNormalized = userData.whatsapp.replace(/\D/g, "");
 
       if (phoneNormalized === whatsappNormalized) {
         // Same number already verified - skip WhatsApp verification and register directly
@@ -774,7 +818,7 @@ export default function EventPage() {
 
           if (registerResult.success) {
             setAuthToken(registerResult.data.token);
-            localStorage.setItem('user_token', registerResult.data.token);
+            localStorage.setItem("user_token", registerResult.data.token);
             setUserData((prev) => ({
               ...prev,
               userId: registerResult.data.user.userId,
@@ -788,7 +832,8 @@ export default function EventPage() {
         } catch (error: any) {
           console.error("Registration error:", error);
           toast.error("Registration Error", {
-            description: error.message || "Failed to register. Please try again.",
+            description:
+              error.message || "Failed to register. Please try again.",
           });
         }
       } else {
@@ -839,13 +884,17 @@ export default function EventPage() {
                       </span>
                     </p>
                     <p className="text-xs text-charcoal/60 mt-1">
-                      Member since {new Date(referrerInfo.memberSince).toLocaleDateString()}
+                      Member since{" "}
+                      {new Date(referrerInfo.memberSince).toLocaleDateString()}
                     </p>
                   </div>
                 ) : (
                   <div>
                     <p className="text-sm text-charcoal/80">
-                      🔍 Validating referral code: <span className="font-mono text-teal">{referralCode}</span>
+                      🔍 Validating referral code:{" "}
+                      <span className="font-mono text-teal">
+                        {referralCode}
+                      </span>
                     </p>
                     <p className="text-xs text-charcoal/60 mt-1">
                       Please wait...
@@ -974,7 +1023,7 @@ export default function EventPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-{isLoading ? (
+                {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     <span className="font-medium">Signing in...</span>
@@ -1033,7 +1082,8 @@ export default function EventPage() {
               Verify Your WhatsApp
             </h1>
             <p className="text-charcoal/70">
-              Hi {userData.fullName}! We'll send a verification code to your WhatsApp number
+              Hi {userData.fullName}! We'll send a verification code to your
+              WhatsApp number
             </p>
           </div>
 
@@ -1087,7 +1137,11 @@ export default function EventPage() {
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent text-center text-lg tracking-widest"
                 />
                 <button
-                  onClick={verificationToken ? handleExistingUserVerification : handleOtpVerification}
+                  onClick={
+                    verificationToken
+                      ? handleExistingUserVerification
+                      : handleOtpVerification
+                  }
                   disabled={otpCode.length !== 6 || isLoading}
                   className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
@@ -1096,8 +1150,10 @@ export default function EventPage() {
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Verifying...
                     </>
+                  ) : verificationToken ? (
+                    "Verify & Login"
                   ) : (
-                    verificationToken ? "Verify & Login" : "Verify & Complete Registration"
+                    "Verify & Complete Registration"
                   )}
                 </button>
                 <button
@@ -1159,16 +1215,20 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, fullName: e.target.value }))
                 }
-                onFocus={() => setFieldErrors(prev => ({ ...prev, fullName: "" }))}
+                onFocus={() =>
+                  setFieldErrors((prev) => ({ ...prev, fullName: "" }))
+                }
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                   fieldErrors.fullName
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-200 focus:ring-teal'
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-200 focus:ring-teal"
                 }`}
                 placeholder="Enter your full name"
               />
               {fieldErrors.fullName && (
-                <p className="mt-1 text-sm text-red-600">{fieldErrors.fullName}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {fieldErrors.fullName}
+                </p>
               )}
             </div>
 
@@ -1191,17 +1251,21 @@ export default function EventPage() {
                       instagram: e.target.value,
                     }))
                   }
-                  onFocus={() => setFieldErrors(prev => ({ ...prev, instagram: "" }))}
+                  onFocus={() =>
+                    setFieldErrors((prev) => ({ ...prev, instagram: "" }))
+                  }
                   className={`w-full p-3 pl-8 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                     fieldErrors.instagram
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-200 focus:ring-teal'
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-200 focus:ring-teal"
                   }`}
                   placeholder="your_username"
                 />
               </div>
               {fieldErrors.instagram && (
-                <p className="mt-1 text-sm text-red-600">{fieldErrors.instagram}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {fieldErrors.instagram}
+                </p>
               )}
             </div>
 
@@ -1217,16 +1281,20 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, whatsapp: e.target.value }))
                 }
-                onFocus={() => setFieldErrors(prev => ({ ...prev, whatsapp: "" }))}
+                onFocus={() =>
+                  setFieldErrors((prev) => ({ ...prev, whatsapp: "" }))
+                }
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                   fieldErrors.whatsapp
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-200 focus:ring-teal'
-                } ${userData.whatsapp ? 'bg-gray-50' : ''}`}
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-200 focus:ring-teal"
+                } ${userData.whatsapp ? "bg-gray-50" : ""}`}
                 placeholder="+62 812-3456-7890"
               />
               {fieldErrors.whatsapp ? (
-                <p className="mt-1 text-sm text-red-600">{fieldErrors.whatsapp}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {fieldErrors.whatsapp}
+                </p>
               ) : (
                 <p className="text-xs text-charcoal/60 mt-1">
                   Auto-filled from your login method
@@ -1246,11 +1314,13 @@ export default function EventPage() {
                 onChange={(e) =>
                   setUserData((prev) => ({ ...prev, email: e.target.value }))
                 }
-                onFocus={() => setFieldErrors(prev => ({ ...prev, email: "" }))}
+                onFocus={() =>
+                  setFieldErrors((prev) => ({ ...prev, email: "" }))
+                }
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                   fieldErrors.email
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-200 focus:ring-teal'
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-200 focus:ring-teal"
                 } ${userData.email ? "bg-gray-50" : ""}`}
                 placeholder="your.email@example.com"
               />
@@ -1291,7 +1361,7 @@ export default function EventPage() {
       <div className="min-h-screen bg-gradient-to-br from-cream via-mint/20 to-teal/10 p-4">
         <div className="max-w-2xl mx-auto">
           {/* Success Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mt-6 mb-8">
             <div className="w-20 h-20 bg-lime/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-lime" />
             </div>
@@ -1385,7 +1455,9 @@ export default function EventPage() {
                       <div className="flex justify-between">
                         <span className="text-charcoal/60">RSVP'd:</span>
                         <span className="text-charcoal font-medium">
-                          {new Date(dashboardData.user.rsvpAt).toLocaleDateString()}
+                          {new Date(
+                            dashboardData.user.rsvpAt,
+                          ).toLocaleDateString()}
                         </span>
                       </div>
                     )}
@@ -1407,7 +1479,9 @@ export default function EventPage() {
                       <p className="text-2xl font-bold text-teal">
                         {dashboardData.referralStats.totalReferrals}
                       </p>
-                      <p className="text-xs text-charcoal/60">Friends Referred</p>
+                      <p className="text-xs text-charcoal/60">
+                        Friends Referred
+                      </p>
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-teal">
@@ -1418,24 +1492,38 @@ export default function EventPage() {
                   </div>
                   {dashboardData.referralStats.referrals.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-charcoal mb-2">Recent Referrals:</p>
+                      <p className="text-sm font-medium text-charcoal mb-2">
+                        Recent Referrals:
+                      </p>
                       <div className="space-y-1">
-                        {dashboardData.referralStats.referrals.slice(0, 3).map((referral) => (
-                          <div key={referral.id} className="flex justify-between text-xs">
-                            <span className="text-charcoal/70">@{referral.instagram}</span>
-                            <span className="text-charcoal/60">
-                              {new Date(referral.joinedAt).toLocaleDateString()}
-                            </span>
-                          </div>
-                        ))}
+                        {dashboardData.referralStats.referrals
+                          .slice(0, 3)
+                          .map((referral) => (
+                            <div
+                              key={referral.id}
+                              className="flex justify-between text-xs"
+                            >
+                              <span className="text-charcoal/70">
+                                @{referral.instagram}
+                              </span>
+                              <span className="text-charcoal/60">
+                                {new Date(
+                                  referral.joinedAt,
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                          ))}
                       </div>
                     </div>
                   )}
                   {dashboardData.referrer && (
                     <div className="mt-4 pt-4 border-t border-teal/20">
-                      <p className="text-xs text-charcoal/60 mb-1">Referred by:</p>
+                      <p className="text-xs text-charcoal/60 mb-1">
+                        Referred by:
+                      </p>
                       <p className="text-sm font-medium text-charcoal">
-                        {dashboardData.referrer.fullName} (@{dashboardData.referrer.instagram})
+                        {dashboardData.referrer.fullName} (@
+                        {dashboardData.referrer.instagram})
                       </p>
                     </div>
                   )}
@@ -1517,7 +1605,10 @@ export default function EventPage() {
               {isLoadingDashboard ? (
                 <div className="space-y-3">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div
+                      key={i}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
                         <div className="h-4 bg-gray-200 rounded animate-pulse w-24"></div>
@@ -1549,41 +1640,42 @@ export default function EventPage() {
                               : "bg-gray-50 text-gray-500"
                           }`}
                         >
-                          #{entry.rank}
+                          <p className="text-xs">#{entry.rank}</p>
                         </div>
-                        <span className="font-medium text-charcoal">
+                        <p className="font-medium text-charcoal text-xs">
                           @{entry.username}
                           {entry.username === userData.instagram && " (You)"}
-                        </span>
+                        </p>
                       </div>
-                      <span className="font-semibold text-charcoal">
+                      <b className="font-semibold text-charcoal text-xs">
                         IDR {entry.expenses.toLocaleString()}
-                      </span>
+                      </b>
                     </div>
                   ))}
 
                   {/* Show current user's rank if not in top 5 */}
                   {dashboardData?.leaderboard.currentUserRank &&
-                   dashboardData.leaderboard.currentUserRank > 5 && (
-                    <>
-                      <div className="text-center py-2">
-                        <span className="text-sm text-charcoal/60">...</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg bg-coral/10 border border-coral/20">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-coral/20 text-coral">
-                            #{dashboardData.leaderboard.currentUserRank}
+                    dashboardData.leaderboard.currentUserRank > 5 && (
+                      <>
+                        <div className="text-center py-2">
+                          <span className="text-sm text-charcoal/60">...</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-coral/10 border border-coral/20">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-coral/20 text-coral">
+                              #{dashboardData.leaderboard.currentUserRank}
+                            </div>
+                            <span className="font-medium text-charcoal">
+                              @{userData.instagram} (You)
+                            </span>
                           </div>
-                          <span className="font-medium text-charcoal">
-                            @{userData.instagram} (You)
+                          <span className="font-semibold text-charcoal">
+                            IDR{" "}
+                            {dashboardData.leaderboard.currentUserExpenses.toLocaleString()}
                           </span>
                         </div>
-                        <span className="font-semibold text-charcoal">
-                          IDR {dashboardData.leaderboard.currentUserExpenses.toLocaleString()}
-                        </span>
-                      </div>
-                    </>
-                  )}
+                      </>
+                    )}
                 </div>
               ) : (
                 <div className="text-center py-8">
@@ -1677,72 +1769,93 @@ export default function EventPage() {
                 </div>
               ) : dashboardData?.expenseStats.expenses.length > 0 ? (
                 <div className="space-y-3">
-                  {dashboardData.expenseStats.expenses.slice(0, 5).map((expense) => (
-                    <div
-                      key={expense.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
-                    >
-                      <div className="flex items-center gap-3">
-                        {expense.photoUrl && (
-                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
-                            <img
-                              src={expense.photoUrl}
-                              alt="Expense photo"
-                              className="w-full h-full object-cover"
-                            />
+                  {dashboardData.expenseStats.expenses
+                    .slice(0, 5)
+                    .map((expense) => (
+                      <div
+                        key={expense.id}
+                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border"
+                      >
+                        <div className="flex items-center gap-3">
+                          {expense.photoUrl && (
+                            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                              <img
+                                src={expense.photoUrl}
+                                alt="Expense photo"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-charcoal text-sm">
+                              {expense.description || expense.category}
+                            </p>
+                            <p className="text-xs text-charcoal/60">
+                              {new Date(expense.timestamp).toLocaleDateString(
+                                "en-US",
+                                {
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit",
+                                },
+                              )}
+                              {expense.staff &&
+                                ` • by ${expense.staff.fullName}`}
+                            </p>
                           </div>
-                        )}
-                        <div>
-                          <p className="font-medium text-charcoal text-sm">
-                            {expense.description || expense.category}
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-charcoal text-xs">
+                            IDR {expense.amount.toLocaleString()}
                           </p>
                           <p className="text-xs text-charcoal/60">
-                            {new Date(expense.timestamp).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                            {expense.staff && ` • by ${expense.staff.fullName}`}
+                            #{expense.expenseId}
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold text-charcoal">
-                          IDR {expense.amount.toLocaleString()}
-                        </p>
-                        <p className="text-xs text-charcoal/60">
-                          #{expense.expenseId}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
 
                   {dashboardData.expenseStats.expenses.length > 5 && (
                     <div className="text-center pt-2">
                       <p className="text-sm text-charcoal/60">
-                        and {dashboardData.expenseStats.expenses.length - 5} more expenses...
+                        and {dashboardData.expenseStats.expenses.length - 5}{" "}
+                        more expenses...
                       </p>
                     </div>
                   )}
 
                   <div className="pt-3 border-t border-gray-200">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-charcoal">Total Expenses:</span>
+                      <span className="text-sm font-medium text-charcoal">
+                        Total Expenses:
+                      </span>
                       <span className="text-lg font-bold text-charcoal">
-                        IDR {dashboardData.expenseStats.totalExpenses.toLocaleString()}
+                        IDR{" "}
+                        {dashboardData.expenseStats.totalExpenses.toLocaleString()}
                       </span>
                     </div>
                     <p className="text-xs text-charcoal/60 mt-1">
-                      {dashboardData.expenseStats.expenseCount} transaction{dashboardData.expenseStats.expenseCount !== 1 ? 's' : ''}
+                      {dashboardData.expenseStats.expenseCount} transaction
+                      {dashboardData.expenseStats.expenseCount !== 1 ? "s" : ""}
                     </p>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-8">
                   <div className="text-gray-400 mb-2">
-                    <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <svg
+                      className="w-12 h-12 mx-auto"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
                     </svg>
                   </div>
                   <p className="text-charcoal/60">No expenses yet</p>
@@ -1766,7 +1879,7 @@ export default function EventPage() {
                   <strong>Time:</strong> 2:00 PM - 9:00 PM
                 </p>
                 <p>
-                  <strong>Venue:</strong> bauerhaus, Canggu, Bali
+                  <strong>Venue:</strong> Canggu, Bali, Indonesia
                 </p>
               </div>
             </div>

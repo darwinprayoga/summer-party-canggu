@@ -93,37 +93,41 @@ export default function StaffPage() {
   });
   const [isWhatsappPrefilled, setIsWhatsappPrefilled] = useState(false);
   const [hasExplicitlyLoggedOut, setHasExplicitlyLoggedOut] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const logoutFlag = localStorage.getItem('staff_explicitly_logged_out');
-      console.log('🔍 Initial logout flag check:', logoutFlag);
-      return logoutFlag === 'true';
+    if (typeof window !== "undefined") {
+      const logoutFlag = localStorage.getItem("staff_explicitly_logged_out");
+      console.log("🔍 Initial logout flag check:", logoutFlag);
+      return logoutFlag === "true";
     }
     return false;
   });
 
   // Check for existing auth token on load
   useEffect(() => {
-    console.log('🔍 Staff page loading - checking tokens...');
-    const staffToken = localStorage.getItem('staff_token');
-    const userToken = localStorage.getItem('user_token');
-    const adminToken = localStorage.getItem('admin_token');
+    console.log("🔍 Staff page loading - checking tokens...");
+    const staffToken = localStorage.getItem("staff_token");
+    const userToken = localStorage.getItem("user_token");
+    const adminToken = localStorage.getItem("admin_token");
 
-    console.log('📋 Token status:', {
+    console.log("📋 Token status:", {
       staffToken: !!staffToken,
       userToken: !!userToken,
-      adminToken: !!adminToken
+      adminToken: !!adminToken,
     });
 
     // Security check: if user has non-staff tokens, prevent access
     if (!staffToken && (userToken || adminToken)) {
       // User is trying to access staff page with user/admin credentials
       if (userToken) {
-        console.warn('🚨 Security: User token detected on staff page - access denied');
+        console.warn(
+          "🚨 Security: User token detected on staff page - access denied",
+        );
       }
       if (adminToken) {
-        console.warn('🚨 Security: Admin token detected on staff page - access denied');
+        console.warn(
+          "🚨 Security: Admin token detected on staff page - access denied",
+        );
       }
-      console.log('❌ No staff token found - showing login page');
+      console.log("❌ No staff token found - showing login page");
       setCurrentStep("dashboard");
       setAuthToken("");
       setStaffData({
@@ -138,13 +142,13 @@ export default function StaffPage() {
     }
 
     if (staffToken) {
-      console.log('✅ Valid staff token found - proceeding to dashboard');
+      console.log("✅ Valid staff token found - proceeding to dashboard");
       setAuthToken(staffToken);
       setCurrentStep("dashboard");
       validateAndLoadStaff(staffToken);
     } else {
       // No token found, default to dashboard but will show login page
-      console.log('ℹ️ No staff token found - showing login page');
+      console.log("ℹ️ No staff token found - showing login page");
       setCurrentStep("dashboard");
       setAuthToken("");
       setStaffData({
@@ -160,35 +164,39 @@ export default function StaffPage() {
 
   // Handle Google OAuth session
   useEffect(() => {
-    console.log('🔍 Google OAuth useEffect triggered:', {
+    console.log("🔍 Google OAuth useEffect triggered:", {
       hasSession: !!session,
-      hasUser: !!(session?.user),
+      hasUser: !!session?.user,
       userEmail: session?.user?.email,
       hasExplicitlyLoggedOut,
-      logoutFlagInStorage: localStorage.getItem('staff_explicitly_logged_out')
+      logoutFlagInStorage: localStorage.getItem("staff_explicitly_logged_out"),
     });
 
     if (session && session.user) {
       // Don't auto-login if user explicitly logged out
       if (hasExplicitlyLoggedOut) {
-        console.log('🚫 User explicitly logged out - not auto-logging in via Google OAuth');
+        console.log(
+          "🚫 User explicitly logged out - not auto-logging in via Google OAuth",
+        );
         return;
       }
 
       // Only process Google OAuth if user doesn't have non-staff tokens
-      const userToken = localStorage.getItem('user_token');
-      const adminToken = localStorage.getItem('admin_token');
+      const userToken = localStorage.getItem("user_token");
+      const adminToken = localStorage.getItem("admin_token");
 
       if (userToken || adminToken) {
-        console.warn('🚨 Security: Google OAuth session detected but user has non-staff tokens - ignoring OAuth for staff page');
+        console.warn(
+          "🚨 Security: Google OAuth session detected but user has non-staff tokens - ignoring OAuth for staff page",
+        );
         return;
       }
 
       // Only process if no conflicting tokens exist and user hasn't explicitly logged out
-      console.log('✅ Proceeding with Google OAuth login flow');
+      console.log("✅ Proceeding with Google OAuth login flow");
       handleGoogleLoginFlow();
     } else {
-      console.log('ℹ️  No Google session detected');
+      console.log("ℹ️  No Google session detected");
     }
   }, [session, hasExplicitlyLoggedOut]);
 
@@ -202,7 +210,9 @@ export default function StaffPage() {
   // Auto-check approval status when on approval step
   useEffect(() => {
     if (currentStep === "approval" && authToken) {
-      console.log('🔄 Auto-checking approval status since user is on approval step');
+      console.log(
+        "🔄 Auto-checking approval status since user is on approval step",
+      );
       // Delay the check slightly to avoid immediate redirect loops
       setTimeout(() => {
         checkApprovalStatus();
@@ -221,11 +231,14 @@ export default function StaffPage() {
   }, [resendTimer]);
 
   // API call functions with token expiration handling
-  const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<ApiResponse> => {
+  const apiCall = async (
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<ApiResponse> => {
     try {
       const response = await fetch(endpoint, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...options.headers,
         },
         ...options,
@@ -234,9 +247,9 @@ export default function StaffPage() {
       const data = await response.json();
 
       // Handle token expiration
-      if (!data.success && data.message === 'Token expired') {
+      if (!data.success && data.message === "Token expired") {
         // Try to refresh the token
-        const currentToken = localStorage.getItem('staff_token');
+        const currentToken = localStorage.getItem("staff_token");
         if (currentToken) {
           const refreshSuccess = await refreshToken(currentToken);
           if (refreshSuccess) {
@@ -245,14 +258,14 @@ export default function StaffPage() {
               ...options,
               headers: {
                 ...options.headers,
-                'Authorization': `Bearer ${localStorage.getItem('staff_token')}`
-              }
+                Authorization: `Bearer ${localStorage.getItem("staff_token")}`,
+              },
             });
           }
         }
 
         // If refresh failed, clear auth
-        localStorage.removeItem('staff_token');
+        localStorage.removeItem("staff_token");
         setAuthToken("");
         setCurrentStep("login");
         setError("Your session has expired. Please log in again.");
@@ -263,7 +276,7 @@ export default function StaffPage() {
     } catch (error) {
       return {
         success: false,
-        message: 'Network error occurred',
+        message: "Network error occurred",
       };
     }
   };
@@ -272,8 +285,8 @@ export default function StaffPage() {
     setLoading(true);
     setError("");
 
-    const response = await apiCall('/api/auth/phone/send-otp', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/phone/send-otp", {
+      method: "POST",
       body: JSON.stringify({ phone }),
     });
 
@@ -290,7 +303,9 @@ export default function StaffPage() {
       // Handle rate limiting
       if (response.data?.nextResendAt) {
         const nextResendTime = new Date(response.data.nextResendAt);
-        const secondsUntilNext = Math.ceil((nextResendTime.getTime() - Date.now()) / 1000);
+        const secondsUntilNext = Math.ceil(
+          (nextResendTime.getTime() - Date.now()) / 1000,
+        );
         setResendTimer(Math.max(0, secondsUntilNext));
       }
 
@@ -298,12 +313,15 @@ export default function StaffPage() {
     }
   };
 
-  const verifyOTP = async (phone: string, otp: string): Promise<string | null> => {
+  const verifyOTP = async (
+    phone: string,
+    otp: string,
+  ): Promise<string | null> => {
     setLoading(true);
     setError("");
 
-    const response = await apiCall('/api/auth/phone/verify-otp', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/phone/verify-otp", {
+      method: "POST",
       body: JSON.stringify({ phone, code: otp }),
     });
 
@@ -326,17 +344,20 @@ export default function StaffPage() {
   const handleLogout = async () => {
     try {
       // Mark that user explicitly logged out (persist in localStorage)
-      console.log('🚪 Setting logout flag in localStorage');
+      console.log("🚪 Setting logout flag in localStorage");
       setHasExplicitlyLoggedOut(true);
-      localStorage.setItem('staff_explicitly_logged_out', 'true');
-      console.log('🔍 Logout flag after setting:', localStorage.getItem('staff_explicitly_logged_out'));
+      localStorage.setItem("staff_explicitly_logged_out", "true");
+      console.log(
+        "🔍 Logout flag after setting:",
+        localStorage.getItem("staff_explicitly_logged_out"),
+      );
 
       // Clear local storage
-      localStorage.removeItem('staff_token');
+      localStorage.removeItem("staff_token");
 
       // Clear app state
-      setAuthToken('');
-      setCurrentStep('login');
+      setAuthToken("");
+      setCurrentStep("login");
       setStaffData({
         phone: "",
         email: "",
@@ -349,25 +370,27 @@ export default function StaffPage() {
       // Clear Google OAuth session
       await signOut({ redirect: false });
 
-      console.log('✅ Logout successful - logout flag set to prevent auto-login');
+      console.log(
+        "✅ Logout successful - logout flag set to prevent auto-login",
+      );
     } catch (error) {
-      console.error('❌ Logout error:', error);
+      console.error("❌ Logout error:", error);
       // Even if signOut fails, still clear local state
       setHasExplicitlyLoggedOut(true);
-      localStorage.setItem('staff_explicitly_logged_out', 'true');
-      localStorage.removeItem('staff_token');
-      setAuthToken('');
-      setCurrentStep('login');
+      localStorage.setItem("staff_explicitly_logged_out", "true");
+      localStorage.removeItem("staff_token");
+      setAuthToken("");
+      setCurrentStep("login");
     }
   };
 
   const refreshToken = async (expiredToken: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/staff/refresh', {
-        method: 'POST',
+      const response = await fetch("/api/auth/staff/refresh", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${expiredToken}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${expiredToken}`,
         },
       });
 
@@ -375,7 +398,7 @@ export default function StaffPage() {
 
       if (data.success && data.data.token) {
         // Update token in localStorage and state
-        localStorage.setItem('staff_token', data.data.token);
+        localStorage.setItem("staff_token", data.data.token);
         setAuthToken(data.data.token);
 
         // Update staff data if available
@@ -388,12 +411,15 @@ export default function StaffPage() {
 
       return false;
     } catch (error) {
-      console.error('Token refresh error:', error);
+      console.error("Token refresh error:", error);
       return false;
     }
   };
 
-  const attemptStaffLogin = async (identifier: string, otp?: string): Promise<StaffData | 'OTP_SENT' | null> => {
+  const attemptStaffLogin = async (
+    identifier: string,
+    otp?: string,
+  ): Promise<StaffData | "OTP_SENT" | null> => {
     setLoading(true);
     setError("");
 
@@ -404,12 +430,10 @@ export default function StaffPage() {
       body.requestOtp = true;
     }
 
-
-    const response = await apiCall('/api/auth/staff/login', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/staff/login", {
+      method: "POST",
       body: JSON.stringify(body),
     });
-
 
     setLoading(false);
 
@@ -418,26 +442,28 @@ export default function StaffPage() {
       const token = response.data.token;
       const staff = response.data.staff;
 
-      localStorage.setItem('staff_token', token);
+      localStorage.setItem("staff_token", token);
       setAuthToken(token);
 
       return staff;
     } else if (response.data?.requireOtp) {
       // OTP required
       setShowOtpInput(true);
-      return 'OTP_SENT';
+      return "OTP_SENT";
     } else {
       setError(response.message);
       return null;
     }
   };
 
-  const checkExistingStaffProfile = async (token: string): Promise<StaffData | null> => {
+  const checkExistingStaffProfile = async (
+    token: string,
+  ): Promise<StaffData | null> => {
     try {
-      const response = await apiCall('/api/auth/staff/profile', {
-        method: 'GET',
+      const response = await apiCall("/api/auth/staff/profile", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -447,16 +473,18 @@ export default function StaffPage() {
 
       return null;
     } catch (error) {
-      console.error('Error checking existing staff profile:', error);
+      console.error("Error checking existing staff profile:", error);
       return null;
     }
   };
 
-  const registerStaff = async (staffData: Partial<StaffData>): Promise<boolean> => {
-    console.log('🔵 registerStaff called with authToken:', authToken);
+  const registerStaff = async (
+    staffData: Partial<StaffData>,
+  ): Promise<boolean> => {
+    console.log("🔵 registerStaff called with authToken:", authToken);
 
     if (!authToken) {
-      console.log('❌ No authToken - registration failed');
+      console.log("❌ No authToken - registration failed");
       setError("Authentication required");
       return false;
     }
@@ -469,14 +497,13 @@ export default function StaffPage() {
       email: staffData.email,
       instagram: staffData.instagram,
       whatsapp: staffData.whatsapp,
-      loginMethod: loginMethod?.toUpperCase() || 'PHONE',
+      loginMethod: loginMethod?.toUpperCase() || "PHONE",
     };
 
-
-    const response = await apiCall('/api/auth/staff/register', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/staff/register", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${authToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       body: JSON.stringify(registrationData),
     });
@@ -484,7 +511,7 @@ export default function StaffPage() {
     setLoading(false);
 
     if (response.success) {
-      setStaffData(prev => ({ ...prev, ...response.data }));
+      setStaffData((prev) => ({ ...prev, ...response.data }));
       return true;
     } else {
       setError(response.message);
@@ -497,8 +524,8 @@ export default function StaffPage() {
     setError("");
 
     try {
-      const response = await apiCall('/api/auth/google/staff', {
-        method: 'POST',
+      const response = await apiCall("/api/auth/google/staff", {
+        method: "POST",
       });
 
       if (response.success && response.data.token) {
@@ -506,7 +533,7 @@ export default function StaffPage() {
         const token = response.data.token;
         const staff = response.data.staff;
 
-        localStorage.setItem('staff_token', token);
+        localStorage.setItem("staff_token", token);
         setAuthToken(token);
 
         return staff;
@@ -515,16 +542,16 @@ export default function StaffPage() {
         const verificationToken = response.data.verificationToken;
         const staff = response.data.staff;
 
-        localStorage.setItem('staff_verification_token', verificationToken);
+        localStorage.setItem("staff_verification_token", verificationToken);
         setStaffData(staff);
-        setPhoneNumber(staff.whatsapp || staff.phone || '');
+        setPhoneNumber(staff.whatsapp || staff.phone || "");
         setCurrentStep("phone-verify");
         return null;
       } else if (response.data?.requireRegistration) {
         // Staff needs to register - store temp token for registration
         if (response.data.tempToken) {
-          console.log('🔵 Google OAuth: storing temp token for registration');
-          localStorage.setItem('staff_token', response.data.tempToken);
+          console.log("🔵 Google OAuth: storing temp token for registration");
+          localStorage.setItem("staff_token", response.data.tempToken);
           setAuthToken(response.data.tempToken);
         }
         return null;
@@ -533,8 +560,8 @@ export default function StaffPage() {
         return null;
       }
     } catch (error) {
-      console.error('Google staff auth error:', error);
-      setError('Failed to authenticate with Google');
+      console.error("Google staff auth error:", error);
+      setError("Failed to authenticate with Google");
       return null;
     } finally {
       setLoading(false);
@@ -546,7 +573,6 @@ export default function StaffPage() {
       return;
     }
 
-
     setLoading(true);
 
     try {
@@ -557,7 +583,7 @@ export default function StaffPage() {
         if (staff.whatsapp) {
           setIsWhatsappPrefilled(true);
         }
-        if (staff.registrationStatus === 'APPROVED' && staff.isActive) {
+        if (staff.registrationStatus === "APPROVED" && staff.isActive) {
           setCurrentStep("dashboard");
         } else {
           setCurrentStep("approval");
@@ -573,15 +599,15 @@ export default function StaffPage() {
         setCurrentStep("form");
       }
     } catch (error) {
-      console.error('Google login flow error:', error);
-      setError('Failed to process Google login');
+      console.error("Google login flow error:", error);
+      setError("Failed to process Google login");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchExpenseHistory = async (page: number = 1, search: string = '') => {
-    const token = localStorage.getItem('staff_token');
+  const fetchExpenseHistory = async (page: number = 1, search: string = "") => {
+    const token = localStorage.getItem("staff_token");
     if (!token) return;
 
     setExpenseLoading(true);
@@ -589,14 +615,14 @@ export default function StaffPage() {
       const queryParams = new URLSearchParams({
         page: page.toString(),
         limit: expenseLimit.toString(),
-        ...(search && { search })
+        ...(search && { search }),
       });
 
       const response = await apiCall(`/api/expenses?${queryParams}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.success) {
@@ -616,20 +642,20 @@ export default function StaffPage() {
         if (page === 1) {
           setExpenseHistory(transformedExpenses);
         } else {
-          setExpenseHistory(prev => [...prev, ...transformedExpenses]);
+          setExpenseHistory((prev) => [...prev, ...transformedExpenses]);
         }
 
         setExpenseTotal(response.pagination?.total || 0);
         setExpensePage(page);
       } else {
-        toast.error('Failed to load expenses', {
-          description: response.message
+        toast.error("Failed to load expenses", {
+          description: response.message,
         });
       }
     } catch (error) {
-      console.error('Expense fetch error:', error);
-      toast.error('Error loading expenses', {
-        description: 'Please try again later'
+      console.error("Expense fetch error:", error);
+      toast.error("Error loading expenses", {
+        description: "Please try again later",
       });
     } finally {
       setExpenseLoading(false);
@@ -637,37 +663,37 @@ export default function StaffPage() {
   };
 
   const fetchDashboardData = async () => {
-    const token = localStorage.getItem('staff_token');
+    const token = localStorage.getItem("staff_token");
     if (!token) return;
 
     setDashboardLoading(true);
     try {
-      const response = await apiCall('/api/staff/dashboard', {
-        method: 'GET',
+      const response = await apiCall("/api/staff/dashboard", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      console.log('📊 Dashboard API response:', response);
+      console.log("📊 Dashboard API response:", response);
 
       if (response.success) {
         setDashboardData(response.data);
 
         // Update staff data from dashboard response
         if (response.data?.currentStaff) {
-          setStaffData(prev => ({ ...prev, ...response.data.currentStaff }));
+          setStaffData((prev) => ({ ...prev, ...response.data.currentStaff }));
         }
 
         // Fetch expense history after dashboard loads
         await fetchExpenseHistory();
       } else {
-        console.error('❌ Dashboard API failed:', response.message);
+        console.error("❌ Dashboard API failed:", response.message);
         // Don't redirect if dashboard fails - user should stay on dashboard page
         // Just show an error message or empty state
       }
     } catch (error) {
-      console.error('Dashboard fetch error:', error);
+      console.error("Dashboard fetch error:", error);
       // Don't redirect on dashboard error - user should stay on dashboard page
     } finally {
       setDashboardLoading(false);
@@ -680,85 +706,99 @@ export default function StaffPage() {
       // Decode token to get phone number and role
       let decoded: any = null;
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         decoded = payload;
-        console.log('🔍 Token decoded:', { role: decoded.role, id: decoded.id, staffId: decoded.staffId });
+        console.log("🔍 Token decoded:", {
+          role: decoded.role,
+          id: decoded.id,
+          staffId: decoded.staffId,
+        });
       } catch (decodeError) {
-        console.error('Failed to decode token:', decodeError);
+        console.error("Failed to decode token:", decodeError);
       }
 
       // Verify this is actually a staff token
-      if (decoded?.role !== 'STAFF') {
-        console.log('❌ Invalid token role for staff page:', decoded?.role);
-        localStorage.removeItem('staff_token');
+      if (decoded?.role !== "STAFF") {
+        console.log("❌ Invalid token role for staff page:", decoded?.role);
+        localStorage.removeItem("staff_token");
         setAuthToken("");
         setCurrentStep("login");
         return;
       }
 
-      const profileResponse = await apiCall('/api/auth/staff/profile', {
+      const profileResponse = await apiCall("/api/auth/staff/profile", {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log('📋 Staff profile API response:', profileResponse);
+      console.log("📋 Staff profile API response:", profileResponse);
 
       if (profileResponse.success && profileResponse.data) {
         // User has a complete profile, check approval status
         const staff = profileResponse.data;
-        console.log('👤 Staff profile loaded:', {
+        console.log("👤 Staff profile loaded:", {
           staffId: staff.staffId,
           status: staff.registrationStatus,
           isActive: staff.isActive,
-          hasCompleteData: !!(staff.fullName && staff.instagram && staff.whatsapp)
+          hasCompleteData: !!(
+            staff.fullName &&
+            staff.instagram &&
+            staff.whatsapp
+          ),
         });
 
         setStaffData(staff);
 
-        if (staff.registrationStatus === 'APPROVED' && staff.isActive) {
+        if (staff.registrationStatus === "APPROVED" && staff.isActive) {
           // Approved staff, go to dashboard
-          console.log('✅ Approved staff - loading dashboard');
+          console.log("✅ Approved staff - loading dashboard");
           setCurrentStep("dashboard");
           await fetchDashboardData();
-        } else if (staff.registrationStatus === 'PENDING') {
+        } else if (staff.registrationStatus === "PENDING") {
           // Pending approval, show approval page
-          console.log('⏳ Pending staff - showing approval page');
+          console.log("⏳ Pending staff - showing approval page");
           setCurrentStep("approval");
-        } else if (staff.registrationStatus === 'DENIED') {
+        } else if (staff.registrationStatus === "DENIED") {
           // Denied staff
-          console.log('❌ Denied staff - showing approval page');
+          console.log("❌ Denied staff - showing approval page");
           setCurrentStep("approval");
         } else {
           // Other cases (inactive, etc.)
-          console.log('❓ Staff status unclear - showing approval page');
+          console.log("❓ Staff status unclear - showing approval page");
           setCurrentStep("approval");
         }
       } else {
         // Profile API failed - check if it's a 404 (no profile) vs other errors
-        if (profileResponse.message?.includes('not found') || profileResponse.message?.includes('404')) {
-          console.log('📝 No staff profile found - showing registration form');
+        if (
+          profileResponse.message?.includes("not found") ||
+          profileResponse.message?.includes("404")
+        ) {
+          console.log("📝 No staff profile found - showing registration form");
           // No profile exists, show form
           if (decoded && decoded.phone) {
-            setStaffData(prev => ({
+            setStaffData((prev) => ({
               ...prev,
               phone: decoded.phone,
-              whatsapp: decoded.phone
+              whatsapp: decoded.phone,
             }));
             setIsWhatsappPrefilled(true);
           }
           setCurrentStep("form");
         } else {
           // Other API error - likely authentication issue, try dashboard which will show login
-          console.log('🔧 Staff profile API error - showing login:', profileResponse.message);
-          localStorage.removeItem('staff_token');
+          console.log(
+            "🔧 Staff profile API error - showing login:",
+            profileResponse.message,
+          );
+          localStorage.removeItem("staff_token");
           setAuthToken("");
           setCurrentStep("login");
         }
       }
     } catch (error) {
-      console.error('❌ Staff token validation error:', error);
-      localStorage.removeItem('staff_token');
+      console.error("❌ Staff token validation error:", error);
+      localStorage.removeItem("staff_token");
       setAuthToken("");
       setCurrentStep("dashboard"); // Will show login page
     }
@@ -794,7 +834,7 @@ export default function StaffPage() {
 
     // Reset logout flag when user explicitly chooses to login
     setHasExplicitlyLoggedOut(false);
-    localStorage.removeItem('staff_explicitly_logged_out');
+    localStorage.removeItem("staff_explicitly_logged_out");
 
     setLoading(true);
     setError("");
@@ -803,16 +843,16 @@ export default function StaffPage() {
       // First try to request OTP for staff login
       const result = await attemptStaffLogin(phoneNumber);
 
-      if (result === 'OTP_SENT') {
+      if (result === "OTP_SENT") {
         // Staff exists and OTP was sent by backend
         setLoading(false);
         return;
       }
 
-      if (result && typeof result === 'object') {
+      if (result && typeof result === "object") {
         // Staff exists and logged in successfully (shouldn't happen without OTP)
         setStaffData(result);
-        if (result.registrationStatus === 'APPROVED' && result.isActive) {
+        if (result.registrationStatus === "APPROVED" && result.isActive) {
           setCurrentStep("dashboard");
         } else {
           setCurrentStep("approval");
@@ -827,7 +867,7 @@ export default function StaffPage() {
         setShowOtpInput(true);
       }
     } catch (error) {
-      console.error('Staff phone login error:', error);
+      console.error("Staff phone login error:", error);
     } finally {
       setLoading(false);
     }
@@ -839,9 +879,9 @@ export default function StaffPage() {
     // First, try staff login with OTP (for existing staff)
     const result = await attemptStaffLogin(phoneNumber, otpCode);
 
-    if (result && typeof result === 'object') {
+    if (result && typeof result === "object") {
       setStaffData(result);
-      if (result.registrationStatus === 'APPROVED' && result.isActive) {
+      if (result.registrationStatus === "APPROVED" && result.isActive) {
         setCurrentStep("dashboard");
       } else {
         setCurrentStep("approval");
@@ -854,7 +894,7 @@ export default function StaffPage() {
 
     if (tempToken) {
       // Store the temp token as auth token (user is now authenticated)
-      localStorage.setItem('staff_token', tempToken);
+      localStorage.setItem("staff_token", tempToken);
       setAuthToken(tempToken);
 
       // Set user data with phone
@@ -871,7 +911,10 @@ export default function StaffPage() {
 
       if (existingStaff) {
         setStaffData(existingStaff);
-        if (existingStaff.registrationStatus === 'APPROVED' && existingStaff.isActive) {
+        if (
+          existingStaff.registrationStatus === "APPROVED" &&
+          existingStaff.isActive
+        ) {
           setCurrentStep("dashboard");
         } else {
           setCurrentStep("approval");
@@ -885,31 +928,31 @@ export default function StaffPage() {
   const handleGoogleLogin = async () => {
     // Reset logout flag when user explicitly chooses to login
     setHasExplicitlyLoggedOut(false);
-    localStorage.removeItem('staff_explicitly_logged_out');
+    localStorage.removeItem("staff_explicitly_logged_out");
 
     setLoading(true);
     setError("");
 
     try {
-      await signIn('google', {
-        callbackUrl: '/staff',
-        redirect: true
+      await signIn("google", {
+        callbackUrl: "/staff",
+        redirect: true,
       });
     } catch (error) {
-      console.error('Google sign-in error:', error);
-      setError('Failed to initiate Google login');
+      console.error("Google sign-in error:", error);
+      setError("Failed to initiate Google login");
       setLoading(false);
     }
   };
 
   // Handle QR scan with customer validation
   const handleQRScan = async (scannedData: string) => {
-    console.log('🔍 QR Scanned:', scannedData);
+    console.log("🔍 QR Scanned:", scannedData);
 
     let customerIdToCheck = scannedData;
 
     // Extract customer ID from QR data if it's a URL or complex format
-    if (scannedData.includes('SP')) {
+    if (scannedData.includes("SP")) {
       const match = scannedData.match(/SP\d+/);
       if (match) {
         customerIdToCheck = match[0];
@@ -918,37 +961,39 @@ export default function StaffPage() {
 
     setLoading(true);
     try {
-      const response = await apiCall(`/api/user/verify-qr?userId=${customerIdToCheck}`);
+      const response = await apiCall(
+        `/api/user/verify-qr?userId=${customerIdToCheck}`,
+      );
 
       if (response.success) {
         const customerData = response.data.user;
         setScannedCustomerId(customerIdToCheck);
         setScannedCustomerData(customerData);
-        setManualCustomerId(''); // Clear manual input
+        setManualCustomerId(""); // Clear manual input
 
-        toast.success('Customer verified!', {
-          description: `${customerData.fullName} (@${customerData.instagram})`
+        toast.success("Customer verified!", {
+          description: `${customerData.fullName} (@${customerData.instagram})`,
         });
       } else {
         // Customer not found, but allow manual entry
         setScannedCustomerId(customerIdToCheck);
         setScannedCustomerData(null);
-        setManualCustomerId(''); // Clear manual input
+        setManualCustomerId(""); // Clear manual input
 
-        toast.warning('Customer not found in system', {
-          description: 'You can still add expense with manual entry'
+        toast.warning("Customer not found in system", {
+          description: "You can still add expense with manual entry",
         });
       }
     } catch (error) {
-      console.error('QR verification error:', error);
+      console.error("QR verification error:", error);
 
       // Allow manual entry even if verification fails
       setScannedCustomerId(customerIdToCheck);
       setScannedCustomerData(null);
-      setManualCustomerId(''); // Clear manual input
+      setManualCustomerId(""); // Clear manual input
 
-      toast.warning('Unable to verify customer', {
-        description: 'Proceeding with manual entry'
+      toast.warning("Unable to verify customer", {
+        description: "Proceeding with manual entry",
       });
     } finally {
       setLoading(false);
@@ -965,8 +1010,8 @@ export default function StaffPage() {
   // Helper function to convert File to base64 string with compression
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
       const htmlImage = new window.Image(); // Use window.Image to avoid conflict
 
       htmlImage.onload = () => {
@@ -992,7 +1037,7 @@ export default function StaffPage() {
 
         // Draw and compress
         ctx?.drawImage(htmlImage, 0, 0, width, height);
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7); // 70% quality
+        const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7); // 70% quality
         resolve(compressedDataUrl);
       };
 
@@ -1015,12 +1060,12 @@ export default function StaffPage() {
       // Check file size (3MB = 3 * 1024 * 1024 bytes)
       const maxSize = 3 * 1024 * 1024; // 3MB in bytes
       if (file.size > maxSize) {
-        toast.error('Photo too large', {
-          description: 'Please select a photo smaller than 3MB'
+        toast.error("Photo too large", {
+          description: "Please select a photo smaller than 3MB",
         });
         // Clear the input
         if (event.target) {
-          event.target.value = '';
+          event.target.value = "";
         }
         return;
       }
@@ -1046,8 +1091,8 @@ export default function StaffPage() {
     // Check file size (3MB = 3 * 1024 * 1024 bytes)
     const maxSize = 3 * 1024 * 1024; // 3MB in bytes
     if (photoFile.size > maxSize) {
-      toast.error('Photo too large', {
-        description: 'Please capture a smaller photo (max 3MB)'
+      toast.error("Photo too large", {
+        description: "Please capture a smaller photo (max 3MB)",
       });
       setShowCamera(false);
       return;
@@ -1076,10 +1121,10 @@ export default function StaffPage() {
 
     setAddExpenseLoading(true);
     try {
-      const token = localStorage.getItem('staff_token');
+      const token = localStorage.getItem("staff_token");
       if (!token) {
-        toast.error('Authentication required', {
-          description: 'Please log in again'
+        toast.error("Authentication required", {
+          description: "Please log in again",
         });
         return;
       }
@@ -1087,13 +1132,15 @@ export default function StaffPage() {
       // First, validate if customer exists by checking QR
       let customerData = null;
       try {
-        const qrResponse = await apiCall(`/api/user/verify-qr?userId=${scannedCustomerId}`);
+        const qrResponse = await apiCall(
+          `/api/user/verify-qr?userId=${scannedCustomerId}`,
+        );
         if (qrResponse.success) {
           customerData = qrResponse.data.user;
         }
       } catch (error) {
         // Customer doesn't exist, we'll use manual entry
-        console.log('Customer not found in system, using manual entry');
+        console.log("Customer not found in system, using manual entry");
       }
 
       // Convert photo to base64 if exists
@@ -1102,9 +1149,9 @@ export default function StaffPage() {
         try {
           photoUrl = await fileToBase64(expensePhoto);
         } catch (error) {
-          console.error('Error converting photo to base64:', error);
-          toast.error('Photo processing failed', {
-            description: 'Please try again or skip the photo'
+          console.error("Error converting photo to base64:", error);
+          toast.error("Photo processing failed", {
+            description: "Please try again or skip the photo",
           });
           return;
         }
@@ -1113,24 +1160,25 @@ export default function StaffPage() {
       const expenseData = {
         customerId: scannedCustomerId,
         customerName: customerData?.fullName || `Customer ${scannedCustomerId}`,
-        customerInstagram: customerData?.instagram || `@${scannedCustomerId.toLowerCase()}`,
+        customerInstagram:
+          customerData?.instagram || `@${scannedCustomerId.toLowerCase()}`,
         amount: Number.parseInt(expenseAmount),
         description: expenseDescription || undefined, // Optional description
         category: "General", // You can add category selection later
-        photoUrl: photoUrl
+        photoUrl: photoUrl,
       };
 
-      const response = await apiCall('/api/expenses', {
-        method: 'POST',
+      const response = await apiCall("/api/expenses", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(expenseData),
       });
 
       if (response.success) {
-        toast.success('Expense added successfully', {
-          description: `IDR ${expenseAmount} for ${expenseData.customerName}`
+        toast.success("Expense added successfully", {
+          description: `IDR ${expenseAmount} for ${expenseData.customerName}`,
         });
 
         // Clear form
@@ -1144,14 +1192,14 @@ export default function StaffPage() {
         // Refresh expense history to show the new expense
         await fetchExpenseHistory(1, searchTerm);
       } else {
-        toast.error('Failed to add expense', {
-          description: response.message
+        toast.error("Failed to add expense", {
+          description: response.message,
         });
       }
     } catch (error) {
-      console.error('Add expense error:', error);
-      toast.error('Error adding expense', {
-        description: 'Please try again later'
+      console.error("Add expense error:", error);
+      toast.error("Error adding expense", {
+        description: "Please try again later",
       });
     } finally {
       setAddExpenseLoading(false);
@@ -1166,10 +1214,10 @@ export default function StaffPage() {
   ) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('staff_token');
+      const token = localStorage.getItem("staff_token");
       if (!token) {
-        toast.error('Authentication required', {
-          description: 'Please log in again'
+        toast.error("Authentication required", {
+          description: "Please log in again",
         });
         return;
       }
@@ -1180,15 +1228,15 @@ export default function StaffPage() {
       };
 
       const response = await apiCall(`/api/expenses/${entryId}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updateData),
       });
 
       if (response.success) {
-        toast.success('Expense updated successfully');
+        toast.success("Expense updated successfully");
 
         // Update local state optimistically
         setExpenseHistory(
@@ -1200,14 +1248,14 @@ export default function StaffPage() {
         );
         setEditingEntry(null);
       } else {
-        toast.error('Failed to update expense', {
-          description: response.message
+        toast.error("Failed to update expense", {
+          description: response.message,
         });
       }
     } catch (error) {
-      console.error('Update expense error:', error);
-      toast.error('Error updating expense', {
-        description: 'Please try again later'
+      console.error("Update expense error:", error);
+      toast.error("Error updating expense", {
+        description: "Please try again later",
       });
     } finally {
       setLoading(false);
@@ -1217,7 +1265,7 @@ export default function StaffPage() {
   // Handle search with debounce
   useEffect(() => {
     const delayedSearch = setTimeout(() => {
-      if (searchTerm !== '') {
+      if (searchTerm !== "") {
         fetchExpenseHistory(1, searchTerm);
       } else {
         fetchExpenseHistory(1);
@@ -1231,12 +1279,12 @@ export default function StaffPage() {
   const filteredHistory = expenseHistory;
 
   const handleFormSubmit = async () => {
-    console.log('🔵 Complete Setup button clicked!');
-    console.log('🔵 Current staffData:', {
+    console.log("🔵 Complete Setup button clicked!");
+    console.log("🔵 Current staffData:", {
       fullName: staffData.fullName,
       instagram: staffData.instagram,
       whatsapp: staffData.whatsapp,
-      loginMethod: loginMethod
+      loginMethod: loginMethod,
     });
 
     // Clear any existing field errors
@@ -1251,14 +1299,14 @@ export default function StaffPage() {
         phone: staffData.phone || undefined,
         whatsapp: staffData.whatsapp,
         instagram: staffData.instagram,
-        loginMethod: loginMethod === 'phone' ? 'PHONE' : 'GOOGLE' as const,
+        loginMethod: loginMethod === "phone" ? "PHONE" : ("GOOGLE" as const),
       };
 
-      console.log('🔍 Validating form data:', validationData);
+      console.log("🔍 Validating form data:", validationData);
       const validatedData = staffRegistrationSchema.parse(validationData);
-      console.log('✅ Form validation passed:', validatedData);
+      console.log("✅ Form validation passed:", validatedData);
     } catch (validationError: any) {
-      console.log('❌ Form validation failed:', validationError);
+      console.log("❌ Form validation failed:", validationError);
 
       // Handle Zod validation errors
       if (validationError.errors) {
@@ -1266,12 +1314,12 @@ export default function StaffPage() {
           const field = error.path[0];
           const message = error.message;
 
-          if (field === 'instagram') {
-            setFieldErrors(prev => ({ ...prev, instagram: message }));
-          } else if (field === 'email') {
-            setFieldErrors(prev => ({ ...prev, email: message }));
-          } else if (field === 'whatsapp') {
-            setFieldErrors(prev => ({ ...prev, whatsapp: message }));
+          if (field === "instagram") {
+            setFieldErrors((prev) => ({ ...prev, instagram: message }));
+          } else if (field === "email") {
+            setFieldErrors((prev) => ({ ...prev, email: message }));
+          } else if (field === "whatsapp") {
+            setFieldErrors((prev) => ({ ...prev, whatsapp: message }));
           }
 
           // Show toast for the first error
@@ -1284,17 +1332,19 @@ export default function StaffPage() {
     }
 
     // For Google OAuth users, verify phone number first
-    if (loginMethod === 'google') {
-      console.log('🔵 Google OAuth user - validating staff data before sending SMS');
+    if (loginMethod === "google") {
+      console.log(
+        "🔵 Google OAuth user - validating staff data before sending SMS",
+      );
 
       // Extract phone number from WhatsApp field (remove formatting)
-      const phoneNumber = staffData.whatsapp.replace(/[^\d+]/g, '');
+      const phoneNumber = staffData.whatsapp.replace(/[^\d+]/g, "");
 
       // First, validate that staff doesn't already exist
       setLoading(true);
       try {
-        const validationResponse = await apiCall('/api/auth/staff/validate', {
-          method: 'POST',
+        const validationResponse = await apiCall("/api/auth/staff/validate", {
+          method: "POST",
           body: JSON.stringify({
             instagram: staffData.instagram,
             email: staffData.email,
@@ -1313,19 +1363,30 @@ export default function StaffPage() {
           // Set field-specific error if available
           if (validationResponse.data?.conflictField) {
             const field = validationResponse.data.conflictField;
-            if (field === 'instagram_handle') {
-              setFieldErrors(prev => ({ ...prev, instagram: validationResponse.message }));
-            } else if (field === 'email') {
-              setFieldErrors(prev => ({ ...prev, email: validationResponse.message }));
-            } else if (field === 'phone_number') {
-              setFieldErrors(prev => ({ ...prev, whatsapp: validationResponse.message }));
+            if (field === "instagram_handle") {
+              setFieldErrors((prev) => ({
+                ...prev,
+                instagram: validationResponse.message,
+              }));
+            } else if (field === "email") {
+              setFieldErrors((prev) => ({
+                ...prev,
+                email: validationResponse.message,
+              }));
+            } else if (field === "phone_number") {
+              setFieldErrors((prev) => ({
+                ...prev,
+                whatsapp: validationResponse.message,
+              }));
             }
           }
 
           return;
         }
 
-        console.log('✅ Validation passed - sending SMS verification to phone number');
+        console.log(
+          "✅ Validation passed - sending SMS verification to phone number",
+        );
 
         // Show success toast for validation
         toast.success("Validation passed", {
@@ -1339,17 +1400,17 @@ export default function StaffPage() {
           setCurrentStep("phone-verify");
         }
       } catch (error) {
-        console.error('Validation error:', error);
-        setError('Failed to validate staff data');
+        console.error("Validation error:", error);
+        setError("Failed to validate staff data");
       } finally {
         setLoading(false);
       }
     } else {
       // For phone/OTP users, proceed with registration directly
-      console.log('✅ Phone login user - proceeding with registration');
+      console.log("✅ Phone login user - proceeding with registration");
       const success = await registerStaff(staffData);
 
-      console.log('🔵 Registration result:', success);
+      console.log("🔵 Registration result:", success);
       if (success) {
         setCurrentStep("approval");
       }
@@ -1362,53 +1423,55 @@ export default function StaffPage() {
 
   const checkApprovalStatus = async () => {
     if (!authToken) {
-      console.log('❌ No auth token for approval check');
+      console.log("❌ No auth token for approval check");
       return;
     }
 
-    console.log('🔍 Checking approval status...');
+    console.log("🔍 Checking approval status...");
     setLoading(true);
 
     try {
-      const response = await apiCall('/api/auth/staff/profile', {
+      const response = await apiCall("/api/auth/staff/profile", {
         headers: {
-          'Authorization': `Bearer ${authToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
-      console.log('📋 Approval check response:', response);
+      console.log("📋 Approval check response:", response);
 
       if (response.success && response.data) {
         const staff = response.data;
-        console.log('👤 Staff data from approval check:', {
+        console.log("👤 Staff data from approval check:", {
           staffId: staff.staffId,
           status: staff.registrationStatus,
           isActive: staff.isActive,
-          fullName: staff.fullName
+          fullName: staff.fullName,
         });
 
         setStaffData(staff);
 
-        if (staff.registrationStatus === 'APPROVED' && staff.isActive) {
-          console.log('✅ Staff is approved and active - redirecting to dashboard');
+        if (staff.registrationStatus === "APPROVED" && staff.isActive) {
+          console.log(
+            "✅ Staff is approved and active - redirecting to dashboard",
+          );
           setApprovalStatus("approved");
           // Immediate redirect to dashboard (no delay)
           setCurrentStep("dashboard");
           await fetchDashboardData();
-        } else if (staff.registrationStatus === 'DENIED') {
-          console.log('❌ Staff registration denied');
+        } else if (staff.registrationStatus === "DENIED") {
+          console.log("❌ Staff registration denied");
           setApprovalStatus("denied");
         } else {
-          console.log('⏳ Staff still pending approval');
+          console.log("⏳ Staff still pending approval");
           setApprovalStatus("pending");
         }
       } else {
-        console.error('❌ Failed to check approval status:', response.message);
-        setError('Failed to check approval status');
+        console.error("❌ Failed to check approval status:", response.message);
+        setError("Failed to check approval status");
       }
     } catch (error) {
-      console.error('❌ Error checking approval status:', error);
-      setError('Error checking approval status');
+      console.error("❌ Error checking approval status:", error);
+      setError("Error checking approval status");
     } finally {
       setLoading(false);
     }
@@ -1524,15 +1587,18 @@ export default function StaffPage() {
                         <div className="text-center">
                           <button
                             onClick={resendOTP}
-                            disabled={loading || remainingAttempts === 0 || resendTimer > 0}
+                            disabled={
+                              loading ||
+                              remainingAttempts === 0 ||
+                              resendTimer > 0
+                            }
                             className="text-teal hover:text-teal/80 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                           >
                             {remainingAttempts === 0
                               ? "No more attempts"
                               : resendTimer > 0
-                                ? `Resend code in ${resendTimer}s`
-                                : "Resend Code"
-                            }
+                              ? `Resend code in ${resendTimer}s`
+                              : "Resend Code"}
                           </button>
                         </div>
                       </div>
@@ -1645,16 +1711,20 @@ export default function StaffPage() {
                       instagram: e.target.value,
                     }))
                   }
-                  onFocus={() => setFieldErrors(prev => ({ ...prev, instagram: "" }))}
+                  onFocus={() =>
+                    setFieldErrors((prev) => ({ ...prev, instagram: "" }))
+                  }
                   placeholder="@your_instagram"
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                     fieldErrors.instagram
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-200 focus:ring-teal'
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-200 focus:ring-teal"
                   }`}
                 />
                 {fieldErrors.instagram && (
-                  <p className="mt-1 text-sm text-red-600">{fieldErrors.instagram}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {fieldErrors.instagram}
+                  </p>
                 )}
               </div>
 
@@ -1685,7 +1755,7 @@ export default function StaffPage() {
                   value={staffData.whatsapp}
                   onFocus={() => {
                     setIsWhatsappPrefilled(false);
-                    setFieldErrors(prev => ({ ...prev, whatsapp: "" }));
+                    setFieldErrors((prev) => ({ ...prev, whatsapp: "" }));
                   }}
                   onChange={(e) =>
                     setStaffData((prev) => ({
@@ -1696,18 +1766,22 @@ export default function StaffPage() {
                   placeholder="+62 812-3456-7890"
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                     fieldErrors.whatsapp
-                      ? 'border-red-500 focus:ring-red-500'
+                      ? "border-red-500 focus:ring-red-500"
                       : isWhatsappPrefilled
-                        ? 'border-gray-200 focus:ring-teal bg-gray-50'
-                        : 'border-gray-200 focus:ring-teal bg-white'
+                      ? "border-gray-200 focus:ring-teal bg-gray-50"
+                      : "border-gray-200 focus:ring-teal bg-white"
                   }`}
                   readOnly={isWhatsappPrefilled}
                 />
                 {fieldErrors.whatsapp ? (
-                  <p className="mt-1 text-sm text-red-600">{fieldErrors.whatsapp}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {fieldErrors.whatsapp}
+                  </p>
                 ) : (
                   <p className="text-xs text-charcoal/60 mt-1">
-                    {isWhatsappPrefilled ? 'Auto-filled from login method' : 'Enter your WhatsApp number'}
+                    {isWhatsappPrefilled
+                      ? "Auto-filled from login method"
+                      : "Enter your WhatsApp number"}
                   </p>
                 )}
               </div>
@@ -1719,19 +1793,23 @@ export default function StaffPage() {
                 <input
                   type="email"
                   value={staffData.email}
-                  onFocus={() => setFieldErrors(prev => ({ ...prev, email: "" }))}
+                  onFocus={() =>
+                    setFieldErrors((prev) => ({ ...prev, email: "" }))
+                  }
                   onChange={(e) =>
                     setStaffData((prev) => ({ ...prev, email: e.target.value }))
                   }
                   placeholder="your.email@example.com"
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
                     fieldErrors.email
-                      ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-200 focus:ring-teal'
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-gray-200 focus:ring-teal"
                   }`}
                 />
                 {fieldErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                  <p className="mt-1 text-sm text-red-600">
+                    {fieldErrors.email}
+                  </p>
                 )}
                 {staffData.email && (
                   <p className="text-xs text-charcoal/60 mt-1">
@@ -1742,7 +1820,12 @@ export default function StaffPage() {
 
               <button
                 onClick={handleFormSubmit}
-                disabled={!staffData.fullName || !staffData.instagram || !staffData.whatsapp || loading}
+                disabled={
+                  !staffData.fullName ||
+                  !staffData.instagram ||
+                  !staffData.whatsapp ||
+                  loading
+                }
                 className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
               >
                 {loading ? (
@@ -1786,13 +1869,14 @@ export default function StaffPage() {
               />
             </div>
             <h1 className="text-3xl font-display font-bold text-charcoal mb-2">
-              {localStorage.getItem('staff_verification_token') ? 'Phone Verification' : 'Verify Phone Number'}
+              {localStorage.getItem("staff_verification_token")
+                ? "Phone Verification"
+                : "Verify Phone Number"}
             </h1>
             <p className="text-charcoal/70">
-              {localStorage.getItem('staff_verification_token')
-                ? 'Enter the SMS code to verify your identity and access your staff account'
-                : 'We\'ve sent an SMS verification code to your phone number'
-              }
+              {localStorage.getItem("staff_verification_token")
+                ? "Enter the SMS code to verify your identity and access your staff account"
+                : "We've sent an SMS verification code to your phone number"}
             </p>
           </div>
 
@@ -1814,7 +1898,9 @@ export default function StaffPage() {
                   placeholder="123456"
                   maxLength={6}
                   value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) =>
+                    setOtpCode(e.target.value.replace(/\D/g, ""))
+                  }
                   className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent text-center text-lg tracking-widest"
                 />
               </div>
@@ -1822,34 +1908,46 @@ export default function StaffPage() {
               <button
                 onClick={async () => {
                   // Check if this is existing staff verification or new registration
-                  const verificationToken = localStorage.getItem('staff_verification_token');
+                  const verificationToken = localStorage.getItem(
+                    "staff_verification_token",
+                  );
 
                   if (verificationToken) {
                     // Existing staff verification
-                    console.log('🔵 Verifying existing staff phone verification');
+                    console.log(
+                      "🔵 Verifying existing staff phone verification",
+                    );
                     setLoading(true);
 
                     try {
-                      const response = await apiCall('/api/auth/staff/verify-existing', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                          phone: phoneNumber,
-                          code: otpCode,
-                          verificationToken: verificationToken
-                        }),
-                      });
+                      const response = await apiCall(
+                        "/api/auth/staff/verify-existing",
+                        {
+                          method: "POST",
+                          body: JSON.stringify({
+                            phone: phoneNumber,
+                            code: otpCode,
+                            verificationToken: verificationToken,
+                          }),
+                        },
+                      );
 
                       if (response.success && response.data.token) {
-                        console.log('✅ Existing staff phone verification successful');
+                        console.log(
+                          "✅ Existing staff phone verification successful",
+                        );
                         const token = response.data.token;
                         const staff = response.data.staff;
 
-                        localStorage.setItem('staff_token', token);
-                        localStorage.removeItem('staff_verification_token');
+                        localStorage.setItem("staff_token", token);
+                        localStorage.removeItem("staff_verification_token");
                         setAuthToken(token);
                         setStaffData(staff);
 
-                        if (staff.registrationStatus === 'APPROVED' && staff.isActive) {
+                        if (
+                          staff.registrationStatus === "APPROVED" &&
+                          staff.isActive
+                        ) {
                           setCurrentStep("dashboard");
                         } else {
                           setCurrentStep("approval");
@@ -1858,25 +1956,32 @@ export default function StaffPage() {
                         setError(response.message);
                       }
                     } catch (error) {
-                      console.error('Existing staff verification error:', error);
-                      setError('Failed to verify existing staff');
+                      console.error(
+                        "Existing staff verification error:",
+                        error,
+                      );
+                      setError("Failed to verify existing staff");
                     } finally {
                       setLoading(false);
                     }
                   } else {
                     // New staff registration flow
-                    console.log('🔵 Verifying SMS OTP for Google OAuth user registration');
+                    console.log(
+                      "🔵 Verifying SMS OTP for Google OAuth user registration",
+                    );
                     const tempToken = await verifyOTP(phoneNumber, otpCode);
                     if (tempToken) {
-                      console.log('✅ Phone number verified via SMS - proceeding with registration');
+                      console.log(
+                        "✅ Phone number verified via SMS - proceeding with registration",
+                      );
                       // Update temp token with verified phone number
                       setAuthToken(tempToken);
-                      localStorage.setItem('staff_token', tempToken);
+                      localStorage.setItem("staff_token", tempToken);
 
                       // Now proceed with registration
                       const success = await registerStaff({
                         ...staffData,
-                        phone: phoneNumber // Add verified phone number
+                        phone: phoneNumber, // Add verified phone number
                       });
 
                       if (success) {
@@ -1893,10 +1998,10 @@ export default function StaffPage() {
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Verifying...
                   </>
+                ) : localStorage.getItem("staff_verification_token") ? (
+                  "Verify Phone & Login"
                 ) : (
-                  localStorage.getItem('staff_verification_token')
-                    ? "Verify Phone & Login"
-                    : "Verify SMS & Complete Registration"
+                  "Verify SMS & Complete Registration"
                 )}
               </button>
 
@@ -1986,7 +2091,7 @@ export default function StaffPage() {
                       Checking...
                     </>
                   ) : (
-                    'Check Approval Status'
+                    "Check Approval Status"
                   )}
                 </button>
               </div>
@@ -2087,7 +2192,9 @@ export default function StaffPage() {
                 <h1 className="text-2xl font-display font-bold text-charcoal">
                   Staff Dashboard
                 </h1>
-                <p className="text-charcoal/70">Welcome, {staffData.fullName}</p>
+                <p className="text-charcoal/70">
+                  Welcome, {staffData.fullName}
+                </p>
                 <p className="text-sm text-charcoal/60">
                   Staff ID: {staffData.staffId}
                 </p>
@@ -2138,7 +2245,9 @@ export default function StaffPage() {
                     <input
                       type="text"
                       value={manualCustomerId}
-                      onChange={(e) => setManualCustomerId(e.target.value.toUpperCase())}
+                      onChange={(e) =>
+                        setManualCustomerId(e.target.value.toUpperCase())
+                      }
                       placeholder="SP123456"
                       className="flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                     />
@@ -2227,37 +2336,58 @@ export default function StaffPage() {
 
                         <div className="space-y-2">
                           <div>
-                            <p className="text-xs text-charcoal/60 uppercase tracking-wide">Customer ID</p>
-                            <p className="font-bold text-lime text-lg">{scannedCustomerId}</p>
+                            <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                              Customer ID
+                            </p>
+                            <p className="font-bold text-lime text-lg">
+                              {scannedCustomerId}
+                            </p>
                           </div>
 
                           <div>
-                            <p className="text-xs text-charcoal/60 uppercase tracking-wide">Full Name</p>
-                            <p className="font-semibold text-charcoal">{scannedCustomerData.fullName}</p>
+                            <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                              Full Name
+                            </p>
+                            <p className="font-semibold text-charcoal">
+                              {scannedCustomerData.fullName}
+                            </p>
                           </div>
 
                           <div className="flex gap-4">
                             <div>
-                              <p className="text-xs text-charcoal/60 uppercase tracking-wide">Instagram</p>
-                              <p className="font-medium text-charcoal">@{scannedCustomerData.instagram}</p>
+                              <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                                Instagram
+                              </p>
+                              <p className="font-medium text-charcoal">
+                                @{scannedCustomerData.instagram}
+                              </p>
                             </div>
 
                             {scannedCustomerData.phone && (
                               <div>
-                                <p className="text-xs text-charcoal/60 uppercase tracking-wide">Phone</p>
-                                <p className="font-medium text-charcoal">{scannedCustomerData.phone}</p>
+                                <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                                  Phone
+                                </p>
+                                <p className="font-medium text-charcoal">
+                                  {scannedCustomerData.phone}
+                                </p>
                               </div>
                             )}
                           </div>
 
                           {scannedCustomerData.registrationStatus && (
                             <div>
-                              <p className="text-xs text-charcoal/60 uppercase tracking-wide">Registration Status</p>
-                              <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                                scannedCustomerData.registrationStatus === 'APPROVED'
-                                  ? 'bg-green-100 text-green-800'
-                                  : 'bg-yellow-100 text-yellow-800'
-                              }`}>
+                              <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                                Registration Status
+                              </p>
+                              <span
+                                className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                                  scannedCustomerData.registrationStatus ===
+                                  "APPROVED"
+                                    ? "bg-green-100 text-green-800"
+                                    : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
                                 {scannedCustomerData.registrationStatus}
                               </span>
                             </div>
@@ -2274,8 +2404,12 @@ export default function StaffPage() {
                           </p>
                         </div>
                         <div>
-                          <p className="text-xs text-charcoal/60 uppercase tracking-wide">Customer ID</p>
-                          <p className="font-bold text-amber-600 text-lg">{scannedCustomerId}</p>
+                          <p className="text-xs text-charcoal/60 uppercase tracking-wide">
+                            Customer ID
+                          </p>
+                          <p className="font-bold text-amber-600 text-lg">
+                            {scannedCustomerId}
+                          </p>
                         </div>
                         <p className="text-xs text-charcoal/60">
                           Proceeding with manual entry
@@ -2325,7 +2459,10 @@ export default function StaffPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-charcoal mb-2">
-                    Photo <span className="text-charcoal/50 font-normal">(max 3MB)</span>
+                    Photo{" "}
+                    <span className="text-charcoal/50 font-normal">
+                      (max 3MB)
+                    </span>
                   </label>
                   <div className="space-y-3">
                     {/* Photo Preview */}
@@ -2357,7 +2494,9 @@ export default function StaffPage() {
                           className="flex-1 flex items-center justify-center gap-2 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                           <Camera className="w-5 h-5 text-charcoal/60" />
-                          <span className="text-sm text-charcoal">Take Photo</span>
+                          <span className="text-sm text-charcoal">
+                            Take Photo
+                          </span>
                         </button>
 
                         <input
@@ -2372,7 +2511,9 @@ export default function StaffPage() {
                           className="flex-1 flex items-center justify-center gap-2 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                         >
                           <Upload className="w-5 h-5 text-charcoal/60" />
-                          <span className="text-sm text-charcoal">Upload Photo</span>
+                          <span className="text-sm text-charcoal">
+                            Upload Photo
+                          </span>
                         </label>
                       </div>
                     )}
@@ -2381,7 +2522,10 @@ export default function StaffPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-charcoal mb-2">
-                    Notes <span className="text-charcoal/50 font-normal">(optional)</span>
+                    Notes{" "}
+                    <span className="text-charcoal/50 font-normal">
+                      (optional)
+                    </span>
                   </label>
                   <input
                     type="text"
@@ -2417,7 +2561,7 @@ export default function StaffPage() {
 
           {/* History Section */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex md:items-center justify-between flex-col md:flex-row gap-2 md:gap-0 mb-6">
               <div className="flex items-center gap-3">
                 <History className="w-6 h-6 text-charcoal" />
                 <h2 className="text-xl font-semibold text-charcoal">
@@ -2447,103 +2591,152 @@ export default function StaffPage() {
                   <History className="w-12 h-12 mx-auto mb-4 text-charcoal/40" />
                   <p>No expense records found</p>
                   {searchTerm && (
-                    <p className="text-sm mt-2">Try adjusting your search terms</p>
+                    <p className="text-sm mt-2">
+                      Try adjusting your search terms
+                    </p>
                   )}
                 </div>
               ) : (
                 <>
                   {filteredHistory.map((entry) => (
-                  <div
-                    key={entry.id}
-                    className="bg-gray-50 rounded-lg p-4 border border-gray-200"
-                  >
-                    {editingEntry === entry.id ? (
-                      <EditExpenseForm
-                        entry={entry}
-                        onSave={(newAmount, newDescription) =>
-                          handleUpdateExpense(
-                            entry.id,
-                            newAmount,
-                            newDescription,
-                          )
-                        }
-                        onCancel={() => setEditingEntry(null)}
-                      />
-                    ) : (
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-4 mb-2">
-                            <div className="flex items-center gap-2">
-                              <User className="w-4 h-4 text-charcoal/60" />
-                              <span className="font-medium text-charcoal">
-                                {entry.customerName}
-                              </span>
-                              <span className="text-sm text-charcoal/60">
-                                @{entry.customerInstagram}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm text-charcoal/60">
-                                ID:
-                              </span>
-                              <span className="text-sm font-mono text-charcoal">
-                                {entry.customerId}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-charcoal/70">
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-4 h-4" />
-                              <span className="font-semibold text-coral">
-                                IDR {entry.amount.toLocaleString()}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>
-                                {entry.timestamp.toLocaleDateString()}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              <span>
-                                {entry.timestamp.toLocaleTimeString()}
-                              </span>
-                            </div>
-                          </div>
-                          <p className="text-sm text-charcoal/80 mt-1">
-                            {entry.description}
-                          </p>
-                          {entry.photoUrl && (
-                            <div className="mt-2">
-                              <div className="w-24 h-24 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
-                                <Image
-                                  src={entry.photoUrl}
-                                  alt="Expense photo"
-                                  width={96}
-                                  height={96}
-                                  className="object-cover w-full h-full"
-                                />
+                    <div
+                      key={entry.id}
+                      className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                    >
+                      {editingEntry === entry.id ? (
+                        <EditExpenseForm
+                          entry={entry}
+                          onSave={(newAmount, newDescription) =>
+                            handleUpdateExpense(
+                              entry.id,
+                              newAmount,
+                              newDescription,
+                            )
+                          }
+                          onCancel={() => setEditingEntry(null)}
+                        />
+                      ) : (
+                        <div className="flex items-center justify-between flex-col md:flex-row">
+                          <div className="flex-1">
+                            <div className="flex md:items-center gap-4 mb-2 flex-col md:flex-row">
+                              <div className="flex items-center gap-2">
+                                <User className="w-4 h-4 text-charcoal/60" />
+                                <span className="font-medium text-charcoal">
+                                  {entry.customerName}
+                                </span>
+                                <span className="text-sm text-charcoal/60">
+                                  @{entry.customerInstagram}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-charcoal/60">
+                                  ID:
+                                </span>
+                                <span className="text-sm font-mono text-charcoal">
+                                  {entry.customerId}
+                                </span>
                               </div>
                             </div>
-                          )}
+
+                            <div className="md:hidden">
+                              <div className="flex justify-between">
+                                <div className="flex md:items-center gap-2 text-sm text-charcoal/70 flex-col md:flex-row">
+                                  <div className="flex items-center gap-1">
+                                    <DollarSign className="w-4 h-4" />
+                                    <span className="font-semibold text-coral">
+                                      IDR {entry.amount.toLocaleString()}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="w-4 h-4" />
+                                    <span>
+                                      {entry.timestamp.toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    <span>
+                                      {entry.timestamp.toLocaleTimeString()}
+                                    </span>
+                                  </div>
+                                </div>
+                                {entry.photoUrl && (
+                                  <div>
+                                    <div className="w-24 h-24 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                                      <Image
+                                        src={entry.photoUrl}
+                                        alt="Expense photo"
+                                        width={96}
+                                        height={96}
+                                        className="object-cover w-full h-full"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              <p className="text-sm text-charcoal/80 mt-1">
+                                {entry.description}
+                              </p>
+                            </div>
+
+                            <div className="hidden md:flex flex-col">
+                              <div className="flex md:items-center gap-4 text-sm text-charcoal/70 flex-col md:flex-row">
+                                <div className="flex items-center gap-1">
+                                  <DollarSign className="w-4 h-4" />
+                                  <span className="font-semibold text-coral">
+                                    IDR {entry.amount.toLocaleString()}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Calendar className="w-4 h-4" />
+                                  <span>
+                                    {entry.timestamp.toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Clock className="w-4 h-4" />
+                                  <span>
+                                    {entry.timestamp.toLocaleTimeString()}
+                                  </span>
+                                </div>
+                              </div>
+                              <p className="text-sm text-charcoal/80 mt-1">
+                                {entry.description}
+                              </p>
+                              {entry.photoUrl && (
+                                <div className="mt-2">
+                                  <div className="w-24 h-24 border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
+                                    <Image
+                                      src={entry.photoUrl}
+                                      alt="Expense photo"
+                                      width={96}
+                                      height={96}
+                                      className="object-cover w-full h-full"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => setEditingEntry(entry.id)}
+                            className="ml-4 p-2 text-charcoal/60 hover:text-teal hover:bg-teal/10 rounded-lg transition-colors"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => setEditingEntry(entry.id)}
-                          className="ml-4 p-2 text-charcoal/60 hover:text-teal hover:bg-teal/10 rounded-lg transition-colors"
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                      )}
+                    </div>
                   ))}
 
                   {/* Load More Button */}
                   {expenseTotal > expenseHistory.length && (
                     <div className="text-center pt-4">
                       <button
-                        onClick={() => fetchExpenseHistory(expensePage + 1, searchTerm)}
+                        onClick={() =>
+                          fetchExpenseHistory(expensePage + 1, searchTerm)
+                        }
                         disabled={expenseLoading}
                         className="bg-teal text-white px-6 py-2 rounded-lg hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 mx-auto"
                       >
@@ -2555,7 +2748,9 @@ export default function StaffPage() {
                         ) : (
                           <>
                             <ArrowRight className="w-4 h-4" />
-                            Load More ({expenseTotal - expenseHistory.length} remaining)
+                            Load More ({expenseTotal -
+                              expenseHistory.length}{" "}
+                            remaining)
                           </>
                         )}
                       </button>
@@ -2600,31 +2795,33 @@ function CameraModal({ isOpen, onCapture, onClose }: CameraModalProps) {
       if (imageSrc) {
         // Convert base64 to blob
         fetch(imageSrc)
-          .then(res => res.blob())
-          .then(blob => {
+          .then((res) => res.blob())
+          .then((blob) => {
             // Check file size (3MB = 3 * 1024 * 1024 bytes)
             const maxSize = 3 * 1024 * 1024;
             if (blob.size > maxSize) {
-              toast.error('Photo too large', {
-                description: 'Please capture a smaller photo (max 3MB)'
+              toast.error("Photo too large", {
+                description: "Please capture a smaller photo (max 3MB)",
               });
               return;
             }
 
-            const file = new File([blob], 'expense-photo.jpg', { type: 'image/jpeg' });
+            const file = new File([blob], "expense-photo.jpg", {
+              type: "image/jpeg",
+            });
             onCapture(file);
           })
-          .catch(error => {
-            console.error('Error converting image:', error);
-            setCameraError('Failed to capture photo');
+          .catch((error) => {
+            console.error("Error converting image:", error);
+            setCameraError("Failed to capture photo");
           });
       }
     }
   };
 
   const handleUserMediaError = (error: any) => {
-    console.error('Camera error:', error);
-    setCameraError('Cannot access camera. Please check permissions.');
+    console.error("Camera error:", error);
+    setCameraError("Cannot access camera. Please check permissions.");
   };
 
   if (!isOpen) return null;
@@ -2661,15 +2858,15 @@ function CameraModal({ isOpen, onCapture, onClose }: CameraModalProps) {
                   screenshotFormat="image/jpeg"
                   screenshotQuality={0.7}
                   videoConstraints={{
-                    facingMode: { ideal: 'environment' },
+                    facingMode: { ideal: "environment" },
                     width: { ideal: 1280, min: 640 },
-                    height: { ideal: 720, min: 480 }
+                    height: { ideal: 720, min: 480 },
                   }}
                   onUserMediaError={handleUserMediaError}
                   style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
                   }}
                 />
               )}
@@ -2738,7 +2935,7 @@ function EditExpenseForm({ entry, onSave, onCancel }: EditExpenseFormProps) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-4 mb-2">
+      <div className="flex md:items-center flex-col md:flex-row gap-4 mb-2">
         <div className="flex items-center gap-2">
           <User className="w-4 h-4 text-charcoal/60" />
           <span className="font-medium text-charcoal">

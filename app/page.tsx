@@ -140,7 +140,7 @@ export default function Home() {
               <div className="relative rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
                 <Image
                   src="/instagram-poster.png"
-                  alt="Summer Party Canggu - Exclusive Pool Party at bauerhaus, Saturday September 27, 2PM-9PM"
+                  alt="Summer Party Canggu - Exclusive Pool Party at Canggu, Saturday September 27, 2PM-9PM"
                   width={600}
                   height={800}
                   className="w-full h-auto"

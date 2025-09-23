@@ -3,7 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Instagram, MessageCircle, Menu, X, ChevronDown, User, LogOut, Shield, Users } from "lucide-react";
+import {
+  Instagram,
+  MessageCircle,
+  Menu,
+  X,
+  ChevronDown,
+  User,
+  LogOut,
+  Shield,
+  Users,
+} from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -23,6 +33,9 @@ export default function Header() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Inside Header component
+  const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isAreasOpen, setIsAreasOpen] = useState(false);
 
   const handleMouseEnter = (dropdown: string) => {
     if (dropdownTimeoutRef.current) {
@@ -44,21 +57,21 @@ export default function Header() {
   // Check authentication state
   useEffect(() => {
     const checkAuthState = () => {
-      const adminToken = localStorage.getItem('admin_token');
-      const staffToken = localStorage.getItem('staff_token');
-      const userToken = localStorage.getItem('user_token');
+      const adminToken = localStorage.getItem("admin_token");
+      const staffToken = localStorage.getItem("staff_token");
+      const userToken = localStorage.getItem("user_token");
 
       if (adminToken) {
-        setUserRole('admin');
+        setUserRole("admin");
       } else if (staffToken) {
-        setUserRole('staff');
+        setUserRole("staff");
       } else if (userToken) {
-        setUserRole('user');
+        setUserRole("user");
       } else if (session?.user) {
         // Check if we're on event page - if so, they're likely an event user
         const currentPath = window.location.pathname;
-        if (currentPath === '/event') {
-          setUserRole('user');
+        if (currentPath === "/event") {
+          setUserRole("user");
         } else {
           // For other pages, check if they have specific admin/staff access
           setUserRole(null);
@@ -71,24 +84,24 @@ export default function Header() {
     checkAuthState();
 
     // Listen for storage changes to update auth state
-    window.addEventListener('storage', checkAuthState);
-    return () => window.removeEventListener('storage', checkAuthState);
+    window.addEventListener("storage", checkAuthState);
+    return () => window.removeEventListener("storage", checkAuthState);
   }, [session]);
 
   // Handle logout
   const handleLogout = async () => {
     try {
-      console.log('🚪 Header logout - Setting logout flags in localStorage');
+      console.log("🚪 Header logout - Setting logout flags in localStorage");
 
       // Set logout flags to prevent automatic re-login
-      localStorage.setItem('admin_explicitly_logged_out', 'true');
-      localStorage.setItem('staff_explicitly_logged_out', 'true');
-      localStorage.setItem('user_explicitly_logged_out', 'true');
+      localStorage.setItem("admin_explicitly_logged_out", "true");
+      localStorage.setItem("staff_explicitly_logged_out", "true");
+      localStorage.setItem("user_explicitly_logged_out", "true");
 
       // Clear local storage tokens
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('staff_token');
-      localStorage.removeItem('user_token');
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("staff_token");
+      localStorage.removeItem("user_token");
       setUserRole(null);
 
       // Sign out from NextAuth if using Google OAuth
@@ -98,41 +111,43 @@ export default function Header() {
 
       closeMobileMenu();
 
-      console.log('✅ Header logout successful - logout flags set to prevent auto-login');
+      console.log(
+        "✅ Header logout successful - logout flags set to prevent auto-login",
+      );
 
       // Redirect to home page after logout
-      window.location.href = '/';
+      window.location.href = "/";
     } catch (error) {
-      console.error('❌ Header logout error:', error);
+      console.error("❌ Header logout error:", error);
       // Still perform cleanup even if error occurs
-      localStorage.setItem('admin_explicitly_logged_out', 'true');
-      localStorage.setItem('staff_explicitly_logged_out', 'true');
-      localStorage.setItem('user_explicitly_logged_out', 'true');
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('staff_token');
-      localStorage.removeItem('user_token');
+      localStorage.setItem("admin_explicitly_logged_out", "true");
+      localStorage.setItem("staff_explicitly_logged_out", "true");
+      localStorage.setItem("user_explicitly_logged_out", "true");
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("staff_token");
+      localStorage.removeItem("user_token");
       setUserRole(null);
       closeMobileMenu();
-      window.location.href = '/';
+      window.location.href = "/";
     }
   };
 
   // Get dashboard URL based on user role
   const getDashboardUrl = () => {
-    const adminToken = localStorage.getItem('admin_token');
-    const staffToken = localStorage.getItem('staff_token');
-    const userToken = localStorage.getItem('user_token');
+    const adminToken = localStorage.getItem("admin_token");
+    const staffToken = localStorage.getItem("staff_token");
+    const userToken = localStorage.getItem("user_token");
 
     // If user has tokens, use those to determine dashboard
-    if (adminToken) return '/admin';
-    if (staffToken) return '/staff';
-    if (userToken) return '/event';
+    if (adminToken) return "/admin";
+    if (staffToken) return "/staff";
+    if (userToken) return "/event";
 
     // Default fallback based on user role
-    if (userRole === 'admin') return '/admin';
-    if (userRole === 'staff') return '/staff';
-    if (userRole === 'user') return '/event';
-    return '/';
+    if (userRole === "admin") return "/admin";
+    if (userRole === "staff") return "/staff";
+    if (userRole === "user") return "/event";
+    return "/";
   };
 
   // Close mobile menu when clicking outside
@@ -361,13 +376,12 @@ export default function Header() {
                 onMouseLeave={handleMouseLeave}
               >
                 <button className="flex items-center text-charcoal hover:text-teal transition-colors">
-                  <User className="w-5 h-5 mr-1" />
-                  {userRole === 'admin' ? (
-                    <Shield className="w-4 h-4" />
-                  ) : userRole === 'staff' ? (
-                    <Users className="w-4 h-4" />
+                  {userRole === "admin" ? (
+                    <Shield className="w-5 h-5" />
+                  ) : userRole === "staff" ? (
+                    <Users className="w-5 h-5" />
                   ) : (
-                    <User className="w-4 h-4" />
+                    <User className="w-5 h-5" />
                   )}
                   <ChevronDown className="w-4 h-4 ml-1" />
                 </button>
@@ -378,17 +392,19 @@ export default function Header() {
                       href={getDashboardUrl()}
                       className="flex items-center px-4 py-3 text-gray-700 hover:bg-mint/10 hover:text-teal transition-colors"
                     >
-                      {userRole === 'admin' ? (
+                      {userRole === "admin" ? (
                         <Shield className="w-4 h-4 mr-3" />
-                      ) : userRole === 'staff' ? (
+                      ) : userRole === "staff" ? (
                         <Users className="w-4 h-4 mr-3" />
                       ) : (
                         <User className="w-4 h-4 mr-3" />
                       )}
                       <span>
-                        {userRole === 'admin' ? 'Admin Dashboard' :
-                         userRole === 'staff' ? 'Staff Dashboard' :
-                         'My Event Page'}
+                        {userRole === "admin"
+                          ? "Admin Dashboard"
+                          : userRole === "staff"
+                          ? "Staff Dashboard"
+                          : "My Event Page"}
                       </span>
                     </Link>
                     <button
@@ -435,27 +451,39 @@ export default function Header() {
 
                   {/* Products Section */}
                   <div>
-                    <div className="text-lg font-medium text-charcoal mb-3">
+                    <button
+                      onClick={() => setIsProductsOpen(!isProductsOpen)}
+                      className="flex justify-between items-center w-full text-lg font-medium text-charcoal mb-3"
+                    >
                       Our Products
-                    </div>
-                    <div className="space-y-3 ml-4">
-                      {productCategories.map((category) => (
-                        <Link
-                          key={category.name}
-                          href={category.href}
-                          onClick={closeMobileMenu}
-                          className="flex items-center text-gray-600 hover:text-teal transition-colors"
-                        >
-                          <span className="text-lg mr-3">{category.icon}</span>
-                          <span>{category.name}</span>
-                          {category.isNew && (
-                            <span className="ml-2 bg-coral text-white px-2 py-0.5 rounded-full text-xs font-bold">
-                              NEW
+                      <ChevronDown
+                        className={`w-4 h-4 ml-1 transition-transform ${
+                          isProductsOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {isProductsOpen && (
+                      <div className="space-y-3 ml-4">
+                        {productCategories.map((category) => (
+                          <Link
+                            key={category.name}
+                            href={category.href}
+                            onClick={closeMobileMenu}
+                            className="flex items-center text-gray-600 hover:text-teal transition-colors"
+                          >
+                            <span className="text-lg mr-3">
+                              {category.icon}
                             </span>
-                          )}
-                        </Link>
-                      ))}
-                    </div>
+                            <span>{category.name}</span>
+                            {category.isNew && (
+                              <span className="ml-2 bg-coral text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                                NEW
+                              </span>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Blog */}
@@ -469,22 +497,32 @@ export default function Header() {
 
                   {/* Areas Section */}
                   <div>
-                    <div className="text-lg font-medium text-charcoal mb-3">
+                    <button
+                      onClick={() => setIsAreasOpen(!isAreasOpen)}
+                      className="flex justify-between items-center w-full text-lg font-medium text-charcoal mb-3"
+                    >
                       Our Areas
-                    </div>
-                    <div className="space-y-3 ml-4">
-                      {areaCategories.map((area) => (
-                        <Link
-                          key={area.name}
-                          href={area.href}
-                          onClick={closeMobileMenu}
-                          className="flex items-center text-gray-600 hover:text-teal transition-colors"
-                        >
-                          <span className="text-lg mr-3">{area.icon}</span>
-                          <span>{area.name}</span>
-                        </Link>
-                      ))}
-                    </div>
+                      <ChevronDown
+                        className={`w-4 h-4 ml-1 transition-transform ${
+                          isAreasOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {isAreasOpen && (
+                      <div className="space-y-3 ml-4">
+                        {areaCategories.map((area) => (
+                          <Link
+                            key={area.name}
+                            href={area.href}
+                            onClick={closeMobileMenu}
+                            className="flex items-center text-gray-600 hover:text-teal transition-colors"
+                          >
+                            <span className="text-lg mr-3">{area.icon}</span>
+                            <span>{area.name}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* Authentication Section */}
@@ -499,17 +537,19 @@ export default function Header() {
                           onClick={closeMobileMenu}
                           className="flex items-center text-gray-600 hover:text-teal transition-colors"
                         >
-                          {userRole === 'admin' ? (
+                          {userRole === "admin" ? (
                             <Shield className="w-5 h-5 mr-3" />
-                          ) : userRole === 'staff' ? (
+                          ) : userRole === "staff" ? (
                             <Users className="w-5 h-5 mr-3" />
                           ) : (
                             <User className="w-5 h-5 mr-3" />
                           )}
                           <span>
-                            {userRole === 'admin' ? 'Admin Dashboard' :
-                             userRole === 'staff' ? 'Staff Dashboard' :
-                             'My Event Page'}
+                            {userRole === "admin"
+                              ? "Admin Dashboard"
+                              : userRole === "staff"
+                              ? "Staff Dashboard"
+                              : "My Event Page"}
                           </span>
                         </Link>
                         <button
@@ -524,15 +564,16 @@ export default function Header() {
                   )}
 
                   {/* Mobile Contact Button */}
-                  <div className="pt-4 border-t border-gray-200">
+                  <div className="pt-6 border-t border-gray-200">
                     <a
-                      href="https://wa.me/6285190459091"
+                      href="/event"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={closeMobileMenu}
                       className="btn-primary w-full text-center"
                     >
-                      Contact Us on WhatsApp
+                      RSVP NOW!
+                      <span className="ml-2">🎉</span>
                     </a>
                   </div>
                 </div>
