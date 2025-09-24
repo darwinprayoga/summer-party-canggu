@@ -6,17 +6,17 @@ import { normalizePhoneNumber } from '@/lib/utils/phone';
 const userValidationSchema = z.object({
   instagram: z.string().min(1, 'Instagram handle is required'),
   email: z.string().email('Valid email is required'),
-  whatsapp: z.string().min(1, 'WhatsApp number is required'),
+  phone: z.string().min(1, 'Phone number is required'),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { instagram, email, whatsapp } = userValidationSchema.parse(body);
+    const { instagram, email, phone } = userValidationSchema.parse(body);
 
-    // Normalize the input WhatsApp number
-    const normalizedInputWhatsapp = normalizePhoneNumber(whatsapp);
-    console.log(`🔍 WhatsApp validation: input "${whatsapp}" normalized to "${normalizedInputWhatsapp}"`);
+    // Normalize the input phone number
+    const normalizedInputPhone = normalizePhoneNumber(phone);
+    console.log(`🔍 Phone validation: input "${phone}" normalized to "${normalizedInputPhone}"`);
 
     // Get all users to check for conflicts with normalization
     const allUsers = await prisma.user.findMany({
@@ -29,7 +29,6 @@ export async function POST(request: NextRequest) {
       select: {
         instagram: true,
         email: true,
-        whatsapp: true,
         phone: true,
       }
     });
@@ -53,36 +52,30 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Check for WhatsApp/phone conflicts with normalization
+    // Check for phone conflicts with normalization
     const allUsersWithPhones = await prisma.user.findMany({
       where: {
-        OR: [
-          { whatsapp: { not: null } },
-          { phone: { not: null } }
-        ]
+        phone: { not: null }
       },
       select: {
-        whatsapp: true,
         phone: true,
       }
     });
 
     const phoneConflict = allUsersWithPhones.find(user => {
-      const normalizedDbWhatsapp = user.whatsapp ? normalizePhoneNumber(user.whatsapp) : null;
       const normalizedDbPhone = user.phone ? normalizePhoneNumber(user.phone) : null;
 
-      console.log(`🔍 Comparing "${normalizedInputWhatsapp}" with DB whatsapp "${user.whatsapp}" (normalized: "${normalizedDbWhatsapp}") and phone "${user.phone}" (normalized: "${normalizedDbPhone}")`);
+      console.log(`🔍 Comparing "${normalizedInputPhone}" with DB phone "${user.phone}" (normalized: "${normalizedDbPhone}")`);
 
-      return normalizedDbWhatsapp === normalizedInputWhatsapp ||
-             normalizedDbPhone === normalizedInputWhatsapp;
+      return normalizedDbPhone === normalizedInputPhone;
     });
 
     if (phoneConflict) {
       return NextResponse.json({
         success: false,
-        message: `User already exists with this WhatsApp number`,
+        message: `User already exists with this phone number`,
         data: {
-          conflictField: 'whatsapp_number',
+          conflictField: 'phone_number',
         }
       }, { status: 400 });
     }

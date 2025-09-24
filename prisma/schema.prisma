@@ -32,7 +32,6 @@ model User {
   fullName      String
   email         String?  @unique
   phone         String?  @unique
-  whatsapp      String?
   instagram     String   @unique
 
   // Authentication
@@ -68,7 +67,6 @@ model Staff {
   fullName         String
   email            String?            @unique
   phone            String?            @unique
-  whatsapp         String?
   instagram        String             @unique
 
   // Authentication
@@ -100,7 +98,6 @@ model Admin {
   fullName         String
   email            String?            @unique
   phone            String?            @unique
-  whatsapp         String?
   instagram        String             @unique
 
   // Authentication
@@ -208,7 +205,7 @@ model EventConfig {
 
   // Social media
   instagramHandle String?  @default("@summerpartycanggu")
-  whatsappNumber  String?  @default("+62 812-3456-7890")
+  contactNumber   String?  @default("+62 812-3456-7890")
 
   // Settings
   isActive        Boolean  @default(true)

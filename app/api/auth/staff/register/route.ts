@@ -54,7 +54,6 @@ export async function POST(request: NextRequest) {
         fullName: staffData.fullName,
         email: staffData.email,
         phone: staffData.phone || payload.phone,
-        whatsapp: staffData.whatsapp,
         instagram: staffData.instagram,
         loginMethod: staffData.loginMethod,
         registrationStatus: 'PENDING',

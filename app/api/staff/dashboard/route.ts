@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           phone: true,
-          whatsapp: true,
+          // whatsapp: true,
           instagram: true,
           isActive: true,
           approvedAt: true
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           phone: true,
-          whatsapp: true,
+          // whatsapp: true,
           instagram: true,
           isActive: true,
           approvedAt: true

@@ -42,7 +42,6 @@ export async function GET(request: NextRequest) {
         fullName: true,
         email: true,
         phone: true,
-        whatsapp: true,
         instagram: true,
         referralCode: true,
         createdAt: true,

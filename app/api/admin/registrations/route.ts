@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           instagram: true,
-          whatsapp: true,
+          phone: true,
           loginMethod: true,
           createdAt: true
         },
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           instagram: true,
-          whatsapp: true,
+          phone: true,
           loginMethod: true,
           createdAt: true
         },
@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           instagram: true,
-          whatsapp: true,
+          phone: true,
           loginMethod: true,
           createdAt: true
         },
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
           fullName: true,
           email: true,
           instagram: true,
-          whatsapp: true,
+          phone: true,
           loginMethod: true,
           isSuperAdmin: true,
           createdAt: true

@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
               fullName: existingAdmin.fullName,
               email: existingAdmin.email,
               instagram: existingAdmin.instagram,
-              whatsapp: existingAdmin.whatsapp,
+              phone: existingAdmin.phone,
               registrationStatus: existingAdmin.registrationStatus,
               isActive: existingAdmin.isActive,
               isSuperAdmin: existingAdmin.isSuperAdmin
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
               fullName: existingAdmin.fullName,
               email: existingAdmin.email,
               instagram: existingAdmin.instagram,
-              whatsapp: existingAdmin.whatsapp,
+              phone: existingAdmin.phone,
               registrationStatus: existingAdmin.registrationStatus,
               isActive: existingAdmin.isActive,
               isSuperAdmin: existingAdmin.isSuperAdmin

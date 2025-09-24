@@ -146,7 +146,6 @@ export async function POST(request: NextRequest) {
             fullName: admin.fullName,
             email: admin.email,
             phone: admin.phone,
-            whatsapp: admin.whatsapp,
             instagram: admin.instagram,
             loginMethod: admin.loginMethod,
             registrationStatus: admin.registrationStatus,

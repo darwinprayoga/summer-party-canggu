@@ -18,12 +18,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { fullName, instagram, whatsapp } = body
+    const { fullName, instagram, phone } = body
 
-    if (!fullName || !instagram || !whatsapp) {
+    if (!fullName || !instagram || !phone) {
       return NextResponse.json({
         success: false,
-        message: 'Full name, Instagram username, and WhatsApp number are required'
+        message: 'Full name, Instagram username, and phone number are required'
       }, { status: 400 })
     }
 
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           { instagram: instagram },
           { email: email },
           { googleId: googleId },
-          { whatsapp: whatsapp }
+          { phone: phone }
         ]
       }
     })
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     if (existingAdmin) {
       return NextResponse.json({
         success: false,
-        message: 'Admin already exists with this Instagram, email, Google account, or WhatsApp number'
+        message: 'Admin already exists with this Instagram, email, Google account, or phone number'
       }, { status: 400 })
     }
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         fullName,
         email,
         googleId,
-        whatsapp,
+        phone,
         instagram,
         loginMethod: 'GOOGLE',
         registrationStatus: 'PENDING',

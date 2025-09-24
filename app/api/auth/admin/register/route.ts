@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const adminData = adminRegistrationSchema.parse(body);
 
     // Determine phone number for duplicate checking
-    const phoneToCheck = adminData.loginMethod === 'GOOGLE' ? adminData.whatsapp : (adminData.phone || payload.phone);
+    const phoneToCheck = adminData.phone || payload.phone;
 
     // Check if admin already exists
     const existingAdmin = await prisma.admin.findFirst({
@@ -50,9 +50,8 @@ export async function POST(request: NextRequest) {
     // Generate admin ID
     const adminId = await IDGenerator.generateAdminId();
 
-    // For Google OAuth registration, use WhatsApp number as phone number
-    // For phone registration, phone comes from payload (already verified)
-    const phoneNumber = adminData.loginMethod === 'GOOGLE' ? adminData.whatsapp : (adminData.phone || payload.phone);
+    // Use phone number from form data or payload (already verified)
+    const phoneNumber = adminData.phone || payload.phone;
 
     // Create admin (pending approval)
     const admin = await prisma.admin.create({
@@ -61,7 +60,6 @@ export async function POST(request: NextRequest) {
         fullName: adminData.fullName,
         email: adminData.email,
         phone: phoneNumber,
-        whatsapp: adminData.whatsapp,
         instagram: adminData.instagram,
         loginMethod: adminData.loginMethod,
         registrationStatus: 'PENDING',

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the phone matches
-    if (existingStaff.phone !== phone && existingStaff.whatsapp !== phone) {
+    if (existingStaff.phone !== phone) {
       return NextResponse.json({
         success: false,
         message: 'Phone number does not match staff records',
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
           fullName: existingStaff.fullName,
           email: existingStaff.email,
           phone: existingStaff.phone,
-          whatsapp: existingStaff.whatsapp,
+          // whatsapp: existingStaff.whatsapp,
           instagram: existingStaff.instagram,
           loginMethod: existingStaff.loginMethod,
           registrationStatus: existingStaff.registrationStatus,

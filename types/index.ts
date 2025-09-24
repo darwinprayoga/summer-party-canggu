@@ -29,15 +29,12 @@ export const googleLoginSchema = z.object({
 export const userRegistrationSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(100),
   email: z.string().email('Invalid email format').optional(),
-  phone: z.string().optional().refine((phone) => {
-    if (!phone) return true; // Optional field
-    return validateInternationalPhone(phone);
-  }, { message: 'Invalid phone number format' }),
-  whatsapp: z.string()
-    .min(1, 'WhatsApp number is required')
+  phone: z.string()
+    .min(1, 'Phone number is required')
     .refine(validateInternationalPhone, {
-      message: 'Please enter a valid WhatsApp number',
+      message: 'Please enter a valid phone number',
     }),
+  whatsapp: z.string().optional(), // Temporary: make optional for backward compatibility
   instagram: z.string()
     .min(1, 'Instagram username is required')
     .max(50)
@@ -50,14 +47,10 @@ export const userRegistrationSchema = z.object({
 export const staffRegistrationSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(100),
   email: z.string().email('Invalid email format').optional(),
-  phone: z.string().optional().refine((phone) => {
-    if (!phone) return true; // Optional field
-    return validateInternationalPhone(phone);
-  }, { message: 'Invalid phone number format' }),
-  whatsapp: z.string()
-    .min(1, 'WhatsApp number is required')
+  phone: z.string()
+    .min(1, 'Phone number is required')
     .refine(validateInternationalPhone, {
-      message: 'Please enter a valid WhatsApp number',
+      message: 'Please enter a valid phone number',
     }),
   instagram: z.string()
     .min(1, 'Instagram username is required')
@@ -70,14 +63,10 @@ export const staffRegistrationSchema = z.object({
 export const adminRegistrationSchema = z.object({
   fullName: z.string().min(1, 'Full name is required').max(100),
   email: z.string().email('Invalid email format').optional(),
-  phone: z.string().optional().refine((phone) => {
-    if (!phone) return true; // Optional field
-    return validateInternationalPhone(phone);
-  }, { message: 'Invalid phone number format' }),
-  whatsapp: z.string()
-    .min(1, 'WhatsApp number is required')
+  phone: z.string()
+    .min(1, 'Phone number is required')
     .refine(validateInternationalPhone, {
-      message: 'Please enter a valid WhatsApp number',
+      message: 'Please enter a valid phone number',
     }),
   instagram: z.string()
     .min(1, 'Instagram username is required')
