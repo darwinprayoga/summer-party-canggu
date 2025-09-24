@@ -156,7 +156,7 @@ export async function GET(request: NextRequest) {
           fullName: user.fullName,
           email: user.email,
           phone: user.phone,
-          whatsapp: user.whatsapp,
+          // whatsapp: user.whatsapp,
           instagram: user.instagram,
           referralCode: user.referralCode,
           isRSVP: user.isRSVP,

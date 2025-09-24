@@ -28,7 +28,7 @@ async function main() {
       mainPageAnnouncement: '🎉 Summer Party Canggu is happening! Join us for the ultimate beach party experience with live music, food, and drinks. Limited spots available!',
       customerPageAnnouncement: 'Welcome to Summer Party Canggu! Get ready for an unforgettable experience. Don\'t forget to bring your friends and earn rewards through our referral system!',
       instagramHandle: '@summerpartycanggu',
-      whatsappNumber: '+62 812-3456-7890',
+      contactNumber: '+62 812-3456-7890',
       referralCommissionRate: 0.05,
     },
   });
@@ -52,7 +52,6 @@ async function main() {
       fullName: superAdminName,
       email: superAdminEmail,
       phone: superAdminPhone,
-      whatsapp: superAdminPhone,
       instagram: superAdminInstagram,
       isActive: true,
       isSuperAdmin: true,
@@ -62,7 +61,6 @@ async function main() {
       fullName: superAdminName,
       email: superAdminEmail,
       phone: superAdminPhone,
-      whatsapp: superAdminPhone,
       instagram: superAdminInstagram,
       loginMethod: superAdminEmail ? 'GOOGLE' : 'PHONE', // Use Google if email provided, otherwise phone
       registrationStatus: 'APPROVED',
@@ -82,7 +80,6 @@ async function main() {
       fullName: 'Made Wirawan',
       email: 'made@summerpartycanggu.com',
       phone: '+62 812-2345-6789',
-      whatsapp: '+62 812-2345-6789',
       instagram: 'made_spc_staff',
       loginMethod: 'PHONE',
       registrationStatus: 'APPROVED',
@@ -101,7 +98,6 @@ async function main() {
       fullName: 'John Doe',
       email: 'john.doe@example.com',
       phone: '+62 812-3456-7890',
-      whatsapp: '+62 812-3456-7890',
       instagram: 'johndoe_bali',
       loginMethod: 'GOOGLE',
       isRSVP: true,
@@ -118,7 +114,6 @@ async function main() {
       fullName: 'Sarah Wilson',
       email: 'sarah.wilson@example.com',
       phone: '+62 812-4567-8901',
-      whatsapp: '+62 812-4567-8901',
       instagram: 'sarah_surfs',
       loginMethod: 'PHONE',
       isRSVP: true,
@@ -132,8 +127,10 @@ async function main() {
 
   // Create sample expenses
   const sampleExpenses = await Promise.all([
-    prisma.expense.create({
-      data: {
+    prisma.expense.upsert({
+      where: { expenseId: 'EXP001' },
+      update: {},
+      create: {
         expenseId: 'EXP001',
         customerId: 'SP123456',
         customerName: 'John Doe',
@@ -146,8 +143,10 @@ async function main() {
         timestamp: new Date('2024-01-15T14:30:00'),
       },
     }),
-    prisma.expense.create({
-      data: {
+    prisma.expense.upsert({
+      where: { expenseId: 'EXP002' },
+      update: {},
+      create: {
         expenseId: 'EXP002',
         customerId: 'SP789012',
         customerName: 'Sarah Wilson',

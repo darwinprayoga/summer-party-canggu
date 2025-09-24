@@ -34,7 +34,6 @@ interface AdminData {
   email: string;
   fullName: string;
   instagram: string;
-  whatsapp: string;
   adminId: string;
   id?: string;
   registrationStatus?: string;
@@ -74,7 +73,7 @@ interface RegistrationData {
   fullName: string;
   instagramUsername: string;
   email: string;
-  whatsappNumber: string;
+  phone: string;
   createdAt: string;
   loginMethod: string;
 }
@@ -108,7 +107,6 @@ export default function AdminPage() {
     email: "",
     fullName: "",
     instagram: "",
-    whatsapp: "",
     adminId: "",
   });
 
@@ -143,8 +141,7 @@ export default function AdminPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
-        adminId: "",
+            adminId: "",
       });
       return;
     }
@@ -164,8 +161,7 @@ export default function AdminPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
-        adminId: "",
+            adminId: "",
       });
     }
   }, []);
@@ -176,6 +172,12 @@ export default function AdminPage() {
       // Check if user explicitly logged out
       if (hasExplicitlyLoggedOut) {
         console.log('🚫 Admin user explicitly logged out - not auto-logging in via Google OAuth');
+        return;
+      }
+
+      // Don't auto-authenticate during registration process
+      if (currentStep === "form" || currentStep === "approval") {
+        console.log(`🔄 Admin user is in ${currentStep} step - skipping auto-authentication to avoid interrupting registration flow`);
         return;
       }
 
@@ -192,7 +194,7 @@ export default function AdminPage() {
       console.log('🔄 Admin auto-login via Google OAuth session');
       handleGoogleLoginFlow();
     }
-  }, [session, hasExplicitlyLoggedOut]);
+  }, [session, hasExplicitlyLoggedOut, currentStep]);
 
   // Force session refresh on page load and after OAuth redirects
   useEffect(() => {
@@ -425,8 +427,7 @@ export default function AdminPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
-        adminId: "",
+            adminId: "",
       });
 
       // Clear Google OAuth session
@@ -501,7 +502,7 @@ export default function AdminPage() {
         fullName: adminData.fullName,
         email: adminData.email,
         instagram: adminData.instagram,
-        whatsapp: adminData.whatsapp,
+        phone: adminData.phone,
         loginMethod: loginMethod?.toUpperCase(),
       }),
     });
@@ -606,7 +607,7 @@ export default function AdminPage() {
     const requestBody = {
       fullName: adminData.fullName,
       instagram: adminData.instagram,
-      whatsapp: adminData.whatsapp,
+      phone: adminData.phone,
     };
 
 
@@ -930,10 +931,15 @@ export default function AdminPage() {
       }
 
       // Admin doesn't exist, send OTP for registration flow
+      console.log('💡 Admin not found, sending OTP for new admin registration');
+      setError(""); // Clear any previous error
 
       const otpSent = await sendOTP(phoneNumber);
       if (otpSent) {
         setShowOtpInput(true);
+        console.log('✅ OTP sent successfully, showing OTP input');
+      } else {
+        console.error('❌ Failed to send OTP');
       }
     } catch (error) {
       console.error('Phone login error:', error);
@@ -966,7 +972,6 @@ export default function AdminPage() {
       setAdminData((prev) => ({
         ...prev,
         phone: phoneNumber,
-        whatsapp: phoneNumber,
       }));
       setCurrentStep("form");
     } else {
@@ -977,12 +982,19 @@ export default function AdminPage() {
 
   // Handle Google login
   const handleGoogleLogin = async () => {
+    // Reset logout flag when user explicitly chooses to login
+    setHasExplicitlyLoggedOut(false);
+    localStorage.removeItem("admin_explicitly_logged_out");
+
     setLoginMethod("google");
     setError("");
     setLoading(true);
 
     try {
-      await signIn('google');
+      await signIn('google', {
+        callbackUrl: "/admin",
+        redirect: true,
+      });
     } catch (error) {
       setError("Failed to initiate Google login");
       setLoading(false);
@@ -1295,19 +1307,19 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* WhatsApp Number */}
+            {/* Phone Number */}
             <div>
               <label className="block text-sm font-medium text-charcoal mb-2">
-                WhatsApp Number *
+                Phone Number *
               </label>
               <input
                 type="tel"
                 required
-                value={adminData.whatsapp}
+                value={adminData.phone}
                 onChange={(e) =>
                   setAdminData((prev) => ({
                     ...prev,
-                    whatsapp: e.target.value,
+                    phone: e.target.value,
                   }))
                 }
                 className={`w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent ${
@@ -1491,8 +1503,7 @@ export default function AdminPage() {
                       email: "",
                       fullName: "",
                       instagram: "",
-                      whatsapp: "",
-                      adminId: "",
+                                        adminId: "",
                     });
                     setAuthToken("");
                     setTempToken("");
@@ -1561,7 +1572,10 @@ export default function AdminPage() {
                     console.log('🔄 Admin manual Google login (form) - clearing logout flag');
                     setHasExplicitlyLoggedOut(false);
                     localStorage.removeItem('admin_explicitly_logged_out');
-                    signIn('google');
+                    signIn('google', {
+                      callbackUrl: "/admin",
+                      redirect: true,
+                    });
                   }}
                   className="w-full bg-white text-charcoal border-2 border-charcoal/20 px-6 py-3 rounded-xl hover:bg-charcoal/5 transition-colors font-medium flex items-center justify-center gap-2"
                 >
@@ -1682,7 +1696,7 @@ export default function AdminPage() {
                             </div>
                             <div className="text-sm text-charcoal/70">
                               <p>{staff.email}</p>
-                              <p>{staff.whatsappNumber}</p>
+                              <p>{staff.phone}</p>
                             </div>
                             <div className="text-xs text-charcoal/50">
                               <p>Applied: {new Date(staff.createdAt).toLocaleDateString()}</p>
@@ -1742,7 +1756,7 @@ export default function AdminPage() {
                             </div>
                             <div className="text-sm text-charcoal/70">
                               <p>{admin.email}</p>
-                              <p>{admin.whatsappNumber}</p>
+                              <p>{admin.phone}</p>
                             </div>
                             <div className="text-xs text-charcoal/50">
                               <p>Applied: {new Date(admin.createdAt).toLocaleDateString()}</p>
@@ -2319,7 +2333,7 @@ export default function AdminPage() {
                             ...prev,
                             socialMediaLinks: {
                               ...prev.socialMediaLinks,
-                              whatsapp: e.target.value,
+                              phone: e.target.value,
                             },
                           }))
                         }

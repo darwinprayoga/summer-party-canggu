@@ -37,7 +37,6 @@ interface StaffData {
   email: string;
   fullName: string;
   instagram: string;
-  whatsapp: string;
   staffId: string;
   id?: string;
   registrationStatus?: string;
@@ -81,17 +80,16 @@ export default function StaffPage() {
   const [fieldErrors, setFieldErrors] = useState({
     instagram: "",
     email: "",
-    whatsapp: "",
+    phone: "",
   });
   const [staffData, setStaffData] = useState<StaffData>({
     phone: "",
     email: "",
     fullName: "",
     instagram: "",
-    whatsapp: "",
     staffId: "",
   });
-  const [isWhatsappPrefilled, setIsWhatsappPrefilled] = useState(false);
+  const [isPhonePrefilled, setIsPhonePrefilled] = useState(false);
   const [hasExplicitlyLoggedOut, setHasExplicitlyLoggedOut] = useState(() => {
     if (typeof window !== "undefined") {
       const logoutFlag = localStorage.getItem("staff_explicitly_logged_out");
@@ -135,7 +133,6 @@ export default function StaffPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
         staffId: "",
       });
       return;
@@ -156,7 +153,6 @@ export default function StaffPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
         staffId: "",
       });
     }
@@ -169,6 +165,7 @@ export default function StaffPage() {
       hasUser: !!session?.user,
       userEmail: session?.user?.email,
       hasExplicitlyLoggedOut,
+      currentStep,
       logoutFlagInStorage: localStorage.getItem("staff_explicitly_logged_out"),
     });
 
@@ -177,6 +174,14 @@ export default function StaffPage() {
       if (hasExplicitlyLoggedOut) {
         console.log(
           "🚫 User explicitly logged out - not auto-logging in via Google OAuth",
+        );
+        return;
+      }
+
+      // Don't auto-authenticate during registration process
+      if (currentStep === "form" || currentStep === "phone-verify" || currentStep === "approval") {
+        console.log(
+          `🔄 User is in ${currentStep} step - skipping auto-authentication to avoid interrupting registration flow`,
         );
         return;
       }
@@ -198,7 +203,7 @@ export default function StaffPage() {
     } else {
       console.log("ℹ️  No Google session detected");
     }
-  }, [session, hasExplicitlyLoggedOut]);
+  }, [session, hasExplicitlyLoggedOut, currentStep]);
 
   // Load dashboard data when authenticated
   useEffect(() => {
@@ -363,7 +368,6 @@ export default function StaffPage() {
         email: "",
         fullName: "",
         instagram: "",
-        whatsapp: "",
         staffId: "",
       });
 
@@ -496,7 +500,7 @@ export default function StaffPage() {
       fullName: staffData.fullName,
       email: staffData.email,
       instagram: staffData.instagram,
-      whatsapp: staffData.whatsapp,
+      phone: staffData.phone,
       loginMethod: loginMethod?.toUpperCase() || "PHONE",
     };
 
@@ -544,7 +548,7 @@ export default function StaffPage() {
 
         localStorage.setItem("staff_verification_token", verificationToken);
         setStaffData(staff);
-        setPhoneNumber(staff.whatsapp || staff.phone || "");
+        setPhoneNumber(staff.phone || "");
         setCurrentStep("phone-verify");
         return null;
       } else if (response.data?.requireRegistration) {
@@ -580,8 +584,8 @@ export default function StaffPage() {
 
       if (staff) {
         setStaffData(staff);
-        if (staff.whatsapp) {
-          setIsWhatsappPrefilled(true);
+        if (staff.phone) {
+          setIsPhonePrefilled(true);
         }
         if (staff.registrationStatus === "APPROVED" && staff.isActive) {
           setCurrentStep("dashboard");
@@ -744,7 +748,7 @@ export default function StaffPage() {
           hasCompleteData: !!(
             staff.fullName &&
             staff.instagram &&
-            staff.whatsapp
+            staff.phone
           ),
         });
 
@@ -780,9 +784,7 @@ export default function StaffPage() {
             setStaffData((prev) => ({
               ...prev,
               phone: decoded.phone,
-              whatsapp: decoded.phone,
             }));
-            setIsWhatsappPrefilled(true);
           }
           setCurrentStep("form");
         } else {
@@ -901,9 +903,8 @@ export default function StaffPage() {
       setStaffData((prev) => ({
         ...prev,
         phone: phoneNumber,
-        whatsapp: phoneNumber,
       }));
-      setIsWhatsappPrefilled(true);
+      setIsPhonePrefilled(true);
       setLoginMethod("phone");
 
       // Check if this phone already has a profile (partial registration)
@@ -1283,12 +1284,12 @@ export default function StaffPage() {
     console.log("🔵 Current staffData:", {
       fullName: staffData.fullName,
       instagram: staffData.instagram,
-      whatsapp: staffData.whatsapp,
+      phone: staffData.phone,
       loginMethod: loginMethod,
     });
 
     // Clear any existing field errors
-    setFieldErrors({ instagram: "", email: "", whatsapp: "" });
+    setFieldErrors({ instagram: "", email: "", phone: "" });
     setError("");
 
     // Validate form data using Zod schema
@@ -1297,7 +1298,6 @@ export default function StaffPage() {
         fullName: staffData.fullName,
         email: staffData.email || undefined,
         phone: staffData.phone || undefined,
-        whatsapp: staffData.whatsapp,
         instagram: staffData.instagram,
         loginMethod: loginMethod === "phone" ? "PHONE" : ("GOOGLE" as const),
       };
@@ -1318,8 +1318,8 @@ export default function StaffPage() {
             setFieldErrors((prev) => ({ ...prev, instagram: message }));
           } else if (field === "email") {
             setFieldErrors((prev) => ({ ...prev, email: message }));
-          } else if (field === "whatsapp") {
-            setFieldErrors((prev) => ({ ...prev, whatsapp: message }));
+          } else if (field === "phone") {
+            setFieldErrors((prev) => ({ ...prev, phone: message }));
           }
 
           // Show toast for the first error
@@ -1337,8 +1337,8 @@ export default function StaffPage() {
         "🔵 Google OAuth user - validating staff data before sending SMS",
       );
 
-      // Extract phone number from WhatsApp field (remove formatting)
-      const phoneNumber = staffData.whatsapp.replace(/[^\d+]/g, "");
+      // Extract phone number from phone field (remove formatting)
+      const phoneNumber = staffData.phone.replace(/[^\d+]/g, "");
 
       // First, validate that staff doesn't already exist
       setLoading(true);
@@ -1376,7 +1376,7 @@ export default function StaffPage() {
             } else if (field === "phone_number") {
               setFieldErrors((prev) => ({
                 ...prev,
-                whatsapp: validationResponse.message,
+                phone: validationResponse.message,
               }));
             }
           }
@@ -1752,36 +1752,36 @@ export default function StaffPage() {
                 </label>
                 <input
                   type="tel"
-                  value={staffData.whatsapp}
+                  value={staffData.phone}
                   onFocus={() => {
-                    setIsWhatsappPrefilled(false);
-                    setFieldErrors((prev) => ({ ...prev, whatsapp: "" }));
+                    setIsPhonePrefilled(false);
+                    setFieldErrors((prev) => ({ ...prev, phone: "" }));
                   }}
                   onChange={(e) =>
                     setStaffData((prev) => ({
                       ...prev,
-                      whatsapp: e.target.value,
+                      phone: e.target.value,
                     }))
                   }
                   placeholder="+62 812-3456-7890"
                   className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
-                    fieldErrors.whatsapp
+                    fieldErrors.phone
                       ? "border-red-500 focus:ring-red-500"
-                      : isWhatsappPrefilled
+                      : isPhonePrefilled
                       ? "border-gray-200 focus:ring-teal bg-gray-50"
                       : "border-gray-200 focus:ring-teal bg-white"
                   }`}
-                  readOnly={isWhatsappPrefilled}
+                  readOnly={isPhonePrefilled}
                 />
-                {fieldErrors.whatsapp ? (
+                {fieldErrors.phone ? (
                   <p className="mt-1 text-sm text-red-600">
-                    {fieldErrors.whatsapp}
+                    {fieldErrors.phone}
                   </p>
                 ) : (
                   <p className="text-xs text-charcoal/60 mt-1">
-                    {isWhatsappPrefilled
+                    {isPhonePrefilled
                       ? "Auto-filled from login method"
-                      : "Enter your WhatsApp number"}
+                      : "Enter your phone number"}
                   </p>
                 )}
               </div>
@@ -1823,7 +1823,7 @@ export default function StaffPage() {
                 disabled={
                   !staffData.fullName ||
                   !staffData.instagram ||
-                  !staffData.whatsapp ||
+                  !staffData.phone ||
                   loading
                 }
                 className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"

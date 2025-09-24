@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the phone matches
-    if (existingUser.phone !== phone && existingUser.whatsapp !== phone) {
+    if (existingUser.phone !== phone) {
       return NextResponse.json({
         success: false,
         message: 'Phone number does not match user records',
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
           instagram: existingUser.instagram,
           email: existingUser.email,
           phone: existingUser.phone,
-          whatsapp: existingUser.whatsapp,
+          // whatsapp: existingUser.whatsapp,
           referralCode: existingUser.referralCode,
           role: 'USER',
         },

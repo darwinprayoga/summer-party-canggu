@@ -29,7 +29,6 @@ interface UserData {
   email: string;
   fullName: string;
   instagram: string;
-  whatsapp: string;
   userId: string;
   isRSVP?: boolean;
   rsvpAt?: string;
@@ -43,7 +42,6 @@ interface DashboardData {
     fullName: string;
     email: string | null;
     phone: string | null;
-    whatsapp: string | null;
     instagram: string;
     referralCode: string;
     isRSVP: boolean;
@@ -125,7 +123,13 @@ export default function EventPage() {
   const [loginMethod, setLoginMethod] = useState<"phone" | "google" | null>(
     null,
   );
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState(() => {
+    // Persist phone number in localStorage to survive hot reloads
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("temp_phone_number") || "";
+    }
+    return "";
+  });
   const [otpCode, setOtpCode] = useState("");
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -137,7 +141,6 @@ export default function EventPage() {
     email: "",
     fullName: "",
     instagram: "",
-    whatsapp: "",
     userId: "",
   });
 
@@ -172,7 +175,7 @@ export default function EventPage() {
     fullName: "",
     instagram: "",
     email: "",
-    whatsapp: "",
+    phone: "",
   });
 
   // Validate referral code
@@ -234,7 +237,6 @@ export default function EventPage() {
           email: user.email || "",
           fullName: user.fullName,
           instagram: user.instagram,
-          whatsapp: user.whatsapp || "",
           userId: user.userId,
         });
       } else {
@@ -366,6 +368,12 @@ export default function EventPage() {
     checkExistingAuth();
   }, []); // Run only on component mount
 
+  // Debug session changes
+  useEffect(() => {
+    console.log("🔍 Session changed:", session);
+    console.log("🔍 Current step:", currentStep);
+  }, [session, currentStep]);
+
   // Validate referral code on component mount
   useEffect(() => {
     if (referralCode && !referralValidated) {
@@ -376,6 +384,15 @@ export default function EventPage() {
   // Auto-handle Google OAuth return
   useEffect(() => {
     const handleGoogleOAuthReturn = async () => {
+      console.log("🔍 Google OAuth handler called with session:", {
+        hasSession: !!session?.user?.email,
+        email: session?.user?.email,
+        hasUserToken: !!localStorage.getItem("user_token"),
+        hasProcessedOAuth,
+        isLoading,
+        currentStep
+      });
+
       // Security check: Only process Google OAuth if user doesn't have non-user tokens
       const staffToken = localStorage.getItem("staff_token");
       const adminToken = localStorage.getItem("admin_token");
@@ -394,6 +411,7 @@ export default function EventPage() {
         !hasProcessedOAuth &&
         !isLoading
       ) {
+        console.log("✅ Processing Google OAuth session...");
         setHasProcessedOAuth(true); // Prevent multiple calls
         setIsLoading(true);
         try {
@@ -405,24 +423,32 @@ export default function EventPage() {
           });
 
           const authResult = await response.json();
+          console.log("📋 Google OAuth API result:", authResult);
 
           if (authResult.success) {
             if (authResult.data.isExisting) {
+              console.log("👤 Existing user detected");
               if (authResult.data.requiresPhoneVerification) {
                 // Existing user - needs phone verification first
+                console.log("📱 Existing user needs phone verification");
                 setVerificationToken(authResult.data.verificationToken);
                 setUserData({
                   phone: authResult.data.user.phone || "",
                   email: authResult.data.user.email || "",
                   fullName: authResult.data.user.fullName,
                   instagram: authResult.data.user.instagram,
-                  whatsapp: authResult.data.user.whatsapp || "",
                   userId: authResult.data.user.userId,
                 });
-                setPhoneNumber(authResult.data.user.whatsapp || ""); // Pre-fill with user's WhatsApp
+                const userPhone = authResult.data.user.phone || "";
+                // Normalize phone number to international format if it starts with 0
+                const normalizedPhone = userPhone.startsWith("0") ? "+62" + userPhone.substring(1) : userPhone;
+                setPhoneNumber(normalizedPhone);
+                localStorage.setItem("temp_phone_number", normalizedPhone);
                 setCurrentStep("phone-verify");
+                console.log("🔄 Set step to phone-verify");
               } else {
                 // Existing user with verified phone - go to success page
+                console.log("✅ Existing user with verified phone - going to success");
                 setAuthToken(authResult.data.token);
                 localStorage.setItem("user_token", authResult.data.token);
                 setUserData({
@@ -430,33 +456,45 @@ export default function EventPage() {
                   email: authResult.data.user.email || "",
                   fullName: authResult.data.user.fullName,
                   instagram: authResult.data.user.instagram,
-                  whatsapp: authResult.data.user.whatsapp || "",
                   userId: authResult.data.user.userId,
                 });
                 setCurrentStep("success");
                 // Load dashboard data for existing user
                 loadDashboardData(authResult.data.token);
+                console.log("🔄 Set step to success");
               }
             } else {
-              // New user - go to registration form
+              // New user - needs to complete registration form
+              console.log("🆕 New user detected - going to registration form");
               setTempToken(authResult.data.tempToken);
               setUserData((prev) => ({
                 ...prev,
                 email: authResult.data.googleUser.email,
                 fullName: authResult.data.googleUser.name,
               }));
-              setCurrentStep("form");
+              setLoginMethod("google");
+              setCurrentStep("form"); // Go to registration form for new users
+              console.log("🔄 Set step to form");
             }
           } else {
+            console.error("❌ Google OAuth API failed:", authResult.message);
             alert(authResult.message || "Google authentication failed");
             setHasProcessedOAuth(false); // Allow retry
           }
         } catch (error) {
+          console.error("❌ Google OAuth error:", error);
           alert("Google authentication failed. Please try again.");
           setHasProcessedOAuth(false); // Allow retry
         } finally {
           setIsLoading(false);
         }
+      } else {
+        console.log("ℹ️ Google OAuth handler skipped:", {
+          reason: !session?.user?.email ? "no session" :
+                  localStorage.getItem("user_token") ? "has user token" :
+                  hasProcessedOAuth ? "already processed" :
+                  isLoading ? "loading" : "unknown"
+        });
       }
     };
 
@@ -464,6 +502,14 @@ export default function EventPage() {
     const timer = setTimeout(handleGoogleOAuthReturn, 500);
     return () => clearTimeout(timer);
   }, [session, hasProcessedOAuth]); // Removed isLoading from dependencies
+
+  // Reset OAuth processing state when session changes
+  useEffect(() => {
+    if (!session?.user?.email && hasProcessedOAuth) {
+      console.log("🔄 Session ended - resetting OAuth processing state");
+      setHasProcessedOAuth(false);
+    }
+  }, [session?.user?.email, hasProcessedOAuth]);
 
   const generateReferralLink = () => {
     const baseUrl = window.location.origin;
@@ -482,12 +528,12 @@ export default function EventPage() {
   };
 
   // Send OTP to WhatsApp number
-  const handlePhoneLogin = async (whatsappNumber?: string) => {
-    const phoneToUse = whatsappNumber || phoneNumber;
-    console.log("🔍 Attempting to send OTP to:", phoneToUse);
+  const handlePhoneLogin = async (phoneToUse?: string) => {
+    const phone = phoneToUse || phoneNumber;
+    console.log("🔍 Attempting to send OTP to:", phone);
 
-    if (!phoneToUse || isLoading) {
-      console.log("❌ Validation failed:", { phoneToUse, isLoading });
+    if (!phone || isLoading) {
+      console.log("❌ Validation failed:", { phone, isLoading });
       return;
     }
 
@@ -499,7 +545,7 @@ export default function EventPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ phone: phoneToUse }),
+        body: JSON.stringify({ phone: phone }),
       });
 
       console.log("📡 Response status:", response.status);
@@ -526,50 +572,118 @@ export default function EventPage() {
 
     setIsLoading(true);
     try {
-      // Use the user login endpoint which handles both existing and new users
-      console.log("🔄 Verifying OTP and handling login/registration");
-      const loginResponse = await fetch("/api/auth/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phone: phoneNumber,
-          code: otpCode,
-        }),
-      });
+      // For Google OAuth users who already filled registration form, we register them after OTP verification
+      if (loginMethod === "google" && tempToken) {
+        console.log("🔄 Google OAuth user: Verifying OTP and completing registration");
 
-      const loginResult = await loginResponse.json();
-      console.log("🔍 FRONTEND DEBUG: Login API response:", loginResult);
+        // First verify the OTP
+        const otpVerifyResponse = await fetch("/api/auth/phone/verify-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: userData.phone,
+            code: otpCode,
+          }),
+        });
 
-      if (loginResult.success) {
-        console.log("🔍 FRONTEND DEBUG: isExisting =", loginResult.data.isExisting);
-        if (loginResult.data.isExisting) {
-          // Existing user - direct login
-          console.log("✅ Existing user login successful");
-          setAuthToken(loginResult.data.token);
-          localStorage.setItem("user_token", loginResult.data.token);
-          setUserData({
-            phone: loginResult.data.user.phone || "",
-            email: loginResult.data.user.email || "",
-            fullName: loginResult.data.user.fullName,
-            instagram: loginResult.data.user.instagram,
-            whatsapp: loginResult.data.user.whatsapp || "",
-            userId: loginResult.data.user.userId,
+        const otpResult = await otpVerifyResponse.json();
+        console.log("🔍 OTP verification result:", otpResult);
+
+        if (otpResult.success) {
+          // OTP verified, now register the user
+          const registrationData = {
+            fullName: userData.fullName,
+            email: userData.email || undefined,
+            phone: userData.phone,
+            instagram: userData.instagram,
+            loginMethod: "GOOGLE",
+            referralCode: referralCode || undefined,
+          };
+
+
+          const registerResponse = await fetch("/api/auth/user/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tempToken}`,
+            },
+            body: JSON.stringify(registrationData),
           });
-          setCurrentStep("success");
-          // Load dashboard data for existing user
-          loadDashboardData(loginResult.data.token);
+
+          const registerResult = await registerResponse.json();
+
+          if (registerResult.success) {
+            setAuthToken(registerResult.data.token);
+            localStorage.setItem("user_token", registerResult.data.token);
+            setUserData((prev) => ({
+              ...prev,
+              userId: registerResult.data.user.userId,
+            }));
+            setCurrentStep("success");
+            // Load dashboard data for new user
+            loadDashboardData(registerResult.data.token);
+            toast.success("Registration Complete!", {
+              description: "Welcome to Summer Party Canggu!",
+            });
+          } else {
+            throw new Error(registerResult.message || "Registration failed");
+          }
         } else {
-          // New user - need to complete registration form
-          console.log("🆕 New user - redirecting to registration form");
-          setTempToken(loginResult.data.tempToken);
-          setCurrentStep("form");
+          toast.error("OTP Verification Failed", {
+            description: otpResult.message || "Invalid verification code",
+          });
         }
       } else {
-        toast.error("Verification Failed", {
-          description: loginResult.message || "OTP verification failed",
+        // For phone login users, use the existing login flow
+        const phoneFromState = phoneNumber;
+        const phoneFromStorage = localStorage.getItem("temp_phone_number");
+        console.log("🔄 Phone user: Verifying OTP and handling login/registration");
+
+        const phoneToUse = phoneFromState || phoneFromStorage || "";
+        const loginResponse = await fetch("/api/auth/user/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phone: phoneToUse,
+            code: otpCode,
+          }),
         });
+
+        const loginResult = await loginResponse.json();
+
+        if (loginResult.success) {
+          if (loginResult.data.isExisting) {
+            // Existing user - direct login
+            setAuthToken(loginResult.data.token);
+            localStorage.setItem("user_token", loginResult.data.token);
+            setUserData({
+              phone: loginResult.data.user.phone || "",
+              email: loginResult.data.user.email || "",
+              fullName: loginResult.data.user.fullName,
+              instagram: loginResult.data.user.instagram,
+              userId: loginResult.data.user.userId,
+            });
+            setCurrentStep("success");
+            localStorage.removeItem("temp_phone_number");
+            loadDashboardData(loginResult.data.token);
+          } else {
+            // New user - need to complete registration form
+            setTempToken(loginResult.data.tempToken);
+            setUserData((prev) => ({
+              ...prev,
+              phone: phoneToUse,
+            }));
+            setCurrentStep("form");
+          }
+        } else {
+          toast.error("Verification Failed", {
+            description: loginResult.message || "OTP verification failed",
+          });
+        }
       }
     } catch (error) {
       console.error("❌ OTP verification error:", error);
@@ -586,13 +700,24 @@ export default function EventPage() {
 
     setIsLoading(true);
     try {
+      // Debug: Check phone number state and localStorage (same as handleOtpVerification)
+      const phoneFromState = phoneNumber;
+      const phoneFromStorage = localStorage.getItem("temp_phone_number");
+      console.log("🔄 LoginOtp: Verifying OTP and handling login/registration");
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Phone state:", phoneFromState);
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Phone from localStorage:", phoneFromStorage);
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Using phone:", phoneFromState || phoneFromStorage);
+
+      const phoneToUse = phoneFromState || phoneFromStorage || "";
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Sending data:", { phone: phoneToUse, code: otpCode });
+
       const response = await fetch("/api/auth/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phone: phoneNumber,
+          phone: phoneToUse,
           code: otpCode,
         }),
       });
@@ -611,7 +736,6 @@ export default function EventPage() {
             email: result.data.user.email || "",
             fullName: result.data.user.fullName,
             instagram: result.data.user.instagram,
-            whatsapp: result.data.user.whatsapp || "",
             userId: result.data.user.userId,
           });
           setCurrentStep("success");
@@ -622,8 +746,7 @@ export default function EventPage() {
           setTempToken(result.data.tempToken);
           setUserData((prev) => ({
             ...prev,
-            phone: phoneNumber,
-            whatsapp: phoneNumber, // Auto-fill WhatsApp with phone number
+            phone: phoneToUse,
             email: "", // Will be filled in form
           }));
           setCurrentStep("form");
@@ -666,7 +789,6 @@ export default function EventPage() {
           email: result.data.user.email || "",
           fullName: result.data.user.fullName,
           instagram: result.data.user.instagram,
-          whatsapp: result.data.user.whatsapp || "",
           userId: result.data.user.userId,
         });
         setCurrentStep("success");
@@ -688,8 +810,9 @@ export default function EventPage() {
 
     setIsLoading(true);
     try {
-      // Sign in with NextAuth Google provider - page will redirect and useEffect will handle the rest
-      await signIn("google", { callbackUrl: "/event" });
+      // Sign in with NextAuth Google provider - preserve referral code in callback URL
+      const callbackUrl = referralCode ? `/event?referral=${referralCode}` : "/event";
+      await signIn("google", { callbackUrl });
     } catch (error) {
       alert("Google sign-in failed. Please try again.");
       setIsLoading(false);
@@ -702,13 +825,13 @@ export default function EventPage() {
     if (isLoading) return;
 
     // Clear any existing field errors
-    setFieldErrors({ fullName: "", instagram: "", email: "", whatsapp: "" });
+    setFieldErrors({ fullName: "", instagram: "", email: "", phone: "" });
 
     // Client-side validation
     if (
       !userData.fullName ||
       !userData.instagram ||
-      !userData.whatsapp ||
+      !userData.phone ||
       !userData.email
     ) {
       alert("Please fill in all required fields");
@@ -726,7 +849,7 @@ export default function EventPage() {
         body: JSON.stringify({
           instagram: userData.instagram,
           email: userData.email,
-          whatsapp: userData.whatsapp,
+          phone: userData.phone,
         }),
       });
 
@@ -751,68 +874,76 @@ export default function EventPage() {
               ...prev,
               email: validationResult.message,
             }));
-          } else if (field === "whatsapp_number") {
+          } else if (field === "phone_number") {
             setFieldErrors((prev) => ({
               ...prev,
-              whatsapp: validationResult.message,
+              phone: validationResult.message,
             }));
           }
         }
         return;
       }
 
-      // Check if WhatsApp number is different from already verified phone number
-      const phoneNormalized = phoneNumber.replace(/\D/g, "");
-      const whatsappNormalized = userData.whatsapp.replace(/\D/g, "");
+      // All users need phone verification for first-time registration
+      if (loginMethod === "phone") {
+        // For phone login users, check if phone number matches already verified one
+        const phoneNormalized = phoneNumber.replace(/\D/g, "");
+        const userPhoneNormalized = userData.phone.replace(/\D/g, "");
 
-      if (phoneNormalized === whatsappNormalized) {
-        // Same number already verified - skip WhatsApp verification and register directly
-        toast.success("Using verified phone number", {
-          description: "Registering with already verified phone number...",
-        });
-
-        try {
-          const registerResponse = await fetch("/api/auth/user/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${tempToken}`,
-            },
-            body: JSON.stringify({
-              fullName: userData.fullName,
-              email: userData.email || undefined,
-              phone: phoneNumber, // Use the already verified phone number
-              whatsapp: userData.whatsapp,
-              instagram: userData.instagram,
-              loginMethod: loginMethod === "phone" ? "PHONE" : "GOOGLE",
-              referralCode: referralCode || undefined,
-            }),
+        if (phoneNormalized === userPhoneNormalized) {
+          // Same number already verified - skip phone verification and register directly
+          toast.success("Using verified phone number", {
+            description: "Registering with already verified phone number...",
           });
 
-          const registerResult = await registerResponse.json();
+          try {
+            const registerResponse = await fetch("/api/auth/user/register", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${tempToken}`,
+              },
+              body: JSON.stringify({
+                fullName: userData.fullName,
+                email: userData.email || undefined,
+                phone: phoneNumber, // Use the already verified phone number
+                instagram: userData.instagram,
+                loginMethod: "PHONE",
+                referralCode: referralCode || undefined,
+              }),
+            });
 
-          if (registerResult.success) {
-            setAuthToken(registerResult.data.token);
-            localStorage.setItem("user_token", registerResult.data.token);
-            setUserData((prev) => ({
-              ...prev,
-              userId: registerResult.data.user.userId,
-            }));
-            setCurrentStep("success");
-            // Load dashboard data for new user
-            loadDashboardData(registerResult.data.token);
-          } else {
-            throw new Error(registerResult.message || "Registration failed");
+            const registerResult = await registerResponse.json();
+
+            if (registerResult.success) {
+              setAuthToken(registerResult.data.token);
+              localStorage.setItem("user_token", registerResult.data.token);
+              setUserData((prev) => ({
+                ...prev,
+                userId: registerResult.data.user.userId,
+              }));
+              setCurrentStep("success");
+              // Load dashboard data for new user
+              loadDashboardData(registerResult.data.token);
+            } else {
+              throw new Error(registerResult.message || "Registration failed");
+            }
+          } catch (error: any) {
+            console.error("Registration error:", error);
+            toast.error("Registration Error", {
+              description:
+                error.message || "Failed to register. Please try again.",
+            });
           }
-        } catch (error: any) {
-          console.error("Registration error:", error);
-          toast.error("Registration Error", {
-            description:
-              error.message || "Failed to register. Please try again.",
+        } else {
+          // Different number - need WhatsApp verification
+          toast.success("Validation passed", {
+            description: "Proceeding to WhatsApp verification...",
           });
+          setCurrentStep("phone-verify");
         }
       } else {
-        // Different number - need WhatsApp verification
+        // For Google OAuth users, always require phone verification
         toast.success("Validation passed", {
           description: "Proceeding to WhatsApp verification...",
         });
@@ -911,7 +1042,10 @@ export default function EventPage() {
                           type="tel"
                           placeholder="+62 812-3456-7890"
                           value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          onChange={(e) => {
+                            setPhoneNumber(e.target.value);
+                            localStorage.setItem("temp_phone_number", e.target.value);
+                          }}
                           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                         />
                         <button
@@ -1072,7 +1206,7 @@ export default function EventPage() {
                   </label>
                   <input
                     type="tel"
-                    value={userData.whatsapp}
+                    value={userData.phone}
                     className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent bg-gray-50"
                     placeholder="+62 812-3456-7890"
                     readOnly
@@ -1082,8 +1216,8 @@ export default function EventPage() {
                   </p>
                 </div>
                 <button
-                  onClick={() => handlePhoneLogin(userData.whatsapp)}
-                  disabled={!userData.whatsapp || isLoading}
+                  onClick={() => handlePhoneLogin(userData.phone)}
+                  disabled={!userData.phone || isLoading}
                   className="w-full bg-teal text-white p-3 rounded-lg font-medium hover:bg-teal/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
@@ -1099,7 +1233,7 @@ export default function EventPage() {
             ) : (
               <div className="space-y-4">
                 <p className="text-sm text-charcoal/70">
-                  Enter the 6-digit code sent to {userData.whatsapp}
+                  Enter the 6-digit code sent to {userData.phone}
                 </p>
                 <input
                   type="text"
@@ -1244,31 +1378,31 @@ export default function EventPage() {
               )}
             </div>
 
-            {/* WhatsApp Number (Auto-filled) */}
+            {/* Phone Number (Auto-filled) */}
             <div>
               <label className="block text-sm font-medium text-charcoal mb-2">
-                WhatsApp Number *
+                Phone Number *
               </label>
               <input
                 type="tel"
                 required
-                value={userData.whatsapp}
+                value={userData.phone}
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, whatsapp: e.target.value }))
+                  setUserData((prev) => ({ ...prev, phone: e.target.value }))
                 }
                 onFocus={() =>
-                  setFieldErrors((prev) => ({ ...prev, whatsapp: "" }))
+                  setFieldErrors((prev) => ({ ...prev, phone: "" }))
                 }
                 className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:border-transparent ${
-                  fieldErrors.whatsapp
+                  fieldErrors.phone
                     ? "border-red-500 focus:ring-red-500"
                     : "border-gray-200 focus:ring-teal"
-                } ${userData.whatsapp ? "bg-gray-50" : ""}`}
+                } ${userData.phone ? "bg-gray-50" : ""}`}
                 placeholder="+62 812-3456-7890"
               />
-              {fieldErrors.whatsapp ? (
+              {fieldErrors.phone ? (
                 <p className="mt-1 text-sm text-red-600">
-                  {fieldErrors.whatsapp}
+                  {fieldErrors.phone}
                 </p>
               ) : (
                 <p className="text-xs text-charcoal/60 mt-1">
@@ -1415,9 +1549,9 @@ export default function EventPage() {
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-charcoal/60">WhatsApp:</span>
+                      <span className="text-charcoal/60">Phone:</span>
                       <span className="text-charcoal font-medium">
-                        {dashboardData?.user.whatsapp || userData.whatsapp}
+                        {dashboardData?.user.phone || userData.phone}
                       </span>
                     </div>
                     <div className="flex justify-between">

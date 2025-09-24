@@ -4,11 +4,15 @@ import { OTPService } from '@/lib/auth/otp';
 import { JWTService } from '@/lib/auth/jwt';
 import { OtpRateLimiter } from '@/lib/auth/otp-rate-limiter';
 import { prisma } from '@/lib/database';
+import { formatPhoneNumber } from '@/lib/utils/phone-validation';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { phone, code } = verifyOtpSchema.parse(body);
+
+    // Normalize phone number to E.164 format for consistent database lookups
+    const normalizedPhone = formatPhoneNumber(phone, 'ID');
 
     // Verify OTP
     const isValid = await OTPService.verifyOTP(phone, code, 'LOGIN');
@@ -23,29 +27,15 @@ export async function POST(request: NextRequest) {
     // Reset rate limiting attempts on successful verification
     await OtpRateLimiter.resetAttempts(phone, 'LOGIN');
 
-    // Check if user already exists by phone OR whatsapp
-    console.log(`🔍 DEBUG: Looking for user with phone: "${phone}"`);
+    // Check if user already exists by phone (regardless of original registration method)
     const existingUser = await prisma.user.findFirst({
       where: {
-        OR: [
-          { phone },
-          { whatsapp: phone },
-        ],
+        phone: normalizedPhone,
       },
     });
 
-    console.log(`🔍 DEBUG: Database search result:`, existingUser ? 'FOUND' : 'NOT FOUND');
-    if (existingUser) {
-      console.log(`🔍 DEBUG: Found user details:`, {
-        id: existingUser.id,
-        fullName: existingUser.fullName,
-        phone: existingUser.phone,
-        whatsapp: existingUser.whatsapp,
-        instagram: existingUser.instagram,
-        userId: existingUser.userId,
-        isActive: existingUser.isActive
-      });
-    }
+    console.log(`🔍 Phone login lookup: input "${phone}" normalized to "${normalizedPhone}"`);
+    console.log(`🔍 User found: ${existingUser ? `${existingUser.fullName} (${existingUser.userId})` : 'No user found'}`);
 
     if (existingUser) {
       // Generate authentication token for existing user
@@ -71,7 +61,6 @@ export async function POST(request: NextRequest) {
             instagram: existingUser.instagram,
             email: existingUser.email,
             phone: existingUser.phone,
-            whatsapp: existingUser.whatsapp,
             referralCode: existingUser.referralCode,
             role: 'USER',
           },
@@ -80,7 +69,6 @@ export async function POST(request: NextRequest) {
     }
 
     // For new users, generate temp token to complete registration
-    console.log(`🔍 DEBUG: User not found, creating temp token for new user with phone: "${phone}"`);
     const tempToken = JWTService.signTempToken({
       id: phone,
       phone,

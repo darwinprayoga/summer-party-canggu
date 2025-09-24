@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
             instagram: existingUser.instagram,
             email: existingUser.email,
             phone: existingUser.phone,
-            whatsapp: existingUser.whatsapp,
             referralCode: existingUser.referralCode,
             role: 'USER',
           },

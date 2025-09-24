@@ -33,11 +33,8 @@ export async function POST(request: NextRequest) {
         where: {
           OR: [
             { phone: identifier },          // Exact match
-            { whatsapp: identifier },       // Exact match
             { phone: normalizedPhone },     // Normalized international format
-            { whatsapp: normalizedPhone },  // Normalized international format
             { phone: localPhone },          // Local format (08...)
-            { whatsapp: localPhone },       // Local format (08...)
           ],
         },
       });
@@ -80,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     // Handle OTP request
     if (requestOtp && !otp) {
-      const staffPhoneForOtp = staff.phone || staff.whatsapp;
+      const staffPhoneForOtp = staff.phone;
       if (!staffPhoneForOtp) {
         return NextResponse.json({
           success: false,
@@ -112,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     // Handle OTP verification and login
     if (otp) {
-      const staffPhoneForOtp = staff.phone || staff.whatsapp;
+      const staffPhoneForOtp = staff.phone;
       if (!staffPhoneForOtp) {
         return NextResponse.json({
           success: false,
@@ -149,7 +146,6 @@ export async function POST(request: NextRequest) {
             fullName: staff.fullName,
             email: staff.email,
             phone: staff.phone,
-            whatsapp: staff.whatsapp,
             instagram: staff.instagram,
             loginMethod: staff.loginMethod,
             approvedAt: staff.approvedAt,
