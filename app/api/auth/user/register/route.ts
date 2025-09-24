@@ -51,18 +51,32 @@ export async function POST(request: NextRequest) {
     // Handle referral
     let referredBy = null;
     if (userData.referralCode) {
+      console.log(`🔍 Looking up referral code: ${userData.referralCode}`);
+
       const referrer = await prisma.user.findFirst({
         where: { userId: userData.referralCode }, // referralCode is actually the referrer's userId
       });
+
       if (referrer) {
         referredBy = referrer.id;
         console.log(`✅ Referral link from ${referrer.fullName} (@${referrer.instagram}) - ${referrer.userId}`);
+        console.log(`🔗 Setting referredBy to: ${referredBy}`);
       } else {
         console.log(`❌ Invalid referral code: ${userData.referralCode}`);
+        // Also check if they meant to use the actual referralCode field instead of userId
+        const referrerByCode = await prisma.user.findFirst({
+          where: { referralCode: userData.referralCode },
+        });
+        if (referrerByCode) {
+          referredBy = referrerByCode.id;
+          console.log(`✅ Found referrer by referralCode: ${referrerByCode.fullName} (@${referrerByCode.instagram})`);
+        }
       }
     }
 
     // Create user
+    console.log(`👤 Creating user with referredBy: ${referredBy}`);
+
     const user = await prisma.user.create({
       data: {
         userId,
@@ -78,6 +92,8 @@ export async function POST(request: NextRequest) {
         rsvpAt: new Date(),
       },
     });
+
+    console.log(`✅ User created with ID: ${user.id}, referredBy: ${user.referredBy}`);
 
     // Generate full authentication token
     const authToken = JWTService.signFullToken({

@@ -80,12 +80,15 @@ export async function GET(request: NextRequest) {
 
     // Calculate referral statistics and earnings
     const totalReferrals = user.referrals.length;
+    console.log(`📊 User ${user.userId} (${user.fullName}) has ${totalReferrals} referrals:`, user.referrals.map(r => r.fullName));
 
     // Calculate actual referral earnings based on referrals' expenses
     let referralEarnings = 0;
+    let referredUsersWithExpenses: any[] = [];
+
     if (user.referrals.length > 0) {
       // Get expenses of all users referred by this user
-      const referredUsersWithExpenses = await prisma.user.findMany({
+      referredUsersWithExpenses = await prisma.user.findMany({
         where: {
           referredBy: user.id,
         },
@@ -180,12 +183,18 @@ export async function GET(request: NextRequest) {
         referralStats: {
           totalReferrals,
           referralEarnings,
-          referrals: user.referrals.map(referral => ({
-            id: referral.id,
-            fullName: referral.fullName,
-            instagram: referral.instagram,
-            joinedAt: referral.createdAt,
-          })),
+          referrals: referredUsersWithExpenses.map(referral => {
+            const totalSpent = referral.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const earnings = totalSpent * 0.05; // 5% commission
+            return {
+              id: referral.id,
+              fullName: referral.fullName,
+              instagram: referral.instagram,
+              joinedAt: referral.createdAt,
+              totalSpent,
+              earnings,
+            };
+          }),
         },
         referrer: user.referrer ? {
           fullName: user.referrer.fullName,
