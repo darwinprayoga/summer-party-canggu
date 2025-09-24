@@ -18,78 +18,45 @@ export async function POST(request: NextRequest) {
 
     console.log('🔍 Google OAuth user login attempt:', session.user.name, `(${session.user.email})`);
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email: session.user.email },
+    // Check if user already exists by email
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        email: session.user.email,
+      },
     });
 
     if (existingUser) {
-      // Check if user originally registered via Google OAuth
-      if (existingUser.loginMethod === 'GOOGLE') {
-        // User already completed Google OAuth registration and phone verification before
-        // Generate full authentication token - no additional verification needed
-        const authToken = JWTService.signFullToken({
-          id: existingUser.id,
-          role: 'USER',
-          email: existingUser.email || undefined,
-          phone: existingUser.phone || undefined,
-        });
+      // User is already registered - direct login regardless of original registration method
+      // Generate full authentication token - no additional verification needed
+      const authToken = JWTService.signFullToken({
+        id: existingUser.id,
+        role: 'USER',
+        email: existingUser.email || undefined,
+        phone: existingUser.phone || undefined,
+      });
 
-        console.log('✅ Existing Google OAuth user - direct login (already verified):', existingUser.fullName, `(@${existingUser.instagram}) - ${existingUser.userId}`);
+      console.log('✅ Existing user Google OAuth login - direct access:', existingUser.fullName, `(@${existingUser.instagram}) - ${existingUser.userId}`);
 
-        return NextResponse.json({
-          success: true,
-          message: 'Login successful',
-          data: {
-            token: authToken,
-            user: {
-              id: existingUser.id,
-              userId: existingUser.userId,
-              fullName: existingUser.fullName,
-              instagram: existingUser.instagram,
-              email: existingUser.email,
-              phone: existingUser.phone,
-              whatsapp: existingUser.whatsapp,
-              referralCode: existingUser.referralCode,
-              role: 'USER',
-            },
-            isExisting: true,
-            requiresPhoneVerification: false,
+      return NextResponse.json({
+        success: true,
+        message: 'Login successful',
+        data: {
+          token: authToken,
+          user: {
+            id: existingUser.id,
+            userId: existingUser.userId,
+            fullName: existingUser.fullName,
+            instagram: existingUser.instagram,
+            email: existingUser.email,
+            phone: existingUser.phone,
+            whatsapp: existingUser.whatsapp,
+            referralCode: existingUser.referralCode,
+            role: 'USER',
           },
-        });
-      } else {
-        // User originally registered via phone - require phone verification for Google OAuth
-        const verificationToken = JWTService.signTempToken({
-          id: existingUser.id,
-          email: existingUser.email || '',
-          phone: existingUser.phone || undefined,
-          role: 'USER',
-          existingUserId: existingUser.id,
-        });
-
-        console.log('🔍 Existing phone-registered user logging in via Google - phone verification required:', existingUser.fullName, `(@${existingUser.instagram}) - ${existingUser.userId}`);
-
-        return NextResponse.json({
-          success: true,
-          message: 'Phone verification required for existing user',
-          data: {
-            verificationToken,
-            user: {
-              id: existingUser.id,
-              userId: existingUser.userId,
-              fullName: existingUser.fullName,
-              instagram: existingUser.instagram,
-              email: existingUser.email,
-              phone: existingUser.phone,
-              whatsapp: existingUser.whatsapp,
-              referralCode: existingUser.referralCode,
-              role: 'USER',
-            },
-            isExisting: true,
-            requiresPhoneVerification: true,
-          },
-        });
-      }
+          isExisting: true,
+          requiresPhoneVerification: false,
+        },
+      });
     }
 
     // For new users, generate temp token to complete registration

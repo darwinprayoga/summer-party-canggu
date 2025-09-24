@@ -23,10 +23,29 @@ export async function POST(request: NextRequest) {
     // Reset rate limiting attempts on successful verification
     await OtpRateLimiter.resetAttempts(phone, 'LOGIN');
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { phone },
+    // Check if user already exists by phone OR whatsapp
+    console.log(`🔍 DEBUG: Looking for user with phone: "${phone}"`);
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { phone },
+          { whatsapp: phone },
+        ],
+      },
     });
+
+    console.log(`🔍 DEBUG: Database search result:`, existingUser ? 'FOUND' : 'NOT FOUND');
+    if (existingUser) {
+      console.log(`🔍 DEBUG: Found user details:`, {
+        id: existingUser.id,
+        fullName: existingUser.fullName,
+        phone: existingUser.phone,
+        whatsapp: existingUser.whatsapp,
+        instagram: existingUser.instagram,
+        userId: existingUser.userId,
+        isActive: existingUser.isActive
+      });
+    }
 
     if (existingUser) {
       // Generate authentication token for existing user
@@ -44,6 +63,7 @@ export async function POST(request: NextRequest) {
         message: 'User login successful',
         data: {
           token: authToken,
+          isExisting: true,
           user: {
             id: existingUser.id,
             userId: existingUser.userId,
@@ -54,13 +74,13 @@ export async function POST(request: NextRequest) {
             whatsapp: existingUser.whatsapp,
             referralCode: existingUser.referralCode,
             role: 'USER',
-            isExisting: true,
           },
         },
       });
     }
 
     // For new users, generate temp token to complete registration
+    console.log(`🔍 DEBUG: User not found, creating temp token for new user with phone: "${phone}"`);
     const tempToken = JWTService.signTempToken({
       id: phone,
       phone,

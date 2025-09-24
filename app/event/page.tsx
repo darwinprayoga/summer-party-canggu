@@ -276,8 +276,8 @@ export default function EventPage() {
           referredUsers: result.data.referralStats.referrals.map(
             (referral: any) => ({
               username: referral.instagram,
-              expenses: 0, // We'll need to calculate this separately if needed
-              earnings: 0, // We'll need to calculate this separately if needed
+              expenses: referral.totalSpent || 0,
+              earnings: referral.earnings || 0,
             }),
           ),
         });
@@ -526,83 +526,56 @@ export default function EventPage() {
 
     setIsLoading(true);
     try {
-      // Step 1: Verify the OTP code
-      const otpResponse = await fetch("/api/auth/phone/verify-otp", {
+      // Use the user login endpoint which handles both existing and new users
+      console.log("🔄 Verifying OTP and handling login/registration");
+      const loginResponse = await fetch("/api/auth/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phone: userData.whatsapp,
+          phone: phoneNumber,
           code: otpCode,
         }),
       });
 
-      const otpResult = await otpResponse.json();
+      const loginResult = await loginResponse.json();
+      console.log("🔍 FRONTEND DEBUG: Login API response:", loginResult);
 
-      if (otpResult.success) {
-        // Step 2: Register the user with verified WhatsApp number
-        const registerResponse = await fetch("/api/auth/user/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${otpResult.data.tempToken}`,
-          },
-          body: JSON.stringify({
-            fullName: userData.fullName,
-            email: userData.email || undefined,
-            phone: userData.whatsapp, // Use WhatsApp number as phone
-            whatsapp: userData.whatsapp,
-            instagram: userData.instagram,
-            loginMethod: loginMethod === "phone" ? "PHONE" : "GOOGLE",
-            referralCode: referralCode || undefined,
-          }),
-        });
-
-        const registerResult = await registerResponse.json();
-
-        if (registerResult.success) {
-          setAuthToken(registerResult.data.token);
-          localStorage.setItem("user_token", registerResult.data.token);
-          setUserData((prev) => ({
-            ...prev,
-            userId: registerResult.data.user.userId,
-          }));
+      if (loginResult.success) {
+        console.log("🔍 FRONTEND DEBUG: isExisting =", loginResult.data.isExisting);
+        if (loginResult.data.isExisting) {
+          // Existing user - direct login
+          console.log("✅ Existing user login successful");
+          setAuthToken(loginResult.data.token);
+          localStorage.setItem("user_token", loginResult.data.token);
+          setUserData({
+            phone: loginResult.data.user.phone || "",
+            email: loginResult.data.user.email || "",
+            fullName: loginResult.data.user.fullName,
+            instagram: loginResult.data.user.instagram,
+            whatsapp: loginResult.data.user.whatsapp || "",
+            userId: loginResult.data.user.userId,
+          });
           setCurrentStep("success");
-          // Load dashboard data for new user
-          loadDashboardData(registerResult.data.token);
+          // Load dashboard data for existing user
+          loadDashboardData(loginResult.data.token);
         } else {
-          // Handle registration errors
-          if (registerResult.errors) {
-            // Handle field-specific errors
-            if (
-              registerResult.errors.some((err: any) =>
-                err.path?.includes("instagram"),
-              )
-            ) {
-              alert("Instagram username is invalid or already taken");
-            } else if (
-              registerResult.errors.some((err: any) =>
-                err.path?.includes("email"),
-              )
-            ) {
-              alert("Email is invalid or already taken");
-            } else if (
-              registerResult.errors.some((err: any) =>
-                err.path?.includes("whatsapp"),
-              )
-            ) {
-              alert("WhatsApp number is invalid or already taken");
-            } else {
-              alert(registerResult.message || "Registration failed");
-            }
-          }
+          // New user - need to complete registration form
+          console.log("🆕 New user - redirecting to registration form");
+          setTempToken(loginResult.data.tempToken);
+          setCurrentStep("form");
         }
       } else {
-        alert(otpResult.message || "Invalid OTP code");
+        toast.error("Verification Failed", {
+          description: loginResult.message || "OTP verification failed",
+        });
       }
     } catch (error) {
-      alert("Failed to verify OTP. Please try again.");
+      console.error("❌ OTP verification error:", error);
+      toast.error("Verification Error", {
+        description: "Failed to verify OTP. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -625,8 +598,10 @@ export default function EventPage() {
       });
 
       const result = await response.json();
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Login API response:", result);
 
       if (result.success) {
+        console.log("🔍 FRONTEND DEBUG (LoginOtp): isExisting =", result.data.isExisting);
         if (result.data.isExisting) {
           // Existing user - go to success page
           setAuthToken(result.data.token);
@@ -1485,7 +1460,7 @@ export default function EventPage() {
                     </div>
                     <div className="text-center">
                       <p className="text-2xl font-bold text-teal">
-                        ${dashboardData.referralStats.referralEarnings}
+                        IDR {dashboardData.referralStats.referralEarnings}
                       </p>
                       <p className="text-xs text-charcoal/60">Earnings</p>
                     </div>

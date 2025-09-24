@@ -3,6 +3,7 @@ import { JWTService } from '@/lib/auth/jwt';
 import { OTPService } from '@/lib/auth/otp';
 import { prisma } from '@/lib/database';
 import { z } from 'zod';
+import { normalizePhoneNumber } from '@/lib/utils/phone';
 
 const staffLoginSchema = z.object({
   identifier: z.string().min(1, 'Phone number, email, or staff ID is required'),
@@ -15,16 +16,45 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { identifier, otp, requestOtp } = staffLoginSchema.parse(body);
 
-    // Find staff by phone, email, or staffId
-    const staff = await prisma.staff.findFirst({
-      where: {
-        OR: [
-          { phone: identifier },
-          { email: identifier },
-          { staffId: identifier },
-        ],
-      },
-    });
+    // Check if identifier looks like a phone number
+    const isPhoneNumber = /^[+]?[\d\s\-\(\)]+$/.test(identifier);
+
+    let staff = null;
+
+    if (isPhoneNumber) {
+      // For phone numbers, try multiple formats
+      const normalizedPhone = normalizePhoneNumber(identifier);
+      const rawPhone = identifier.replace(/[^\d]/g, ''); // Remove all non-digits
+      const localPhone = rawPhone.startsWith('62') ? '0' + rawPhone.substring(2) : rawPhone;
+
+      console.log(`🔍 Staff phone lookup for: "${identifier}" → normalized: "${normalizedPhone}", local: "${localPhone}"`);
+
+      staff = await prisma.staff.findFirst({
+        where: {
+          OR: [
+            { phone: identifier },          // Exact match
+            { whatsapp: identifier },       // Exact match
+            { phone: normalizedPhone },     // Normalized international format
+            { whatsapp: normalizedPhone },  // Normalized international format
+            { phone: localPhone },          // Local format (08...)
+            { whatsapp: localPhone },       // Local format (08...)
+          ],
+        },
+      });
+
+      console.log(`🔍 Staff search result:`, staff ? `FOUND: ${staff.fullName} (${staff.staffId})` : 'NOT FOUND');
+    } else {
+      // For email or staffId, use exact match
+      staff = await prisma.staff.findFirst({
+        where: {
+          OR: [
+            { email: identifier },
+            { staffId: identifier },
+          ],
+        },
+      });
+      console.log(`🔍 Staff search result (email/ID):`, staff ? `FOUND: ${staff.fullName} (${staff.staffId})` : 'NOT FOUND');
+    }
 
     if (!staff) {
       return NextResponse.json({
@@ -50,7 +80,8 @@ export async function POST(request: NextRequest) {
 
     // Handle OTP request
     if (requestOtp && !otp) {
-      if (!staff.phone) {
+      const staffPhoneForOtp = staff.phone || staff.whatsapp;
+      if (!staffPhoneForOtp) {
         return NextResponse.json({
           success: false,
           message: 'No phone number associated with this staff account',
@@ -58,7 +89,7 @@ export async function POST(request: NextRequest) {
       }
 
       try {
-        await OTPService.sendOTP(staff.phone, 'STAFF_LOGIN');
+        await OTPService.sendOTP(staffPhoneForOtp, 'STAFF_LOGIN');
 
         return NextResponse.json({
           success: true,
@@ -81,7 +112,8 @@ export async function POST(request: NextRequest) {
 
     // Handle OTP verification and login
     if (otp) {
-      if (!staff.phone) {
+      const staffPhoneForOtp = staff.phone || staff.whatsapp;
+      if (!staffPhoneForOtp) {
         return NextResponse.json({
           success: false,
           message: 'No phone number associated with this staff account',
@@ -89,7 +121,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Verify OTP
-      const isValidOtp = await OTPService.verifyOTP(staff.phone, otp, 'STAFF_LOGIN');
+      const isValidOtp = await OTPService.verifyOTP(staffPhoneForOtp, otp, 'STAFF_LOGIN');
       if (!isValidOtp) {
         return NextResponse.json({
           success: false,
