@@ -2018,13 +2018,22 @@ export default function AdminPage() {
                 </h3>
               </div>
               {!editingEvent && (
-                <button
-                  onClick={() => setEditingEvent(true)}
-                  className="bg-coral text-white px-4 py-2 rounded-lg font-medium hover:bg-coral/90 transition-colors flex items-center gap-2"
-                >
-                  <Edit3 className="w-4 h-4" />
-                  Edit Event
-                </button>
+                <div className="flex gap-2">
+                  <Link
+                    href="/admin/event"
+                    className="bg-teal text-white px-4 py-2 rounded-lg font-medium hover:bg-teal/90 transition-colors flex items-center gap-2"
+                  >
+                    <UserCheck className="w-4 h-4" />
+                    Event Check-In
+                  </Link>
+                  <button
+                    onClick={() => setEditingEvent(true)}
+                    className="bg-coral text-white px-4 py-2 rounded-lg font-medium hover:bg-coral/90 transition-colors flex items-center gap-2"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    Edit Event
+                  </button>
+                </div>
               )}
             </div>
 
@@ -2103,35 +2112,29 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-charcoal mb-2">
-                        Max Capacity
+                        Total RSVP
                       </label>
                       <input
                         type="number"
-                        value={editEventData.maxCapacity}
-                        onChange={(e) =>
-                          setEditEventData((prev) => ({
-                            ...prev,
-                            maxCapacity: Number.parseInt(e.target.value),
-                          }))
-                        }
-                        className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                        value={dashboardData?.stats?.totalRSVP || 0}
+                        readOnly
+                        disabled
+                        className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                       />
+                      <p className="text-xs text-charcoal/70 mt-1">Read-only: Based on user registrations</p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-charcoal mb-2">
-                        Current Attendees
+                        Checked In
                       </label>
                       <input
                         type="number"
-                        value={editEventData.currentAttendees}
-                        onChange={(e) =>
-                          setEditEventData((prev) => ({
-                            ...prev,
-                            currentAttendees: Number.parseInt(e.target.value),
-                          }))
-                        }
-                        className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                        value={dashboardData?.stats?.totalCheckedIn || 0}
+                        readOnly
+                        disabled
+                        className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                       />
+                      <p className="text-xs text-charcoal/70 mt-1">Read-only: Based on event check-ins</p>
                     </div>
                   </div>
                   <div className="mt-4">
@@ -2389,9 +2392,9 @@ export default function AdminPage() {
                     <Users className="w-5 h-5 text-coral" />
                     <div>
                       <p className="font-medium text-charcoal">
-                        {dashboardData?.eventConfig?.currentAttendees || eventData.currentAttendees} / {dashboardData?.eventConfig?.maxCapacity || eventData.maxCapacity}
+                        {dashboardData?.stats?.totalCheckedIn || 0}
                       </p>
-                      <p className="text-sm text-charcoal/70">Attendees</p>
+                      <p className="text-sm text-charcoal/70">Checked In</p>
                     </div>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">

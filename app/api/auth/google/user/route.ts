@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       // User is already registered - direct login regardless of original registration method
-      // Generate full authentication token - no additional verification needed
+      // For Google OAuth users, we never require phone verification
       const authToken = JWTService.signFullToken({
         id: existingUser.id,
         role: 'USER',
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         phone: existingUser.phone || undefined,
       });
 
-      console.log('✅ Existing user Google OAuth login - direct access:', existingUser.fullName, `(@${existingUser.instagram}) - ${existingUser.userId}`);
+      console.log('✅ Existing user Google OAuth login - direct access (no phone verification required):', existingUser.fullName, `(@${existingUser.instagram}) - ${existingUser.userId}`);
 
       return NextResponse.json({
         success: true,
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
             role: 'USER',
           },
           isExisting: true,
-          requiresPhoneVerification: false,
+          requiresPhoneVerification: false, // Always false for Google OAuth
         },
       });
     }

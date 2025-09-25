@@ -427,42 +427,21 @@ export default function EventPage() {
 
           if (authResult.success) {
             if (authResult.data.isExisting) {
-              console.log("👤 Existing user detected");
-              if (authResult.data.requiresPhoneVerification) {
-                // Existing user - needs phone verification first
-                console.log("📱 Existing user needs phone verification");
-                setVerificationToken(authResult.data.verificationToken);
-                setUserData({
-                  phone: authResult.data.user.phone || "",
-                  email: authResult.data.user.email || "",
-                  fullName: authResult.data.user.fullName,
-                  instagram: authResult.data.user.instagram,
-                  userId: authResult.data.user.userId,
-                });
-                const userPhone = authResult.data.user.phone || "";
-                // Normalize phone number to international format if it starts with 0
-                const normalizedPhone = userPhone.startsWith("0") ? "+62" + userPhone.substring(1) : userPhone;
-                setPhoneNumber(normalizedPhone);
-                localStorage.setItem("temp_phone_number", normalizedPhone);
-                setCurrentStep("phone-verify");
-                console.log("🔄 Set step to phone-verify");
-              } else {
-                // Existing user with verified phone - go to success page
-                console.log("✅ Existing user with verified phone - going to success");
-                setAuthToken(authResult.data.token);
-                localStorage.setItem("user_token", authResult.data.token);
-                setUserData({
-                  phone: authResult.data.user.phone || "",
-                  email: authResult.data.user.email || "",
-                  fullName: authResult.data.user.fullName,
-                  instagram: authResult.data.user.instagram,
-                  userId: authResult.data.user.userId,
-                });
-                setCurrentStep("success");
-                // Load dashboard data for existing user
-                loadDashboardData(authResult.data.token);
-                console.log("🔄 Set step to success");
-              }
+              console.log("👤 Existing Google OAuth user - skipping phone verification");
+              // Existing users with Google OAuth always skip phone verification
+              setAuthToken(authResult.data.token);
+              localStorage.setItem("user_token", authResult.data.token);
+              setUserData({
+                phone: authResult.data.user.phone || "",
+                email: authResult.data.user.email || "",
+                fullName: authResult.data.user.fullName,
+                instagram: authResult.data.user.instagram,
+                userId: authResult.data.user.userId,
+              });
+              setCurrentStep("success");
+              // Load dashboard data for existing user
+              loadDashboardData(authResult.data.token);
+              console.log("🔄 Set step to success - no phone verification needed");
             } else {
               // New user - needs to complete registration form
               console.log("🆕 New user detected - going to registration form");
@@ -943,11 +922,53 @@ export default function EventPage() {
           setCurrentStep("phone-verify");
         }
       } else {
-        // For Google OAuth users, always require phone verification
+        // For Google OAuth users, skip phone verification and register directly
         toast.success("Validation passed", {
-          description: "Proceeding to WhatsApp verification...",
+          description: "Completing registration with Google account...",
         });
-        setCurrentStep("phone-verify");
+
+        try {
+          const registerResponse = await fetch("/api/auth/user/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${tempToken}`,
+            },
+            body: JSON.stringify({
+              fullName: userData.fullName,
+              email: userData.email || undefined,
+              phone: userData.phone,
+              instagram: userData.instagram,
+              loginMethod: "GOOGLE",
+              referralCode: referralCode || undefined,
+            }),
+          });
+
+          const registerResult = await registerResponse.json();
+
+          if (registerResult.success) {
+            setAuthToken(registerResult.data.token);
+            localStorage.setItem("user_token", registerResult.data.token);
+            setUserData((prev) => ({
+              ...prev,
+              userId: registerResult.data.user.userId,
+            }));
+            setCurrentStep("success");
+            // Load dashboard data for new user
+            loadDashboardData(registerResult.data.token);
+            toast.success("Registration Complete!", {
+              description: "Welcome to Summer Party Canggu!",
+            });
+          } else {
+            throw new Error(registerResult.message || "Registration failed");
+          }
+        } catch (error: any) {
+          console.error("Google OAuth registration error:", error);
+          toast.error("Registration Error", {
+            description:
+              error.message || "Failed to register. Please try again.",
+          });
+        }
       }
     } catch (error) {
       console.error("Validation error:", error);
