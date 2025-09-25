@@ -82,6 +82,8 @@ export async function GET(request: NextRequest) {
       totalExpenses,
       recentExpenses,
       expenseLeaderboard,
+      totalRSVP,
+      totalCheckedIn,
       eventConfig
     ] = await Promise.all([
       // Pending staff approvals
@@ -153,6 +155,16 @@ export async function GET(request: NextRequest) {
         }
       }),
 
+      // Total RSVP users
+      prisma.user.count({
+        where: { isRSVP: true }
+      }),
+
+      // Total checked-in users
+      prisma.user.count({
+        where: { isCheckedIn: true }
+      }),
+
       // Event configuration
       prisma.eventConfig.findFirst({
         orderBy: { createdAt: 'desc' }
@@ -181,7 +193,9 @@ export async function GET(request: NextRequest) {
           activeStaff,
           pendingAdmins,
           activeAdmins,
-          totalExpenses: totalExpenses._sum.amount || 0
+          totalExpenses: totalExpenses._sum.amount || 0,
+          totalRSVP,
+          totalCheckedIn
         },
         recentExpenses: recentExpenses.map(expense => ({
           id: expense.id,
@@ -196,14 +210,17 @@ export async function GET(request: NextRequest) {
           description: expense.description
         })),
         leaderboard: leaderboardWithTotals,
-        eventConfig: eventConfig || {
+        eventConfig: eventConfig ? {
+          ...eventConfig,
+          currentAttendees: totalCheckedIn // Use real checked-in data
+        } : {
           name: 'Summer Party Canggu',
           date: '2024-09-27',
           time: '14:00-21:00',
           venue: 'Canggu, Bali',
           description: 'Beach party with amazing vibes',
-          maxCapacity: 200,
-          currentAttendees: 0
+          maxCapacity: null, // Remove capacity limit
+          currentAttendees: totalCheckedIn
         }
       }
     });

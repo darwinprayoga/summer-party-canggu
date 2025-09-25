@@ -41,6 +41,8 @@ model User {
   // Event participation
   isRSVP        Boolean  @default(false)
   rsvpAt        DateTime?
+  isCheckedIn   Boolean  @default(false)
+  checkedInAt   DateTime?
 
   // Referral system
   referralCode  String?  @unique
