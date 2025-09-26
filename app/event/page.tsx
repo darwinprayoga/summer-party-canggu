@@ -390,7 +390,7 @@ export default function EventPage() {
         hasUserToken: !!localStorage.getItem("user_token"),
         hasProcessedOAuth,
         isLoading,
-        currentStep
+        currentStep,
       });
 
       // Security check: Only process Google OAuth if user doesn't have non-user tokens
@@ -427,7 +427,9 @@ export default function EventPage() {
 
           if (authResult.success) {
             if (authResult.data.isExisting) {
-              console.log("👤 Existing Google OAuth user - skipping phone verification");
+              console.log(
+                "👤 Existing Google OAuth user - skipping phone verification",
+              );
               // Existing users with Google OAuth always skip phone verification
               setAuthToken(authResult.data.token);
               localStorage.setItem("user_token", authResult.data.token);
@@ -441,7 +443,9 @@ export default function EventPage() {
               setCurrentStep("success");
               // Load dashboard data for existing user
               loadDashboardData(authResult.data.token);
-              console.log("🔄 Set step to success - no phone verification needed");
+              console.log(
+                "🔄 Set step to success - no phone verification needed",
+              );
             } else {
               // New user - needs to complete registration form
               console.log("🆕 New user detected - going to registration form");
@@ -469,10 +473,15 @@ export default function EventPage() {
         }
       } else {
         console.log("ℹ️ Google OAuth handler skipped:", {
-          reason: !session?.user?.email ? "no session" :
-                  localStorage.getItem("user_token") ? "has user token" :
-                  hasProcessedOAuth ? "already processed" :
-                  isLoading ? "loading" : "unknown"
+          reason: !session?.user?.email
+            ? "no session"
+            : localStorage.getItem("user_token")
+            ? "has user token"
+            : hasProcessedOAuth
+            ? "already processed"
+            : isLoading
+            ? "loading"
+            : "unknown",
         });
       }
     };
@@ -553,7 +562,9 @@ export default function EventPage() {
     try {
       // For Google OAuth users who already filled registration form, we register them after OTP verification
       if (loginMethod === "google" && tempToken) {
-        console.log("🔄 Google OAuth user: Verifying OTP and completing registration");
+        console.log(
+          "🔄 Google OAuth user: Verifying OTP and completing registration",
+        );
 
         // First verify the OTP
         const otpVerifyResponse = await fetch("/api/auth/phone/verify-otp", {
@@ -580,7 +591,6 @@ export default function EventPage() {
             loginMethod: "GOOGLE",
             referralCode: referralCode || undefined,
           };
-
 
           const registerResponse = await fetch("/api/auth/user/register", {
             method: "POST",
@@ -618,7 +628,9 @@ export default function EventPage() {
         // For phone login users, use the existing login flow
         const phoneFromState = phoneNumber;
         const phoneFromStorage = localStorage.getItem("temp_phone_number");
-        console.log("🔄 Phone user: Verifying OTP and handling login/registration");
+        console.log(
+          "🔄 Phone user: Verifying OTP and handling login/registration",
+        );
 
         const phoneToUse = phoneFromState || phoneFromStorage || "";
         const loginResponse = await fetch("/api/auth/user/login", {
@@ -684,11 +696,20 @@ export default function EventPage() {
       const phoneFromStorage = localStorage.getItem("temp_phone_number");
       console.log("🔄 LoginOtp: Verifying OTP and handling login/registration");
       console.log("🔍 FRONTEND DEBUG (LoginOtp): Phone state:", phoneFromState);
-      console.log("🔍 FRONTEND DEBUG (LoginOtp): Phone from localStorage:", phoneFromStorage);
-      console.log("🔍 FRONTEND DEBUG (LoginOtp): Using phone:", phoneFromState || phoneFromStorage);
+      console.log(
+        "🔍 FRONTEND DEBUG (LoginOtp): Phone from localStorage:",
+        phoneFromStorage,
+      );
+      console.log(
+        "🔍 FRONTEND DEBUG (LoginOtp): Using phone:",
+        phoneFromState || phoneFromStorage,
+      );
 
       const phoneToUse = phoneFromState || phoneFromStorage || "";
-      console.log("🔍 FRONTEND DEBUG (LoginOtp): Sending data:", { phone: phoneToUse, code: otpCode });
+      console.log("🔍 FRONTEND DEBUG (LoginOtp): Sending data:", {
+        phone: phoneToUse,
+        code: otpCode,
+      });
 
       const response = await fetch("/api/auth/user/login", {
         method: "POST",
@@ -705,7 +726,10 @@ export default function EventPage() {
       console.log("🔍 FRONTEND DEBUG (LoginOtp): Login API response:", result);
 
       if (result.success) {
-        console.log("🔍 FRONTEND DEBUG (LoginOtp): isExisting =", result.data.isExisting);
+        console.log(
+          "🔍 FRONTEND DEBUG (LoginOtp): isExisting =",
+          result.data.isExisting,
+        );
         if (result.data.isExisting) {
           // Existing user - go to success page
           setAuthToken(result.data.token);
@@ -790,7 +814,9 @@ export default function EventPage() {
     setIsLoading(true);
     try {
       // Sign in with NextAuth Google provider - preserve referral code in callback URL
-      const callbackUrl = referralCode ? `/event?referral=${referralCode}` : "/event";
+      const callbackUrl = referralCode
+        ? `/event?referral=${referralCode}`
+        : "/event";
       await signIn("google", { callbackUrl });
     } catch (error) {
       alert("Google sign-in failed. Please try again.");
@@ -1065,7 +1091,10 @@ export default function EventPage() {
                           value={phoneNumber}
                           onChange={(e) => {
                             setPhoneNumber(e.target.value);
-                            localStorage.setItem("temp_phone_number", e.target.value);
+                            localStorage.setItem(
+                              "temp_phone_number",
+                              e.target.value,
+                            );
                           }}
                           className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                         />
@@ -1422,9 +1451,7 @@ export default function EventPage() {
                 placeholder="+62 812-3456-7890"
               />
               {fieldErrors.phone ? (
-                <p className="mt-1 text-sm text-red-600">
-                  {fieldErrors.phone}
-                </p>
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.phone}</p>
               ) : (
                 <p className="text-xs text-charcoal/60 mt-1">
                   Auto-filled from your login method
@@ -1668,7 +1695,8 @@ export default function EventPage() {
                   </h3>
                 </div>
                 <p className="text-sm text-charcoal/70 mb-4">
-                  Invite friends and earn $5 for each successful referral!
+                  Invite friends and earn 5% for each expense of your referral
+                  member!
                 </p>
                 <button
                   onClick={copyReferralLink}

@@ -84,10 +84,10 @@ export default function AdminPage() {
 
   // Track explicit logout to prevent automatic re-login
   const [hasExplicitlyLoggedOut, setHasExplicitlyLoggedOut] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const logoutFlag = localStorage.getItem('admin_explicitly_logged_out');
-      console.log('🔍 Admin initial logout flag check:', logoutFlag);
-      return logoutFlag === 'true';
+    if (typeof window !== "undefined") {
+      const logoutFlag = localStorage.getItem("admin_explicitly_logged_out");
+      console.log("🔍 Admin initial logout flag check:", logoutFlag);
+      return logoutFlag === "true";
     }
     return false;
   });
@@ -112,15 +112,15 @@ export default function AdminPage() {
 
   // Check for existing auth token on load
   useEffect(() => {
-    console.log('🔍 Admin page loading - checking tokens...');
-    const adminToken = localStorage.getItem('admin_token');
-    const userToken = localStorage.getItem('user_token');
-    const staffToken = localStorage.getItem('staff_token');
+    console.log("🔍 Admin page loading - checking tokens...");
+    const adminToken = localStorage.getItem("admin_token");
+    const userToken = localStorage.getItem("user_token");
+    const staffToken = localStorage.getItem("staff_token");
 
-    console.log('📋 Token status:', {
-      adminToken: adminToken ? `EXISTS (${adminToken.length} chars)` : 'NONE',
-      userToken: userToken ? `EXISTS (${userToken.length} chars)` : 'NONE',
-      staffToken: staffToken ? `EXISTS (${staffToken.length} chars)` : 'NONE'
+    console.log("📋 Token status:", {
+      adminToken: adminToken ? `EXISTS (${adminToken.length} chars)` : "NONE",
+      userToken: userToken ? `EXISTS (${userToken.length} chars)` : "NONE",
+      staffToken: staffToken ? `EXISTS (${staffToken.length} chars)` : "NONE",
     });
 
     // Security check: if user has non-admin tokens, clear them for admin page
@@ -128,12 +128,16 @@ export default function AdminPage() {
       // User is trying to access admin page with user/staff credentials
       // Clear any non-admin tokens to prevent confusion
       if (userToken) {
-        console.warn('🚨 Security: User token detected on admin page - access denied');
+        console.warn(
+          "🚨 Security: User token detected on admin page - access denied",
+        );
       }
       if (staffToken) {
-        console.warn('🚨 Security: Staff token detected on admin page - access denied');
+        console.warn(
+          "🚨 Security: Staff token detected on admin page - access denied",
+        );
       }
-      console.log('❌ No admin token found - showing login page');
+      console.log("❌ No admin token found - showing login page");
       setCurrentStep("login");
       setAuthToken("");
       setAdminData({
@@ -141,19 +145,19 @@ export default function AdminPage() {
         email: "",
         fullName: "",
         instagram: "",
-            adminId: "",
+        adminId: "",
       });
       return;
     }
 
     if (adminToken) {
-      console.log('✅ Admin token found - validating...');
+      console.log("✅ Admin token found - validating...");
       setAuthToken(adminToken);
       setCurrentStep("dashboard");
       validateAndLoadAdmin(adminToken);
     } else {
       // No admin token found, show login
-      console.log('❌ No tokens found - showing login page');
+      console.log("❌ No tokens found - showing login page");
       setCurrentStep("login");
       setAuthToken("");
       setAdminData({
@@ -161,7 +165,7 @@ export default function AdminPage() {
         email: "",
         fullName: "",
         instagram: "",
-            adminId: "",
+        adminId: "",
       });
     }
   }, []);
@@ -171,27 +175,33 @@ export default function AdminPage() {
     if (session && session.user) {
       // Check if user explicitly logged out
       if (hasExplicitlyLoggedOut) {
-        console.log('🚫 Admin user explicitly logged out - not auto-logging in via Google OAuth');
+        console.log(
+          "🚫 Admin user explicitly logged out - not auto-logging in via Google OAuth",
+        );
         return;
       }
 
       // Don't auto-authenticate during registration process
       if (currentStep === "form" || currentStep === "approval") {
-        console.log(`🔄 Admin user is in ${currentStep} step - skipping auto-authentication to avoid interrupting registration flow`);
+        console.log(
+          `🔄 Admin user is in ${currentStep} step - skipping auto-authentication to avoid interrupting registration flow`,
+        );
         return;
       }
 
       // Only process Google OAuth if user doesn't have non-admin tokens
-      const userToken = localStorage.getItem('user_token');
-      const staffToken = localStorage.getItem('staff_token');
+      const userToken = localStorage.getItem("user_token");
+      const staffToken = localStorage.getItem("staff_token");
 
       if (userToken || staffToken) {
-        console.warn('🚨 Security: Google OAuth session detected but user has non-admin tokens - ignoring OAuth for admin page');
+        console.warn(
+          "🚨 Security: Google OAuth session detected but user has non-admin tokens - ignoring OAuth for admin page",
+        );
         return;
       }
 
       // Only process if no conflicting tokens exist
-      console.log('🔄 Admin auto-login via Google OAuth session');
+      console.log("🔄 Admin auto-login via Google OAuth session");
       handleGoogleLoginFlow();
     }
   }, [session, hasExplicitlyLoggedOut, currentStep]);
@@ -199,57 +209,50 @@ export default function AdminPage() {
   // Force session refresh on page load and after OAuth redirects
   useEffect(() => {
     const checkForOAuthReturn = async () => {
-
-
-
       // Check if we're coming back from OAuth (URL has state and code parameters)
       const urlParams = new URLSearchParams(window.location.search);
-      const hasState = urlParams.has('state');
-      const hasCode = urlParams.has('code');
-
-
+      const hasState = urlParams.has("state");
+      const hasCode = urlParams.has("code");
 
       if (hasState && hasCode) {
-
         // Clear the URL parameters
-        window.history.replaceState({}, document.title, window.location.pathname);
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
 
         // Wait a moment for NextAuth to process
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Force a session refresh by making a direct request
         try {
-          const response = await fetch('/api/auth/session', {
-            credentials: 'include' // Important for cookies
+          const response = await fetch("/api/auth/session", {
+            credentials: "include", // Important for cookies
           });
           const sessionData = await response.json();
 
-
           if (sessionData && sessionData.user) {
-
             // Force component re-render to trigger session hook
             window.location.reload();
           } else {
-
             setTimeout(async () => {
               try {
-                const retryResponse = await fetch('/api/auth/session', {
-                  credentials: 'include'
+                const retryResponse = await fetch("/api/auth/session", {
+                  credentials: "include",
                 });
                 const retrySessionData = await retryResponse.json();
 
-
                 if (retrySessionData && retrySessionData.user) {
-
                   window.location.reload();
                 }
               } catch (retryError) {
-                console.error('Retry session check error:', retryError);
+                console.error("Retry session check error:", retryError);
               }
             }, 2000);
           }
         } catch (error) {
-          console.error('Error checking session:', error);
+          console.error("Error checking session:", error);
         }
       }
     };
@@ -260,21 +263,20 @@ export default function AdminPage() {
   // Monitor authentication state changes
   useEffect(() => {
     const checkAuthState = () => {
-      const token = localStorage.getItem('admin_token');
-
+      const token = localStorage.getItem("admin_token");
     };
 
     // Check auth state on component mount and when storage changes
     checkAuthState();
 
     // Listen for storage changes (logout in other tabs)
-    window.addEventListener('storage', checkAuthState);
+    window.addEventListener("storage", checkAuthState);
 
     // Also check periodically in case token is manually removed
     const interval = setInterval(checkAuthState, 1000);
 
     return () => {
-      window.removeEventListener('storage', checkAuthState);
+      window.removeEventListener("storage", checkAuthState);
       clearInterval(interval);
     };
   }, [currentStep]);
@@ -291,7 +293,6 @@ export default function AdminPage() {
 
   const handleGoogleLoginFlow = async () => {
     if (!session) {
-
       return;
     }
 
@@ -300,14 +301,11 @@ export default function AdminPage() {
     try {
       const admin = await handleGoogleAdminAuth();
 
-
       if (admin) {
         setAdminData(admin);
-        if (admin.registrationStatus === 'APPROVED' && admin.isActive) {
-
+        if (admin.registrationStatus === "APPROVED" && admin.isActive) {
           setCurrentStep("dashboard");
         } else {
-
           setCurrentStep("approval");
         }
       } else {
@@ -317,20 +315,23 @@ export default function AdminPage() {
         setCurrentStep("form");
       }
     } catch (error) {
-      console.error('Google login flow error:', error);
-      setError('Google login failed');
-      toast.error('Google authentication failed');
+      console.error("Google login flow error:", error);
+      setError("Google login failed");
+      toast.error("Google authentication failed");
     } finally {
       setLoading(false);
     }
   };
 
   // API call functions
-  const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<ApiResponse> => {
+  const apiCall = async (
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<ApiResponse> => {
     try {
       const response = await fetch(endpoint, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...options.headers,
         },
         ...options,
@@ -341,7 +342,7 @@ export default function AdminPage() {
     } catch (error) {
       return {
         success: false,
-        message: 'Network error occurred',
+        message: "Network error occurred",
       };
     }
   };
@@ -350,8 +351,8 @@ export default function AdminPage() {
     setLoading(true);
     setError("");
 
-    const response = await apiCall('/api/auth/phone/send-otp', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/phone/send-otp", {
+      method: "POST",
       body: JSON.stringify({ phone }),
     });
 
@@ -361,17 +362,20 @@ export default function AdminPage() {
       setShowOtpInput(true);
       setRemainingAttempts(response.data?.remainingAttempts ?? 4);
       setResendTimer(60); // 1 minute countdown
-      toast.success('OTP sent successfully! Check your phone.');
+      toast.success("OTP sent successfully! Check your phone.");
       return true;
     } else {
-      const errorMessage = response.message || 'Failed to send OTP. Please try again.';
+      const errorMessage =
+        response.message || "Failed to send OTP. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
 
       // Handle rate limiting
       if (response.data?.nextResendAt) {
         const nextResendTime = new Date(response.data.nextResendAt);
-        const secondsUntilNext = Math.ceil((nextResendTime.getTime() - Date.now()) / 1000);
+        const secondsUntilNext = Math.ceil(
+          (nextResendTime.getTime() - Date.now()) / 1000,
+        );
         setResendTimer(Math.max(0, secondsUntilNext));
       }
 
@@ -383,12 +387,15 @@ export default function AdminPage() {
     }
   };
 
-  const verifyOTP = async (phone: string, otp: string): Promise<string | null> => {
+  const verifyOTP = async (
+    phone: string,
+    otp: string,
+  ): Promise<string | null> => {
     setLoading(true);
     setError("");
 
-    const response = await apiCall('/api/auth/phone/verify-otp', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/phone/verify-otp", {
+      method: "POST",
       body: JSON.stringify({ phone, code: otp }),
     });
 
@@ -410,42 +417,47 @@ export default function AdminPage() {
 
   const handleLogout = async () => {
     try {
-      console.log('🚪 Admin logout - Setting logout flag in localStorage');
+      console.log("🚪 Admin logout - Setting logout flag in localStorage");
 
       // Set logout flag to prevent automatic re-login
       setHasExplicitlyLoggedOut(true);
-      localStorage.setItem('admin_explicitly_logged_out', 'true');
+      localStorage.setItem("admin_explicitly_logged_out", "true");
 
       // Clear local storage
-      localStorage.removeItem('admin_token');
+      localStorage.removeItem("admin_token");
 
       // Clear app state
-      setAuthToken('');
-      setCurrentStep('login');
+      setAuthToken("");
+      setCurrentStep("login");
       setAdminData({
         phone: "",
         email: "",
         fullName: "",
         instagram: "",
-            adminId: "",
+        adminId: "",
       });
 
       // Clear Google OAuth session
       await signOut({ redirect: false });
 
-      console.log('✅ Admin logout successful - logout flag set to prevent auto-login');
+      console.log(
+        "✅ Admin logout successful - logout flag set to prevent auto-login",
+      );
     } catch (error) {
-      console.error('❌ Admin logout error:', error);
+      console.error("❌ Admin logout error:", error);
       // Even if signOut fails, still clear local state and set logout flag
       setHasExplicitlyLoggedOut(true);
-      localStorage.setItem('admin_explicitly_logged_out', 'true');
-      localStorage.removeItem('admin_token');
-      setAuthToken('');
-      setCurrentStep('login');
+      localStorage.setItem("admin_explicitly_logged_out", "true");
+      localStorage.removeItem("admin_token");
+      setAuthToken("");
+      setCurrentStep("login");
     }
   };
 
-  const attemptAdminLogin = async (identifier: string, otp?: string): Promise<AdminData | null | 'OTP_SENT'> => {
+  const attemptAdminLogin = async (
+    identifier: string,
+    otp?: string,
+  ): Promise<AdminData | null | "OTP_SENT"> => {
     setLoading(true);
     setError("");
 
@@ -456,8 +468,8 @@ export default function AdminPage() {
       body.requestOtp = true;
     }
 
-    const response = await apiCall('/api/auth/admin/login', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/admin/login", {
+      method: "POST",
       body: JSON.stringify(body),
     });
 
@@ -468,23 +480,25 @@ export default function AdminPage() {
       const token = response.data.token;
       const admin = response.data.admin;
 
-      localStorage.setItem('admin_token', token);
+      localStorage.setItem("admin_token", token);
       setAuthToken(token);
 
       return admin;
     } else if (response.data?.requireOtp) {
       // OTP required - admin exists and OTP was sent
       setShowOtpInput(true);
-      return 'OTP_SENT';
+      return "OTP_SENT";
     } else {
       // Log the full response for debugging
-      console.error('Admin login failed:', response);
-      setError(response.message || 'Admin login failed. Please try again.');
+      console.error("Admin login failed:", response);
+      setError(response.message || "Admin login failed. Please try again.");
       return null;
     }
   };
 
-  const registerAdmin = async (adminData: Partial<AdminData>): Promise<boolean> => {
+  const registerAdmin = async (
+    adminData: Partial<AdminData>,
+  ): Promise<boolean> => {
     if (!tempToken) {
       setError("Phone verification required");
       return false;
@@ -493,10 +507,10 @@ export default function AdminPage() {
     setLoading(true);
     setError("");
 
-    const response = await apiCall('/api/auth/admin/register', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/admin/register", {
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${tempToken}`,
+        Authorization: `Bearer ${tempToken}`,
       },
       body: JSON.stringify({
         fullName: adminData.fullName,
@@ -510,11 +524,12 @@ export default function AdminPage() {
     setLoading(false);
 
     if (response.success) {
-      setAdminData(prev => ({ ...prev, ...response.data }));
-      toast.success('Registration successful! Please wait for approval.');
+      setAdminData((prev) => ({ ...prev, ...response.data }));
+      toast.success("Registration successful! Please wait for approval.");
       return true;
     } else {
-      const errorMessage = response.message || 'Registration failed. Please try again.';
+      const errorMessage =
+        response.message || "Registration failed. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
       return false;
@@ -523,30 +538,30 @@ export default function AdminPage() {
 
   const validateAndLoadAdmin = async (token: string): Promise<void> => {
     try {
-      console.log('🔐 Validating admin token...');
-      const response = await apiCall('/api/admin/registrations', {
+      console.log("🔐 Validating admin token...");
+      const response = await apiCall("/api/admin/registrations", {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.success) {
-        console.log('✅ Token valid - loading admin dashboard');
+        console.log("✅ Token valid - loading admin dashboard");
         setCurrentStep("dashboard");
         // Load admin data from response if available
         if (response.data?.currentAdmin) {
-          setAdminData(prev => ({ ...prev, ...response.data.currentAdmin }));
+          setAdminData((prev) => ({ ...prev, ...response.data.currentAdmin }));
         }
       } else {
         // Token invalid, clear it and show login
-        console.log('❌ Token invalid - redirecting to login');
-        localStorage.removeItem('admin_token');
+        console.log("❌ Token invalid - redirecting to login");
+        localStorage.removeItem("admin_token");
         setAuthToken("");
         setCurrentStep("login");
       }
     } catch (error) {
-      console.error('❌ Token validation failed:', error);
-      localStorage.removeItem('admin_token');
+      console.error("❌ Token validation failed:", error);
+      localStorage.removeItem("admin_token");
       setAuthToken("");
       setCurrentStep("login");
     }
@@ -554,23 +569,20 @@ export default function AdminPage() {
 
   // Google OAuth Functions
   const handleGoogleAdminAuth = async (): Promise<AdminData | null> => {
-
     setLoading(true);
     setError("");
 
     try {
-      const response = await apiCall('/api/auth/google/admin', {
-        method: 'POST',
+      const response = await apiCall("/api/auth/google/admin", {
+        method: "POST",
       });
-
-
 
       if (response.success && response.data.token) {
         // Admin exists and logged in successfully
         const token = response.data.token;
         const admin = response.data.admin;
 
-        localStorage.setItem('admin_token', token);
+        localStorage.setItem("admin_token", token);
         setAuthToken(token);
 
         return admin;
@@ -580,7 +592,7 @@ export default function AdminPage() {
       } else if (response.data?.requiresRegistration) {
         // Admin doesn't exist, needs registration
         const googleUser = response.data.googleUser;
-        setAdminData(prev => ({
+        setAdminData((prev) => ({
           ...prev,
           email: googleUser.email,
           fullName: googleUser.name || "",
@@ -591,16 +603,17 @@ export default function AdminPage() {
         return null;
       }
     } catch (error) {
-      console.error('Google admin auth error:', error);
-      setError('Failed to authenticate with Google');
+      console.error("Google admin auth error:", error);
+      setError("Failed to authenticate with Google");
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  const registerGoogleAdmin = async (adminData: Partial<AdminData>): Promise<boolean> => {
-
+  const registerGoogleAdmin = async (
+    adminData: Partial<AdminData>,
+  ): Promise<boolean> => {
     setLoading(true);
     setError("");
 
@@ -610,21 +623,20 @@ export default function AdminPage() {
       phone: adminData.phone,
     };
 
-
-    const response = await apiCall('/api/auth/google/admin/register', {
-      method: 'POST',
+    const response = await apiCall("/api/auth/google/admin/register", {
+      method: "POST",
       body: JSON.stringify(requestBody),
     });
-
 
     setLoading(false);
 
     if (response.success) {
-      setAdminData(prev => ({ ...prev, ...response.data }));
-      toast.success('Registration successful! Please wait for approval.');
+      setAdminData((prev) => ({ ...prev, ...response.data }));
+      toast.success("Registration successful! Please wait for approval.");
       return true;
     } else {
-      const errorMessage = response.message || 'Registration failed. Please try again.';
+      const errorMessage =
+        response.message || "Registration failed. Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
       return false;
@@ -646,27 +658,26 @@ export default function AdminPage() {
 
   // Fetch dashboard data
   const fetchDashboardData = async () => {
-    const token = localStorage.getItem('admin_token');
+    const token = localStorage.getItem("admin_token");
     if (!token) return;
 
     setDashboardLoading(true);
     try {
-      const response = await apiCall('/api/admin/dashboard', {
-        method: 'GET',
+      const response = await apiCall("/api/admin/dashboard", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.success) {
         setDashboardData(response.data);
-
       } else {
-        toast.error('Failed to load dashboard data');
+        toast.error("Failed to load dashboard data");
       }
     } catch (error) {
-      console.error('Dashboard fetch error:', error);
-      toast.error('Failed to load dashboard data');
+      console.error("Dashboard fetch error:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setDashboardLoading(false);
     }
@@ -675,75 +686,78 @@ export default function AdminPage() {
   // Verify token and set authentication state
   const verifyTokenAndSetState = async (token: string) => {
     try {
-      console.log('🔐 Verifying admin token...');
-      const response = await apiCall('/api/admin/dashboard', {
-        method: 'GET',
+      console.log("🔐 Verifying admin token...");
+      const response = await apiCall("/api/admin/dashboard", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.success) {
-        console.log('✅ Token valid - setting auth state');
+        console.log("✅ Token valid - setting auth state");
         setAuthToken(token);
-        setCurrentStep('dashboard');
+        setCurrentStep("dashboard");
         if (response.data?.currentAdmin) {
-          setAdminData(prev => ({ ...prev, ...response.data.currentAdmin }));
+          setAdminData((prev) => ({ ...prev, ...response.data.currentAdmin }));
         }
         return true;
       } else {
-        console.log('❌ Token invalid - clearing auth state');
-        localStorage.removeItem('admin_token');
-        setAuthToken('');
-        setCurrentStep('login');
+        console.log("❌ Token invalid - clearing auth state");
+        localStorage.removeItem("admin_token");
+        setAuthToken("");
+        setCurrentStep("login");
         return false;
       }
     } catch (error) {
-      console.error('❌ Token verification failed:', error);
-      localStorage.removeItem('admin_token');
-      setAuthToken('');
-      setCurrentStep('login');
+      console.error("❌ Token verification failed:", error);
+      localStorage.removeItem("admin_token");
+      setAuthToken("");
+      setCurrentStep("login");
       return false;
     }
   };
 
   // Fetch registrations data
   const fetchRegistrationsData = async () => {
-    const token = localStorage.getItem('admin_token');
+    const token = localStorage.getItem("admin_token");
     if (!token) return;
 
     try {
-      const response = await apiCall('/api/admin/registrations', {
-        method: 'GET',
+      const response = await apiCall("/api/admin/registrations", {
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.success) {
         setRegistrationsData(response.data);
-
       } else {
-        toast.error('Failed to load registrations data');
+        toast.error("Failed to load registrations data");
       }
     } catch (error) {
-      console.error('Registrations fetch error:', error);
-      toast.error('Failed to load registrations data');
+      console.error("Registrations fetch error:", error);
+      toast.error("Failed to load registrations data");
     }
   };
 
   // Approve or deny registrations
-  const handleRegistrationAction = async (type: string, id: string, action: string) => {
-    const token = localStorage.getItem('admin_token');
+  const handleRegistrationAction = async (
+    type: string,
+    id: string,
+    action: string,
+  ) => {
+    const token = localStorage.getItem("admin_token");
     if (!token) return;
 
     try {
-      const response = await apiCall('/api/admin/registrations', {
-        method: 'POST',
+      const response = await apiCall("/api/admin/registrations", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ type, id, action })
+        body: JSON.stringify({ type, id, action }),
       });
 
       if (response.success) {
@@ -755,8 +769,8 @@ export default function AdminPage() {
         toast.error(response.message);
       }
     } catch (error) {
-      console.error('Registration action error:', error);
-      toast.error('Failed to update registration');
+      console.error("Registration action error:", error);
+      toast.error("Failed to update registration");
     }
   };
 
@@ -774,32 +788,35 @@ export default function AdminPage() {
     if (!editingExpense) return;
 
     try {
-      const token = localStorage.getItem('admin_token');
-      const response = await apiCall(`/api/expenses/${editingExpense.expenseId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const token = localStorage.getItem("admin_token");
+      const response = await apiCall(
+        `/api/expenses/${editingExpense.expenseId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount: Number(editExpenseData.amount),
+            description: editExpenseData.description,
+            category: editExpenseData.category,
+          }),
         },
-        body: JSON.stringify({
-          amount: Number(editExpenseData.amount),
-          description: editExpenseData.description,
-          category: editExpenseData.category,
-        }),
-      });
+      );
 
       if (response.success) {
-        toast.success('Expense updated successfully');
+        toast.success("Expense updated successfully");
         setEditingExpense(null);
         setEditExpenseData({ amount: "", description: "", category: "" });
         // Refresh dashboard data
         await fetchDashboardData();
       } else {
-        toast.error(response.message || 'Failed to update expense');
+        toast.error(response.message || "Failed to update expense");
       }
     } catch (error) {
-      console.error('Edit expense error:', error);
-      toast.error('Failed to update expense');
+      console.error("Edit expense error:", error);
+      toast.error("Failed to update expense");
     }
   };
 
@@ -810,23 +827,18 @@ export default function AdminPage() {
 
   // Load dashboard data when user enters dashboard
   useEffect(() => {
-    if (currentStep === 'dashboard') {
-      const token = localStorage.getItem('admin_token');
+    if (currentStep === "dashboard") {
+      const token = localStorage.getItem("admin_token");
 
       if (authToken && token) {
-
         fetchDashboardData();
         fetchRegistrationsData();
       } else {
-
-
         // If we have a Google session but no admin token, try to authenticate
         if (session && session.user && !token) {
-
           handleGoogleLoginFlow();
         } else {
-
-          setCurrentStep('login');
+          setCurrentStep("login");
         }
       }
     }
@@ -872,10 +884,11 @@ export default function AdminPage() {
 
   // Calculate totals from real data
   const totalExpenses = dashboardData?.stats?.totalExpenses || 0;
-  const totalReferralEarnings = dashboardData?.leaderboard?.reduce(
-    (sum: number, user: any) => sum + (user.totalExpenses * 0.15), // Assuming 15% referral earnings
-    0,
-  ) || 0;
+  const totalReferralEarnings =
+    dashboardData?.leaderboard?.reduce(
+      (sum: number, user: any) => sum + user.totalExpenses * 0.15, // Assuming 15% referral earnings
+      0,
+    ) || 0;
 
   // Pending registrations now come from registrationsData
   const pendingRegistrations = {
@@ -894,8 +907,11 @@ export default function AdminPage() {
     type: "staff" | "admin",
     action: "approved" | "denied",
   ) => {
-
-    await handleRegistrationAction(type, id, action === "approved" ? "approve" : "deny");
+    await handleRegistrationAction(
+      type,
+      id,
+      action === "approved" ? "approve" : "deny",
+    );
   };
 
   // Old approval handler removed - using real API now
@@ -911,17 +927,17 @@ export default function AdminPage() {
       // First try to request OTP for admin login
       const result = await attemptAdminLogin(phoneNumber);
 
-      if (result === 'OTP_SENT') {
+      if (result === "OTP_SENT") {
         // Admin exists and OTP was sent by backend
 
         setLoading(false);
         return;
       }
 
-      if (result && typeof result === 'object') {
+      if (result && typeof result === "object") {
         // Admin exists and logged in successfully (shouldn't happen without OTP)
         setAdminData(result);
-        if (result.registrationStatus === 'APPROVED' && result.isActive) {
+        if (result.registrationStatus === "APPROVED" && result.isActive) {
           setCurrentStep("dashboard");
         } else {
           setCurrentStep("approval");
@@ -931,18 +947,18 @@ export default function AdminPage() {
       }
 
       // Admin doesn't exist, send OTP for registration flow
-      console.log('💡 Admin not found, sending OTP for new admin registration');
+      console.log("💡 Admin not found, sending OTP for new admin registration");
       setError(""); // Clear any previous error
 
       const otpSent = await sendOTP(phoneNumber);
       if (otpSent) {
         setShowOtpInput(true);
-        console.log('✅ OTP sent successfully, showing OTP input');
+        console.log("✅ OTP sent successfully, showing OTP input");
       } else {
-        console.error('❌ Failed to send OTP');
+        console.error("❌ Failed to send OTP");
       }
     } catch (error) {
-      console.error('Phone login error:', error);
+      console.error("Phone login error:", error);
     } finally {
       setLoading(false);
     }
@@ -953,10 +969,10 @@ export default function AdminPage() {
 
     // First, try admin login with OTP
     const result = await attemptAdminLogin(phoneNumber, otpCode);
-    if (result && typeof result === 'object') {
+    if (result && typeof result === "object") {
       // Successfully logged in as existing admin
       setAdminData(result);
-      if (result.registrationStatus === 'APPROVED' && result.isActive) {
+      if (result.registrationStatus === "APPROVED" && result.isActive) {
         setCurrentStep("dashboard");
       } else {
         setCurrentStep("approval");
@@ -976,7 +992,9 @@ export default function AdminPage() {
       setCurrentStep("form");
     } else {
       // If both attempts failed, show clearer error message
-      setError("Invalid or expired OTP code. Please request a new OTP and try again.");
+      setError(
+        "Invalid or expired OTP code. Please request a new OTP and try again.",
+      );
     }
   };
 
@@ -991,7 +1009,7 @@ export default function AdminPage() {
     setLoading(true);
 
     try {
-      await signIn('google', {
+      await signIn("google", {
         callbackUrl: "/admin",
         redirect: true,
       });
@@ -1005,20 +1023,12 @@ export default function AdminPage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-
-
-
-
-
     let success = false;
     if (loginMethod === "google") {
-
       success = await registerGoogleAdmin(adminData);
     } else {
-
       success = await registerAdmin(adminData);
     }
-
 
     if (success) {
       setCurrentStep("approval");
@@ -1169,15 +1179,18 @@ export default function AdminPage() {
                         <div className="text-center">
                           <button
                             onClick={resendOTP}
-                            disabled={loading || remainingAttempts === 0 || resendTimer > 0}
+                            disabled={
+                              loading ||
+                              remainingAttempts === 0 ||
+                              resendTimer > 0
+                            }
                             className="text-teal hover:text-teal/80 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                           >
                             {remainingAttempts === 0
                               ? "No more attempts"
                               : resendTimer > 0
-                                ? `Resend code in ${resendTimer}s`
-                                : "Resend Code"
-                            }
+                              ? `Resend code in ${resendTimer}s`
+                              : "Resend Code"}
                           </button>
                         </div>
                       </div>
@@ -1415,8 +1428,8 @@ export default function AdminPage() {
                   Approval Pending
                 </h2>
                 <p className="text-charcoal/70">
-                  Your admin registration is being reviewed by a super admin. Please
-                  wait for approval.
+                  Your admin registration is being reviewed by a super admin.
+                  Please wait for approval.
                 </p>
                 <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
                   <p className="text-sm text-yellow-800">
@@ -1433,42 +1446,48 @@ export default function AdminPage() {
                   </p>
                 </div>
                 <p className="text-sm text-charcoal/60">
-                  You will be notified once your registration is approved. You can also contact the event organizer for updates.
+                  You will be notified once your registration is approved. You
+                  can also contact the event organizer for updates.
                 </p>
               </div>
             )}
 
-            {adminData.registrationStatus === "APPROVED" && adminData.isActive && (
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
+            {adminData.registrationStatus === "APPROVED" &&
+              adminData.isActive && (
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <CheckCircle className="w-8 h-8 text-green-600" />
+                  </div>
+                  <h2 className="text-xl font-semibold text-charcoal">
+                    Registration Approved!
+                  </h2>
+                  <p className="text-charcoal/70">
+                    Congratulations! Your admin registration has been approved
+                    by a super admin.
+                  </p>
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+                    <p className="text-sm text-green-800">
+                      <strong>Admin ID:</strong> {adminData.adminId}
+                    </p>
+                    <p className="text-sm text-green-800">
+                      <strong>Status:</strong>{" "}
+                      {adminData.isSuperAdmin
+                        ? "Super Administrator"
+                        : "Administrator"}
+                    </p>
+                    <p className="text-sm text-green-800">
+                      <strong>Active:</strong>{" "}
+                      {adminData.isActive ? "Yes" : "No"}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCurrentStep("dashboard")}
+                    className="w-full bg-green-600 text-white p-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                  >
+                    Access Admin Dashboard
+                  </button>
                 </div>
-                <h2 className="text-xl font-semibold text-charcoal">
-                  Registration Approved!
-                </h2>
-                <p className="text-charcoal/70">
-                  Congratulations! Your admin registration has been approved by
-                  a super admin.
-                </p>
-                <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                  <p className="text-sm text-green-800">
-                    <strong>Admin ID:</strong> {adminData.adminId}
-                  </p>
-                  <p className="text-sm text-green-800">
-                    <strong>Status:</strong> {adminData.isSuperAdmin ? 'Super Administrator' : 'Administrator'}
-                  </p>
-                  <p className="text-sm text-green-800">
-                    <strong>Active:</strong> {adminData.isActive ? 'Yes' : 'No'}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setCurrentStep("dashboard")}
-                  className="w-full bg-green-600 text-white p-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
-                >
-                  Access Admin Dashboard
-                </button>
-              </div>
-            )}
+              )}
 
             {adminData.registrationStatus === "REJECTED" && (
               <div className="text-center space-y-4">
@@ -1496,14 +1515,14 @@ export default function AdminPage() {
                 </div>
                 <button
                   onClick={() => {
-                    localStorage.removeItem('admin_token');
+                    localStorage.removeItem("admin_token");
                     setCurrentStep("login");
                     setAdminData({
                       phone: "",
                       email: "",
                       fullName: "",
                       instagram: "",
-                                        adminId: "",
+                      adminId: "",
                     });
                     setAuthToken("");
                     setTempToken("");
@@ -1542,9 +1561,7 @@ export default function AdminPage() {
                 <span className="text-coral">Admin</span>{" "}
                 <span className="text-teal italic">Login</span>
               </h1>
-              <p className="text-charcoal/70">
-                Access your admin dashboard
-              </p>
+              <p className="text-charcoal/70">Access your admin dashboard</p>
             </div>
 
             {/* Login Methods */}
@@ -1569,10 +1586,12 @@ export default function AdminPage() {
                 <button
                   onClick={() => {
                     // Clear logout flag when user manually chooses to login
-                    console.log('🔄 Admin manual Google login (form) - clearing logout flag');
+                    console.log(
+                      "🔄 Admin manual Google login (form) - clearing logout flag",
+                    );
                     setHasExplicitlyLoggedOut(false);
-                    localStorage.removeItem('admin_explicitly_logged_out');
-                    signIn('google', {
+                    localStorage.removeItem("admin_explicitly_logged_out");
+                    signIn("google", {
                       callbackUrl: "/admin",
                       redirect: true,
                     });
@@ -1580,10 +1599,22 @@ export default function AdminPage() {
                   className="w-full bg-white text-charcoal border-2 border-charcoal/20 px-6 py-3 rounded-xl hover:bg-charcoal/5 transition-colors font-medium flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    />
                   </svg>
                   Continue with Google
                 </button>
@@ -1699,7 +1730,10 @@ export default function AdminPage() {
                               <p>{staff.phone}</p>
                             </div>
                             <div className="text-xs text-charcoal/50">
-                              <p>Applied: {new Date(staff.createdAt).toLocaleDateString()}</p>
+                              <p>
+                                Applied:{" "}
+                                {new Date(staff.createdAt).toLocaleDateString()}
+                              </p>
                               <p>Login: {staff.loginMethod}</p>
                             </div>
                           </div>
@@ -1759,7 +1793,10 @@ export default function AdminPage() {
                               <p>{admin.phone}</p>
                             </div>
                             <div className="text-xs text-charcoal/50">
-                              <p>Applied: {new Date(admin.createdAt).toLocaleDateString()}</p>
+                              <p>
+                                Applied:{" "}
+                                {new Date(admin.createdAt).toLocaleDateString()}
+                              </p>
                               <p>Login: {admin.loginMethod}</p>
                             </div>
                           </div>
@@ -1904,9 +1941,7 @@ export default function AdminPage() {
                       <p className="font-semibold text-charcoal">
                         IDR {user.totalExpenses.toLocaleString()}
                       </p>
-                      <p className="text-sm text-lime">
-                        Total spent
-                      </p>
+                      <p className="text-sm text-lime">Total spent</p>
                     </div>
                   </div>
                 ))
@@ -1972,15 +2007,19 @@ export default function AdminPage() {
                         </td>
                         <td className="py-3 px-4">
                           <div>
-                            <p className="font-medium text-charcoal">{entry.customerName}</p>
-                            <p className="text-sm text-charcoal/60">{entry.customerInstagram}</p>
+                            <p className="font-medium text-charcoal">
+                              {entry.customerName}
+                            </p>
+                            <p className="text-sm text-charcoal/60">
+                              {entry.customerInstagram}
+                            </p>
                           </div>
                         </td>
                         <td className="py-3 px-4 font-semibold text-teal">
                           IDR {entry.amount.toLocaleString()}
                         </td>
                         <td className="py-3 px-4 text-sm text-charcoal/70">
-                          {entry.description || 'No description'}
+                          {entry.description || "No description"}
                         </td>
                         <td className="py-3 px-4 text-sm text-charcoal/70">
                           {new Date(entry.timestamp).toLocaleDateString()}
@@ -2010,15 +2049,15 @@ export default function AdminPage() {
           </div>
 
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-4 md:flex-row items-start md:items-center justify-between mb-4">
+              <div className="flex md:items-center items-start gap-3">
                 <Settings className="w-6 h-6 text-coral" />
                 <h3 className="text-xl font-semibold text-charcoal">
                   Event Management
                 </h3>
               </div>
               {!editingEvent && (
-                <div className="flex gap-2">
+                <div className="flex flex-col md:flex-row gap-2">
                   <Link
                     href="/admin/event"
                     className="bg-teal text-white px-4 py-2 rounded-lg font-medium hover:bg-teal/90 transition-colors flex items-center gap-2"
@@ -2121,7 +2160,9 @@ export default function AdminPage() {
                         disabled
                         className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                       />
-                      <p className="text-xs text-charcoal/70 mt-1">Read-only: Based on user registrations</p>
+                      <p className="text-xs text-charcoal/70 mt-1">
+                        Read-only: Based on user registrations
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-charcoal mb-2">
@@ -2134,7 +2175,9 @@ export default function AdminPage() {
                         disabled
                         className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
                       />
-                      <p className="text-xs text-charcoal/70 mt-1">Read-only: Based on event check-ins</p>
+                      <p className="text-xs text-charcoal/70 mt-1">
+                        Read-only: Based on event check-ins
+                      </p>
                     </div>
                   </div>
                   <div className="mt-4">
@@ -2353,7 +2396,7 @@ export default function AdminPage() {
                     className="bg-lime text-white px-6 py-2 rounded-lg font-medium hover:bg-lime/90 transition-colors flex items-center gap-2"
                   >
                     <Save className="w-4 h-4" />
-                    Save All Changes
+                    Save Changes
                   </button>
                   <button
                     onClick={handleCancelEventEdit}
@@ -2380,11 +2423,15 @@ export default function AdminPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5 text-teal" />
-                    <p className="text-charcoal">{dashboardData?.eventConfig?.time || eventData.time}</p>
+                    <p className="text-charcoal">
+                      {dashboardData?.eventConfig?.time || eventData.time}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-teal" />
-                    <p className="text-charcoal">{dashboardData?.eventConfig?.venue || eventData.venue}</p>
+                    <p className="text-charcoal">
+                      {dashboardData?.eventConfig?.venue || eventData.venue}
+                    </p>
                   </div>
                 </div>
                 <div className="space-y-4">
@@ -2399,7 +2446,10 @@ export default function AdminPage() {
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm text-charcoal/70 mb-2">Description</p>
-                    <p className="text-charcoal">{dashboardData?.eventConfig?.description || eventData.description}</p>
+                    <p className="text-charcoal">
+                      {dashboardData?.eventConfig?.description ||
+                        eventData.description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -2411,7 +2461,9 @@ export default function AdminPage() {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
               <div className="bg-white rounded-2xl p-6 w-full max-w-md">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-semibold text-charcoal">Edit Expense</h3>
+                  <h3 className="text-xl font-semibold text-charcoal">
+                    Edit Expense
+                  </h3>
                   <button
                     onClick={handleCancelExpenseEdit}
                     className="text-gray-400 hover:text-gray-600"
@@ -2440,10 +2492,12 @@ export default function AdminPage() {
                     <input
                       type="number"
                       value={editExpenseData.amount}
-                      onChange={(e) => setEditExpenseData(prev => ({
-                        ...prev,
-                        amount: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setEditExpenseData((prev) => ({
+                          ...prev,
+                          amount: e.target.value,
+                        }))
+                      }
                       className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                       placeholder="Enter amount"
                     />
@@ -2455,10 +2509,12 @@ export default function AdminPage() {
                     </label>
                     <textarea
                       value={editExpenseData.description}
-                      onChange={(e) => setEditExpenseData(prev => ({
-                        ...prev,
-                        description: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setEditExpenseData((prev) => ({
+                          ...prev,
+                          description: e.target.value,
+                        }))
+                      }
                       className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                       placeholder="Expense description"
                       rows={3}
@@ -2471,10 +2527,12 @@ export default function AdminPage() {
                     </label>
                     <select
                       value={editExpenseData.category}
-                      onChange={(e) => setEditExpenseData(prev => ({
-                        ...prev,
-                        category: e.target.value
-                      }))}
+                      onChange={(e) =>
+                        setEditExpenseData((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
+                      }
                       className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
                     >
                       <option value="">Select category</option>
@@ -2490,7 +2548,10 @@ export default function AdminPage() {
                 <div className="flex gap-3 mt-6">
                   <button
                     onClick={handleSaveExpense}
-                    disabled={!editExpenseData.amount || parseFloat(editExpenseData.amount) <= 0}
+                    disabled={
+                      !editExpenseData.amount ||
+                      parseFloat(editExpenseData.amount) <= 0
+                    }
                     className="flex-1 bg-coral text-white px-4 py-2 rounded-lg font-medium hover:bg-coral/90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
                     Save Changes

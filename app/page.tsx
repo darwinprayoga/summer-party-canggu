@@ -1,3 +1,4 @@
+import { Instagram, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -60,7 +61,10 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <a
+                    href="https://maps.app.goo.gl/BpH94CfM1ocQwQda7"
+                    className="flex items-center gap-4"
+                  >
                     <div className="w-12 h-12 bg-coral/10 rounded-full flex items-center justify-center">
                       <svg
                         className="w-6 h-6 text-coral"
@@ -83,15 +87,17 @@ export default function Home() {
                       </svg>
                     </div>
                     <div>
-                      <p className="text-sm text-charcoal/60 font-medium">
-                        Location
+                      <p className="text-sm text-charcoal/60 font-medium underline">
+                        Tap to open directions!
                       </p>
                       <p className="text-lg font-semibold text-charcoal">
-                        Canggu
+                        Wolu Residence
                       </p>
-                      <p className="text-charcoal/80">Bali, Indonesia</p>
+                      <p className="text-charcoal/80">
+                        Canggu, Bali, Indonesia
+                      </p>
                     </div>
-                  </div>
+                  </a>
                 </div>
               </div>
 
@@ -106,13 +112,23 @@ export default function Home() {
                 </Link>
 
                 <Link
-                  href="https://www.instagram.com/p/DOp-l_NEvBy/"
+                  href="https://www.instagram.com/summerparty.canggu/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary text-center inline-block"
+                  className="btn-secondary text-center flex justify-center items-center gap-2"
                 >
-                  Learn More
-                  <span className="ml-2">📱</span>
+                  <Instagram className="w-5 h-5" />
+                  Instagram <span className="md:hidden">Posts</span>
+                </Link>
+
+                <Link
+                  href="https://chat.whatsapp.com/FzBkoiJAlyBBFzjEYmgCeu?mode=ems_copy_t"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary bg-lime flex justify-center items-center text-center gap-2"
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  WhatsApp <span className="md:hidden">Community</span>
                 </Link>
               </div>
 

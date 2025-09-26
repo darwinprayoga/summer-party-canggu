@@ -179,7 +179,11 @@ export default function StaffPage() {
       }
 
       // Don't auto-authenticate during registration process
-      if (currentStep === "form" || currentStep === "phone-verify" || currentStep === "approval") {
+      if (
+        currentStep === "form" ||
+        currentStep === "phone-verify" ||
+        currentStep === "approval"
+      ) {
         console.log(
           `🔄 User is in ${currentStep} step - skipping auto-authentication to avoid interrupting registration flow`,
         );
@@ -745,11 +749,7 @@ export default function StaffPage() {
           staffId: staff.staffId,
           status: staff.registrationStatus,
           isActive: staff.isActive,
-          hasCompleteData: !!(
-            staff.fullName &&
-            staff.instagram &&
-            staff.phone
-          ),
+          hasCompleteData: !!(staff.fullName && staff.instagram && staff.phone),
         });
 
         setStaffData(staff);
@@ -2184,6 +2184,22 @@ export default function StaffPage() {
     // If authenticated, show dashboard
     return (
       <div className="min-h-screen bg-gradient-to-br from-cream via-mint/20 to-teal/10 p-4">
+        {/* Camera Modal */}
+        {showCamera && (
+          <CameraModal
+            isOpen={showCamera}
+            onCapture={handlePhotoFromCamera}
+            onClose={() => setShowCamera(false)}
+          />
+        )}
+
+        {/* QR Scanner Component */}
+        <QRScanner
+          isOpen={showScanner}
+          onScan={handleQRScan}
+          onClose={() => setShowScanner(false)}
+        />
+
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg mb-6">
@@ -2249,7 +2265,7 @@ export default function StaffPage() {
                         setManualCustomerId(e.target.value.toUpperCase())
                       }
                       placeholder="SP123456"
-                      className="flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
+                      className="flex-1 p-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent w-20"
                     />
                     <button
                       onClick={() => handleQRScan(manualCustomerId)}
@@ -2305,22 +2321,6 @@ export default function StaffPage() {
                     )}
                   </button>
                 </div>
-
-                {/* QR Scanner Component */}
-                <QRScanner
-                  isOpen={showScanner}
-                  onScan={handleQRScan}
-                  onClose={() => setShowScanner(false)}
-                />
-
-                {/* Camera Modal */}
-                {showCamera && (
-                  <CameraModal
-                    isOpen={showCamera}
-                    onCapture={handlePhotoFromCamera}
-                    onClose={() => setShowCamera(false)}
-                  />
-                )}
 
                 {scannedCustomerId && (
                   <div className="bg-lime/10 rounded-lg p-4 border border-lime/20">
@@ -2639,7 +2639,7 @@ export default function StaffPage() {
                             </div>
 
                             <div className="md:hidden">
-                              <div className="flex justify-between">
+                              <div className="flex justify-between gap-4">
                                 <div className="flex md:items-center gap-2 text-sm text-charcoal/70 flex-col md:flex-row">
                                   <div className="flex items-center gap-1">
                                     <DollarSign className="w-4 h-4" />
