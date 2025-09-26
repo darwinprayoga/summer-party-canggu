@@ -1748,7 +1748,7 @@ export default function StaffPage() {
 
               <div>
                 <label className="block text-sm font-medium text-charcoal mb-2">
-                  WhatsApp Number
+                  Phone Number
                 </label>
                 <input
                   type="tel"

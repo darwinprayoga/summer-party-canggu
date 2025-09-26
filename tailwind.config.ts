@@ -64,7 +64,7 @@ const config: Config = {
         mint: "#B5DCDA",
         teal: "#2CA3A7",
         coral: "#F7687F",
-        red: "#E0333A",
+        // red: "#E0333A",
         lime: "#6AC147",
         cream: "#F8F8F8",
         charcoal: "#252729",

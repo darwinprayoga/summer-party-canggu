@@ -1713,10 +1713,10 @@ export default function AdminPage() {
                     {pendingRegistrations.staff.map((staff) => (
                       <div
                         key={staff.id}
-                        className="flex items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
+                        className="flex flex-col md:flex-row gap-6 md:gap-0 items-center justify-between p-4 bg-amber-50 rounded-lg border border-amber-200"
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-4">
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-col md:flex-row md:items-center gap-4">
                             <div>
                               <p className="font-medium text-charcoal">
                                 {staff.fullName}
@@ -2369,7 +2369,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-charcoal mb-2">
-                        WhatsApp Number
+                        Phone Number
                       </label>
                       <input
                         type="tel"

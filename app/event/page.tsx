@@ -515,7 +515,7 @@ export default function EventPage() {
     }
   };
 
-  // Send OTP to WhatsApp number
+  // Send OTP to Phone number
   const handlePhoneLogin = async (phoneToUse?: string) => {
     const phone = phoneToUse || phoneNumber;
     console.log("🔍 Attempting to send OTP to:", phone);
@@ -1238,11 +1238,11 @@ export default function EventPage() {
               <Phone className="w-8 h-8 text-teal" />
             </div>
             <h1 className="text-2xl font-display font-bold text-charcoal mb-2">
-              Verify Your WhatsApp
+              Verify Your Phone Number
             </h1>
             <p className="text-charcoal/70">
-              Hi {userData.fullName}! We'll send a verification code to your
-              WhatsApp number
+              Hi {userData.fullName}! We'll send an SMS code to your phone
+              number
             </p>
           </div>
 
@@ -1252,7 +1252,7 @@ export default function EventPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-charcoal mb-2">
-                    WhatsApp Number
+                    Phone Number
                   </label>
                   <input
                     type="tel"
@@ -1262,7 +1262,7 @@ export default function EventPage() {
                     readOnly
                   />
                   <p className="text-xs text-charcoal/60 mt-1">
-                    We'll send the verification code to this WhatsApp number
+                    We'll send the verification code to this phone number
                   </p>
                 </div>
                 <button
