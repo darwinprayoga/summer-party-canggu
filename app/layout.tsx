@@ -26,8 +26,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL("https://summer.prayoga.io"),
   title: {
-    default:
-      "Summer Party Canggu - Premium Beach & Pool Equipment Rental in Bali",
+    default: "Summer Party Canggu!",
     template: "%s | Summer Party Canggu - Bali Beach Activities",
   },
   description:
@@ -70,28 +69,24 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://summer.prayoga.io",
     siteName: "Summer Party Canggu",
-    title:
-      "Summer Party Canggu - Premium Beach & Pool Equipment Rental in Bali",
-    description:
-      "Premium beach and pool equipment rental in Canggu, Bali. Surfboards, party essentials, and beach gear for the ultimate Bali experience. Free surfboard size calculator included.",
+    title: "Summer Party Canggu - Pool Party Sept 27th",
+    description: "The Exclusive pool party experience you've been waiting for!",
     images: [
       {
-        url: "/icon-landscape.webp",
-        width: 1200,
-        height: 630,
-        alt: "Summer Party Canggu - Premium Beach & Pool Equipment Rental in Bali",
+        url: "/instagram-poster-medium.png",
+        width: 512,
+        height: 640,
+        alt: "Summer Party Canggu!",
         type: "image/webp",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Summer Party Canggu - Premium Beach & Pool Equipment Rental in Bali",
-    description:
-      "Premium beach and pool equipment rental in Canggu, Bali. Surfboards, party essentials, and beach gear for the ultimate Bali experience.",
-    images: ["/icon-landscape.webp"],
-    creator: "@summerpartycanggu",
+    title: "Summer Party Canggu!",
+    description: "The Exclusive pool party experience you've been waiting for!",
+    images: ["/instagram-poster-medium.png"],
+    creator: "@summerparty.canggu",
   },
   robots: {
     index: true,
