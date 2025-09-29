@@ -1776,10 +1776,10 @@ export default function AdminPage() {
                     {pendingRegistrations.admin.map((admin) => (
                       <div
                         key={admin.id}
-                        className="flex items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200"
+                        className="flex flex-col md:flex-row gap-6 md:gap-0 items-center justify-between p-4 bg-purple-50 rounded-lg border border-purple-200"
                       >
-                        <div className="flex-1">
-                          <div className="flex items-center gap-4">
+                        <div className="flex-1 w-full">
+                          <div className="flex flex-col md:flex-row md:items-center gap-4">
                             <div>
                               <p className="font-medium text-charcoal">
                                 {admin.fullName}
